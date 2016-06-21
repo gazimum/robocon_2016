@@ -1,9 +1,6 @@
 #include <iostream>
 
 int main() {
-	std::cout << "hi" << std::endl;
-	/*while (true) {
-	 *
-	}*/
+	std::cout << "hi all :)" << std::endl;
 	return 0;
 }
