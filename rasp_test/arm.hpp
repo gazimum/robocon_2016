@@ -12,6 +12,8 @@ class arm {
 public:
 	arm();
 	~arm();
+
+	void update();
 };
 
 #endif /* ARM_HPP_ */

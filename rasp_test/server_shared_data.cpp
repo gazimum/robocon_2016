@@ -5,7 +5,7 @@
  *      Author: tomoya
  */
 
-#include "servershareddata.hpp"
+#include "server_shared_data.hpp"
 
 server_shared_data::server_shared_data() {
 	// TODO 自動生成されたコンストラクター・スタブ

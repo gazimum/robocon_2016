@@ -15,3 +15,6 @@ omni_wheel::~omni_wheel() {
 	// TODO Auto-generated destructor stub
 }
 
+void omni_wheel::update() {
+
+}

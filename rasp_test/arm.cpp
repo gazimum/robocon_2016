@@ -16,3 +16,6 @@ arm::~arm() {
 	// TODO Auto-generated destructor stub
 }
 
+void arm::update() {
+
+}

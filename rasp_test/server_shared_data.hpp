@@ -5,8 +5,8 @@
  *      Author: tomoya
  */
 
-#ifndef SERVERSHAREDDATA_HPP_
-#define SERVERSHAREDDATA_HPP_
+#ifndef SERVER_SHARED_DATA_HPP_
+#define SERVER_SHARED_DATA_HPP_
 
 class server_shared_data {
 public:
@@ -14,4 +14,4 @@ public:
 	~server_shared_data();
 };
 
-#endif /* SERVERSHAREDDATA_HPP_ */
+#endif /* SERVER_SHARED_DATA_HPP_ */

@@ -16,3 +16,8 @@ robot::~robot() {
 	// TODO Auto-generated destructor stub
 }
 
+void robot::update() {
+	_arm.update();
+	_omni_wheel.update();
+}
+

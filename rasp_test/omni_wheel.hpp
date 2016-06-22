@@ -12,6 +12,8 @@ class omni_wheel {
 public:
 	omni_wheel();
 	~omni_wheel();
+
+	void update();
 };
 
 #endif /* OMNI_WHEEL_HPP_ */

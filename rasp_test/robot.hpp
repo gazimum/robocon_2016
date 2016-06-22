@@ -16,6 +16,8 @@ public:
 	robot();
 	~robot();
 
+	void update();
+
 private:
 	omni_wheel _omni_wheel;
 	arm _arm;
