@@ -24,10 +24,10 @@ communication::communication() {}
 void communication::operator()(){
 	//boost::asio::io_service io;
 	//RobotClient client(ip, port, 5, "\n", io);
-
+	server_shared_data_2016_robocon&  server_shared_data = server_shared_data_2016_robocon::instance();
 
 	while (true) {
-		server_shared_data_2016_robocon::instance().get();
+		server_shared_data.get();
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }

@@ -13,9 +13,7 @@
 #include "server_shared_data.hpp"
 
 template <size_t N>
-server_shared_data<N>::server_shared_data() {
-
-}
+server_shared_data<N>::server_shared_data() {}
 
 template <size_t N>
 void server_shared_data<N>::set(int port, const server_shared_data_type& d) {
