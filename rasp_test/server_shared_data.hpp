@@ -3,6 +3,7 @@
 
 #include <array>
 #include <map>
+#include <mutex>
 #include "singleton.hpp"
 
 template <size_t N>
@@ -12,13 +13,14 @@ public:
 	typedef std::map<int, server_shared_data_type> server_shared_data_container_type;
 
 	inline void set(int port, const server_shared_data_type& d);
-	inline server_shared_data_container_type get() const;
+	inline server_shared_data_container_type get();
 
 private:
 	friend class singleton<server_shared_data<N> >;
 
 	server_shared_data();
 
+	std::mutex _mutex;
 	server_shared_data_container_type _data;
 };
 

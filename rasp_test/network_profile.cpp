@@ -11,13 +11,13 @@
 namespace network {
 
 const std::map<std::string, int> ports_for_clients{
-	{std::make_pair("controller0", 5000)},
-	{std::make_pair("controller1", 5001)},
-	{std::make_pair("controller2", 5002)},
-	{std::make_pair("lifter0", 5003)},
-	{std::make_pair("lifter1", 5004)},
-	{std::make_pair("builder0", 5005)},
-	{std::make_pair("builder1", 5006)}
+	{"controller0", 5000},
+	{"controller1", 5001},
+	{"controller2", 5002},
+	{"lifter0", 5003},
+	{"lifter1", 5004},
+	{"builder0", 5005},
+	{"builder1", 5006}
 };
 
 } /* namespace network */

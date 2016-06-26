@@ -22,16 +22,21 @@ typedef server_shared_data<network::network_node_num> server_shared_data_2016_ro
 
 communication::communication() {}
 
-void communication::operator()(){
+void communication::operator()() {
+	std::cout << "start communication thread" << std::endl;
+
 	//boost::asio::io_service io;
 	//RobotClient client(ip, port, 5, "\n", io);
 	server_shared_data_2016_robocon&  server_shared_data = server_shared_data_2016_robocon::instance();
-
-	network::ports_for_clients.at("controller0");
+	int my_port  = network::ports_for_clients.at("controller0");
 
 	while (true) {
-		server_shared_data.get()[5000];
+		std::cout << "communication thread" << std::endl;
+
+		// 自分のデータをセット
+		server_shared_data.set(my_port, server_shared_data.get()[my_port]);
 		//server_shared_data.set(server_shared_data.get());
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 }
