@@ -18,8 +18,7 @@ public:
 	omni_wheel();
 	~omni_wheel();
 
-	void update();
-
+	void write();
 	void set_velocity(vector v);
 	void set_angular_velocity(float v);
 

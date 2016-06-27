@@ -7,6 +7,7 @@
 #include "SimpleMapDeSerializer.hpp"
 #include "SimpleMapSerializer.hpp"
 #include <map>
+#include <string>
 
 namespace network {
 

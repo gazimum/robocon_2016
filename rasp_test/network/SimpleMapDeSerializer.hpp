@@ -6,6 +6,8 @@
 #include <map>
 #include <deque>
 
+namespace network {
+
 namespace SimpleMapSerialization {
 	template <class T, class U>
 	void simpleMapDeSerializer(const std::string &str, char delim, std::map<T, U>& result) {
@@ -27,5 +29,7 @@ namespace SimpleMapSerialization {
 		}
 	}
 }
+
+} /* namespace network */
 
 #endif //SIMPLE_MAP_DESERIALIZER_HPP

@@ -10,6 +10,7 @@
 #include <cmath>
 #include <algorithm>
 //#include <math.h>
+#include "i2c.hpp"
 
 /*
  *  1      2
@@ -27,7 +28,7 @@ omni_wheel::omni_wheel() : _velocity_propotion(0.5f),
 
 omni_wheel::~omni_wheel() {}
 
-void omni_wheel::update() {
+void omni_wheel::write() {
 	float p[_wheel_num];
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		p[i] = boost::numeric::ublas::inner_prod(_velocity, _wheel_directions[i]);

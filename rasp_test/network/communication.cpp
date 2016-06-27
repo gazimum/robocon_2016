@@ -10,7 +10,7 @@
 #include <chrono>
 #include <string>
 #include "communication.hpp"
-//#include "RobotClient.hpp"
+#include "RobotClient.hpp"
 //#include <boost/asio.hpp>
 #include "server_shared_data.hpp"
 #include "network_profile.hpp"

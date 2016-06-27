@@ -1,23 +1,22 @@
 /*
- * robot.cpp
+ * moving_object.cpp
  *
- *  Created on: 2016/06/20
+ *  Created on: 2016/06/27
  *      Author: tomoya
  */
 
-#include "robot.hpp"
+#include "moving_object.hpp"
 
-robot::robot() {
+moving_object::moving_object() {
 	// TODO 自動生成されたコンストラクター・スタブ
 
 }
 
-robot::~robot() {
+moving_object::~moving_object() {
 	// TODO Auto-generated destructor stub
 }
 
-void robot::update() {
-	_arm.update();
+void moving_object::update() {
 	_omni_wheel.update();
 }
 
