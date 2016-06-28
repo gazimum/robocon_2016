@@ -15,11 +15,6 @@
 #include "server_shared_data.hpp"
 #include "network_profile.hpp"
 
-constexpr int port = 100;
-constexpr auto ip = "127.0.0.1";
-
-typedef server_shared_data<network::network_node_num> server_shared_data_2016_robocon;
-
 communication::communication() {}
 
 void communication::operator()() {

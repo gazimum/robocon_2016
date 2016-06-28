@@ -7,6 +7,7 @@
 
 #include "moving_object.hpp"
 #include "omni_wheel.hpp"
+#include "server_shared_data.hpp"
 
 moving_object::moving_object() {
 	// TODO 自動生成されたコンストラクター・スタブ
@@ -18,6 +19,8 @@ moving_object::~moving_object() {
 }
 
 void moving_object::update() {
+	_omni_wheel.set_velocity(server_shared_data::instance());
+	_omni_wheel.set_angular_velocity();
 	_omni_wheel.write();
 }
 

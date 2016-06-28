@@ -26,4 +26,6 @@ private:
 
 #include "server_shared_data_impl.hpp"
 
+typedef server_shared_data<network::network_node_num> server_shared_data_2016_robocon;
+
 #endif /* SERVER_SHARED_DATA_HPP_ */
