@@ -22,6 +22,7 @@ public:
 
 private:
 	omni_wheel _omni_wheel;
+	static const float _angular_velocity_coefficient;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */

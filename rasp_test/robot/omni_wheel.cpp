@@ -11,6 +11,7 @@
 #include <algorithm>
 //#include <math.h>
 #include "../i2c/i2c.hpp"
+#include "../i2c/i2c_profile.hpp"
 
 /*
  *  1      2
@@ -34,6 +35,10 @@ void omni_wheel::write() {
 		p[i] = boost::numeric::ublas::inner_prod(_velocity, _wheel_directions[i]);
 		p[i] *= _velocity_propotion;
 		p[i] += (1.0f - _velocity_propotion) * _angular_velocity;
+	}
+
+	for (size_t i = 0; i < _wheel_num; ++i) {
+		i2c::instance().set(i2c_device_name[i], p[i]);
 	}
 }
 

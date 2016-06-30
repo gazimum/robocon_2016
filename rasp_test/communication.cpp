@@ -9,28 +9,30 @@
 #include <thread>
 #include <chrono>
 #include <string>
+#include <boost/asio.hpp>
 #include "communication.hpp"
-#include "RobotClient.hpp"
-//#include <boost/asio.hpp>
+#include "./network/RobotClient.hpp"
 #include "server_shared_data.hpp"
-#include "network_profile.hpp"
+#include "./network/network_profile.hpp"
 
 communication::communication() {}
 
 void communication::operator()() {
 	std::cout << "start communication thread" << std::endl;
 
-	//boost::asio::io_service io;
-	//RobotClient client(ip, port, 5, "\n", io);
+	boost::asio::io_service io;
+	network::RobotClient client(network::server_ip_address, network::my_port, 5, "\n", io);
+	client.connect();
+
 	server_shared_data_2016_robocon&  server_shared_data = server_shared_data_2016_robocon::instance();
-	int my_port  = network::ports_for_clients.at("controller0");
 
 	while (true) {
 		std::cout << "communication thread" << std::endl;
 
-		// 自分のデータをセット
-		server_shared_data.set(my_port, server_shared_data.get()[my_port]);
-		//server_shared_data.set(server_shared_data.get());
+		client.set(server_shared_data.get()[network::my_port]);
+		for (uint32_t i = 0; i < network::network_node_num; ++i) {
+			client.get(network::ports_for_clients[network::]);
+		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}

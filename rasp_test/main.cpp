@@ -7,8 +7,8 @@
 
 #include <thread>
 #include "communication.hpp"
-#include "robot.hpp"
-#include "i2c.hpp"
+#include "./robot/robot.hpp"
+#include "./i2c/i2c.hpp"
 
 int main() {
 	std::thread com_thread(std::ref(communication::instance()));
