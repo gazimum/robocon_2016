@@ -12,7 +12,7 @@ public:
 	typedef std::map<std::string, int> server_shared_data_type;
 	typedef std::map<int, server_shared_data_type> server_shared_data_container_type;
 
-	inline server_shared_data_container_type get();
+	inline server_shared_data_container_type& get();
 
 private:
 	friend class singleton<server_shared_data<N>>;

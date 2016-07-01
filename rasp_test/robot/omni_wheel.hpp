@@ -19,7 +19,7 @@ public:
 	~omni_wheel();
 
 	void write();
-	void set_velocity(vector v);
+	void set_velocity(float x, float y);
 	void set_angular_velocity(float v);
 
 private:

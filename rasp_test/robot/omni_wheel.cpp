@@ -12,6 +12,8 @@
 #include "../i2c/i2c.hpp"
 #include "../i2c/i2c_profile.hpp"
 
+#include <iostream>
+
 /*
  *  1      2
  *
@@ -40,12 +42,16 @@ void omni_wheel::write() {
 	}
 }
 
-void omni_wheel::set_velocity(vector v) {
+void omni_wheel::set_velocity(float x, float y) {
+	std::cout << x << ", " << y << std::endl;
+
+	_velocity = vector{x, y};
+
 	// ベクトルの大きさが1より大きいなら1に調整する
-	if (boost::numeric::ublas::norm_2(v) > 1.0f) {
-		v /= boost::numeric::ublas::norm_2(v);
+	float l = abs(boost::numeric::ublas::norm_2(_velocity));
+	if (l > 1.0f) {
+		_velocity /= l;
 	}
-	_velocity = v;
 }
 
 void omni_wheel::set_angular_velocity(float v) {

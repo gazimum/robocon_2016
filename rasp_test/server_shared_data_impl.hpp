@@ -19,7 +19,7 @@ template <size_t N>
 server_shared_data<N>::server_shared_data() {}
 
 template <size_t N>
-typename server_shared_data<N>::server_shared_data_container_type server_shared_data<N>::get() {
+typename server_shared_data<N>::server_shared_data_container_type& server_shared_data<N>::get() {
 	std::lock_guard<std::mutex> lock(_mutex);
 	return _data;
 }
