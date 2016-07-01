@@ -9,7 +9,6 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <cmath>
 #include <algorithm>
-//#include <math.h>
 #include "../i2c/i2c.hpp"
 #include "../i2c/i2c_profile.hpp"
 

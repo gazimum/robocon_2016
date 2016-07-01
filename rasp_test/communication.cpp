@@ -30,8 +30,8 @@ void communication::operator()() {
 		std::cout << "communication thread" << std::endl;
 
 		client.set(server_shared_data.get()[network::my_port]);
-		for (uint32_t i = 0; i < network::network_node_num; ++i) {
-			client.get(network::ports_for_clients[network::]);
+		for (const auto& port : network::ports_for_clients) {
+			server_shared_data.get()[port.second] = client.get(port.second);
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
