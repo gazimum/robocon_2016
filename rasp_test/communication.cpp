@@ -18,8 +18,6 @@
 communication::communication() {}
 
 void communication::operator()() {
-	std::cout << "start communication thread" << std::endl;
-
 	boost::asio::io_service io;
 	network::RobotClient client(network::server_ip_address, network::my_port, 5, "\n", io);
 	client.connect();
@@ -29,9 +27,9 @@ void communication::operator()() {
 	while (true) {
 		std::cout << "communication thread" << std::endl;
 
-		client.set(server_shared_data.get()[network::my_port]);
+		//client.set(server_shared_data.get()[network::my_port]);
 		for (const auto& port : network::ports_for_clients) {
-			server_shared_data.get()[port.second] = client.get(port.second);
+			//server_shared_data.get()[port.second] = client.get(port.second);
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));

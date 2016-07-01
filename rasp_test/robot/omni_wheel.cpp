@@ -17,14 +17,14 @@
  *
  *      3
  */
-const omni_wheel::unit_vector omni_wheel::_wheel_directions[_wheel_num] = {
-		unit_vector( 1.0f / sqrt(2.0f),  1.0f / sqrt(2.0f)),
-		unit_vector( 1.0f / sqrt(2.0f), -1.0f / sqrt(2.0f)),
-		unit_vector(-1.0f, 0.0f)
+const omni_wheel::vector omni_wheel::_wheel_directions[_wheel_num] = {
+		vector{ 1.0f / sqrt(2.0f),  1.0f / sqrt(2.0f)},
+		vector{ 1.0f / sqrt(2.0f), -1.0f / sqrt(2.0f)},
+		vector{-1.0f, 0.0f}
 };
 
-omni_wheel::omni_wheel() : _velocity_propotion(0.5f),
-						   _angular_velocity(float()) {}
+omni_wheel::omni_wheel() : _velocity_propotion{0.5f},
+						   _angular_velocity{float()} {}
 
 omni_wheel::~omni_wheel() {}
 
@@ -35,7 +35,6 @@ void omni_wheel::write() {
 		p[i] *= _velocity_propotion;
 		p[i] += (1.0f - _velocity_propotion) * _angular_velocity;
 	}
-
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		i2c::instance().set(i2c_device_name[i], p[i]);
 	}

@@ -26,7 +26,7 @@ private:
 	static constexpr size_t _wheel_num = 3;
 	float _velocity_propotion;;
 
-	static const unit_vector _wheel_directions[_wheel_num];
+	static const vector _wheel_directions[_wheel_num];
 	vector _velocity;
 	float _angular_velocity;
 };

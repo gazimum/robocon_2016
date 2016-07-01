@@ -14,7 +14,7 @@
 
 i2c::i2c() {
 	for (const auto& i : i2c_device_name) {
-		_filehandles[i] = wiringPiI2CSetup(i2c_address.at(""));
+		_filehandles[i] = wiringPiI2CSetup(i2c_address.at(i));
 	}
 }
 
@@ -23,8 +23,8 @@ void i2c::set(std::string name, float p) {
 }
 
 void i2c::write() {
-	for (size_t i = 0; i < i2c_device_num; ++i) {
-		// wiringPiI2CWrite(_filehandles[i2c_device_name[i], _buffer[i2c_device_name[i]]);
+	for (const auto& i : i2c_device_name) {
+		wiringPiI2CWrite(_filehandles[i], _buffers[i]);
 	}
 }
 

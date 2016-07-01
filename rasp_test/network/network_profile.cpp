@@ -20,7 +20,7 @@ const std::map<std::string, int> ports_for_clients{
 	{"builder1", 5006}
 };
 
-const std::string my_name = "conrtoller0";
+const std::string my_name = "controller0";
 const int my_port = ports_for_clients.at(my_name);
 
 } /* namespace network */

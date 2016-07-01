@@ -16,7 +16,7 @@
 namespace network {
 
 constexpr size_t network_node_num = 7;
-constexpr const char* server_ip_address = "127.0.0.1";
+constexpr const char* server_ip_address = "192.168.111.110";
 extern const std::map<std::string, int> ports_for_clients;
 extern const std::string my_name;
 extern const int my_port;
