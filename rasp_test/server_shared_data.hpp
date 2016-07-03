@@ -12,16 +12,16 @@ public:
 	typedef std::map<std::string, int> server_shared_data_type;
 	typedef std::map<int, server_shared_data_type> server_shared_data_container_type;
 
-	inline server_shared_data_container_type& get();
+	//inline server_shared_data_container_type& get();
+
+	static std::mutex _mutex;
+	static server_shared_data_container_type _data;
+
 
 private:
 	friend class singleton<server_shared_data<N>>;
 
 	server_shared_data();
-
-	std::mutex _mutex;
-	server_shared_data_container_type _data;
-	server_shared_data_type _my_data;
 };
 
 #include "server_shared_data_impl.hpp"

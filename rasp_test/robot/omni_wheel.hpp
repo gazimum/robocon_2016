@@ -12,9 +12,6 @@
 
 class omni_wheel {
 public:
-	typedef boost::numeric::ublas::vector<float> vector;
-	typedef boost::numeric::ublas::unit_vector<float> unit_vector;
-
 	omni_wheel();
 	~omni_wheel();
 
@@ -24,10 +21,12 @@ public:
 
 private:
 	static constexpr size_t _wheel_num = 3;
-	float _velocity_propotion;;
+	static const float _wheel_directions_x[_wheel_num];
+	static const float _wheel_directions_y[_wheel_num];
 
-	static const vector _wheel_directions[_wheel_num];
-	vector _velocity;
+	float _velocity_propotion;
+	float _velocity_x;
+	float _velocity_y;
 	float _angular_velocity;
 };
 

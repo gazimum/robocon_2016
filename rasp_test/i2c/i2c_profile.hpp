@@ -12,7 +12,7 @@
 #include <string>
 #include <array>
 
-constexpr size_t i2c_device_num = 7;
+constexpr size_t i2c_device_num = 6;
 extern const std::map<std::string, int> i2c_address;
 extern const std::array<std::string, i2c_device_num> i2c_device_name;
 

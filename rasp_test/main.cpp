@@ -10,13 +10,19 @@
 #include "./robot/robot.hpp"
 #include "./i2c/i2c.hpp"
 
-int main() {
-	std::thread com_thread(std::ref(communication::instance()));
-
+void main_thread_func() {
 	while (true) {
 		robot::instance().update();
 		i2c::instance().write();
 	}
+}
+
+int main() {
+	std::thread com_thread(std::ref(communication::instance()));
+	std::thread main_thread(main_thread_func);
+
+	com_thread.join();
+	main_thread.join();
 
 	return 0;
 }
