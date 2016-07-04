@@ -28,17 +28,16 @@ void communication::operator()() {
 
 	while (true) {
 		/*
-		server_shared_data_2016_robocon::_mutex.lock();
 		for (const auto& port : network::ports_for_clients) {
+			server_shared_data_2016_robocon::_mutex.lock();
 			server_shared_data_2016_robocon::_data[port.second] = client.get(port.second);
+			std::this_thread::sleep_for(std::chrono::milliseconds(80));
+			server_shared_data_2016_robocon::_mutex.unlock();
 		}
-		server_shared_data_2016_robocon::_mutex.unlock();
-		*/
+		 */
 
 		server_shared_data_2016_robocon::_mutex.lock();
 		server_shared_data_2016_robocon::_data[5000] = client.get(5000);
 		server_shared_data_2016_robocon::_mutex.unlock();
-
-		std::this_thread::sleep_for(std::chrono::milliseconds(80));
 	}
 }
