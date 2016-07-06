@@ -13,11 +13,10 @@ arm::arm() : _length(float()),
 			 _width(float()) {}
 
 void arm::update() {
-	server_shared_data_2016_robocon::_mutex.lock();
-	std::map<std::string, int> controller{
-		server_shared_data_2016_robocon::_data[network::ports_for_clients.at("controller0")]
-	};
-	server_shared_data_2016_robocon::_mutex.unlock();
-
-	controller.at("");
+	/*
+	_controller_map["grab"] = controller[config.key_config("grab")];
+	_controller_map["lengther"] = controller[config.key_config("lengther")];
+	_controller_map["widener"] = controller[config.key_config("widener")];
+	_controller_map["height_adjuster"] = controller[config.key_config("height_adjuster")];
+	*/
 }

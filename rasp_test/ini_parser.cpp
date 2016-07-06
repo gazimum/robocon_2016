@@ -23,15 +23,15 @@ ini_parser::ini_parser() {
 }
 
 std::string ini_parser::key_config(std::string key) {
-	return _key_config_ptree.get_optional<std::string>(_key_config_file_section_name + "." + key);
+	return _key_config_ptree.get_optional<std::string>(_key_config_file_section_name + "." + key).get();
 }
 
 float ini_parser::setting(std::string key) {
-	return _setting_ptree.get_optional<float>(_setting_file_section_name + "." + key);
+	return _setting_ptree.get_optional<float>(_setting_file_section_name + "." + key).get();
 }
 
 void ini_parser::set_key_config(std::string key, std::string config) {
-	_key_config_ptree.put(_key_config_file_section_name + "." + key, config)
+	_key_config_ptree.put(_key_config_file_section_name + "." + key, config);
 }
 
 void ini_parser::set_setting(std::string key, float an) {

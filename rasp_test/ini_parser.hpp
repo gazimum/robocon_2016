@@ -14,7 +14,6 @@
 
 class ini_parser : public singleton<ini_parser> {
 public:
-
 	std::string key_config(std::string key);
 	float setting(std::string key);
 

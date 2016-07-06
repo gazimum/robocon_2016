@@ -14,8 +14,6 @@ class communication : public singleton<communication> {
 public:
 	void operator()();
 
-	static constexpr float _controller_analog_coeff = 1.0f / 32767.0f;
-
 private:
 	friend class singleton<communication>;
 	communication();
