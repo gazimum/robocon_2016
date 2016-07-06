@@ -11,9 +11,13 @@
 class arm {
 public:
 	arm();
-	~arm();
 
 	void update();
+
+private:
+	float _length;
+	float _angle;
+	float _width;
 };
 
 #endif /* ARM_HPP_ */

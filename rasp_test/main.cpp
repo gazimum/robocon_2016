@@ -18,6 +18,8 @@ void main_thread_func() {
 }
 
 int main() {
+
+
 	std::thread com_thread(std::ref(communication::instance()));
 	std::thread main_thread(main_thread_func);
 
