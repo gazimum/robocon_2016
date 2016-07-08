@@ -11,15 +11,16 @@
 #include "pid.hpp"
 
 template <class T>
-class speed_type_pid : pid<T> {
+class speed_type_pid : public pid<T> {
 public:
-	speed_type_pid();
+	speed_type_pid(const T& kp, const T& ki, const T& kd);
 	~speed_type_pid();
 
 	virtual T update(const T& e);
 
-	const T F1;
-	const T F2;
+private:
+	const T _F1;
+	const T _F2;
 	T _J;
 	T _mv;
 	T _prev_error;

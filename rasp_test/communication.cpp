@@ -12,32 +12,32 @@
 #include <chrono>
 #include <string>
 #include <boost/asio.hpp>
-#include "communication.hpp"
-#include "./network/RobotClient.hpp"
-#include "server_shared_data.hpp"
-#include "./network/network_profile.hpp"
+#include <communication.hpp>
+#include <ini_parser.hpp>
+#include <network/RobotClient.hpp>
+#include <server_shared_data.hpp>
 
 communication::communication() {}
 
 void communication::operator()() {
 	boost::asio::io_service io;
-	network::RobotClient client(network::server_ip_address, network::my_port, 40, "\n", io);
+	network::RobotClient client(ini_parser::instance().network_profile<std::string>("server_ip_address"),
+								ini_parser::instance().network_profile<int>("my_port"),
+								40, "\n", io);
 	client.connect();
-
-	//server_shared_data_2016_robocon&  server_shared_data = server_shared_data_2016_robocon::instance();
 
 	while (true) {
 		/*
 		for (const auto& port : network::ports_for_clients) {
-			server_shared_data_2016_robocon::_mutex.lock();
-			server_shared_data_2016_robocon::_data[port.second] = client.get(port.second);
+			server_shared_data::_mutex.lock();
+			server_shared_data::_data[port.second] = client.get(port.second);
 			std::this_thread::sleep_for(std::chrono::milliseconds(80));
-			server_shared_data_2016_robocon::_mutex.unlock();
+			server_shared_data::_mutex.unlock();
 		}*/
 
-		server_shared_data_2016_robocon::_mutex.lock();
-		server_shared_data_2016_robocon::_data[5000] = client.get(5000);
-		server_shared_data_2016_robocon::_mutex.unlock();
+		server_shared_data::_mutex.lock();
+		server_shared_data::_data[5000] = client.get(5000);
+		server_shared_data::_mutex.unlock();
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 	}

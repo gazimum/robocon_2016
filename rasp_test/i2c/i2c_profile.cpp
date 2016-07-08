@@ -16,7 +16,7 @@ const std::array<std::string, i2c_device_num> i2c_device_name {
 	"wheel2",
 	"arm_lengthener",
 	"arm_widener",
-	"arm_height_adjuster"
+	"arm_angle_adjuster"
 };
 
 const std::map<std::string, int> i2c_address{

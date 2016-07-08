@@ -7,11 +7,12 @@
 
 #include <serial_connected_mcu.hpp>
 
-serial_connected_mcu::serial_connected_mcu() {
-	// TODO 自動生成されたコンストラクター・スタブ
-}
+namespace serial_connected_mcu {
 
-serial_connected_mcu::~serial_connected_mcu() {
-	// TODO Auto-generated destructor stub
-}
+const std::string portname = "/dev/ttyACM0";
+const int32_t baudrate = 9600;
 
+const std::string serial_connected_mcu_master::portname = "/dev/ttyACM0";
+const int32_t serial_connected_mcu_master::baudrate = 9600;
+
+} /* namespace serial_connected_mcu */

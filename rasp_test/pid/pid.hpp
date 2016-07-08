@@ -11,19 +11,18 @@
 template <class T>
 class pid {
 public:
-	pid(const T& kp, const T& ki, const T& kd, const T& t);
+	pid(const T& kp, const T& ki, const T& kd);
 	virtual ~pid() {};
 
-	void operator()(const T& e);
-	void operator()(T&& e);
-	virtual void update(const T& e) = 0;
-	void update(T&& e);
+	T operator()(const T& e);
+	T operator()(T&& e);
+	virtual T update(const T& e) = 0;
+	T update(T&& e);
 
-private:
+protected:
 	const T _kp;
 	const T _ki;
 	const T _kd;
-	const T _T;	// サンプリング周期
 };
 
 #include "pid_impl.hpp"

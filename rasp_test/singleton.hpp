@@ -20,6 +20,7 @@ public:
 
 protected:
 	singleton() {}
+	virtual ~singleton() {}
 
 private:
 	typedef std::unique_ptr<T> singleton_pointer_type;

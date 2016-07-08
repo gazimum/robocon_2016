@@ -6,10 +6,10 @@
 */
 
 #include <thread>
-#include "communication.hpp"
-#include "./robot/robot.hpp"
-#include "./i2c/i2c.hpp"
-#include "controller.hpp"
+#include <communication.hpp>
+#include <robot/robot.hpp>
+#include <i2c/i2c.hpp>
+#include <controller.hpp>
 
 void main_thread_func() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(80));

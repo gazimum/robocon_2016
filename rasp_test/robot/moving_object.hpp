@@ -10,6 +10,7 @@
 
 #include "omni_wheel.hpp"
 #include "lpf.hpp"
+#include "../pid/speed_type_pid.hpp"
 
 class moving_object {
 public:
@@ -24,6 +25,8 @@ private:
 	basic_low_pass_filter _lpf_velocity_x;
 	basic_low_pass_filter _lpf_velocity_y;
 	basic_low_pass_filter _lpf_angular_velocity;
+	speed_type_pid<float> _pid_velocity_x;
+	speed_type_pid<float> _pid_velocity_y;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */

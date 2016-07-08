@@ -5,26 +5,29 @@
  *      Author: tomoya
  */
 
-#include <pid.hpp>
+#ifndef PID_IMPL_HPP_
+#define PID_IMPL_HPP_
+
+#include "pid.hpp"
 
 template <class T>
-pid<T>::pid(const T& kp, const T& ki, const T& kd, const T& t) : _kp(kp),
-																 _ki(ki),
-																 _kd(kd),
-																 _T(t) {}
+pid<T>::pid(const T& kp, const T& ki, const T& kd) : _kp(kp),
+													 _ki(ki),
+													 _kd(kd) {}
 
 template <class T>
-void pid<T>::operator()(const T& e) {
-	update(e);
+T pid<T>::operator()(const T& e) {
+	return update(e);
 }
 
 template <class T>
-void pid<T>::operator()(const T& e) {
-	update(e);
+T pid<T>::operator()(T&& e) {
+	return update(e);
 }
 
 template <class T>
-void pid<T>::update(T&& e) {
-	operator()(e);
+T pid<T>::update(T&& e) {
+	return operator()(e);
 }
 
+#endif

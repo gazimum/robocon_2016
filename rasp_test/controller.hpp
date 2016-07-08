@@ -23,7 +23,6 @@ private:
 	controller();
 
 	static constexpr float _controller_analog_coeff = 1.0f / 32767.0f;
-	static const std::string _my_controller_name;
 
 	std::map<std::string, float> _controller_map;
 };

@@ -49,9 +49,8 @@ void omni_wheel::write() {
 }
 
 void omni_wheel::set_velocity(float x, float y) {
-	// ベクトルの大きさが1より大きいなら1に調整する
 	float l2 = x * x + y * y;
-	if (l2 > 1.0f) {
+	if (l2 > 1.0f) { // ベクトルの大きさが1より大きいなら1に調整する
 		float l = sqrt(l2);
 		x /= l;
 		y /= l;
