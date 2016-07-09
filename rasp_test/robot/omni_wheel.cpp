@@ -8,29 +8,27 @@
 #include "omni_wheel.hpp"
 #include <cmath>
 #include <algorithm>
-#include "../i2c/i2c.hpp"
-#include "../i2c/i2c_profile.hpp"
-
+#include <i2c/i2c.hpp>
 /*
  *  1      2
  *
  *      3
  */
 const float omni_wheel::_wheel_directions_x[] = {
-		1.0f / sqrt(2.0f),
-		1.0f / sqrt(2.0f),
-		-1.0f
+		cos( 60.0  * M_PI / 180.0),
+		cos(-60.0  * M_PI / 180.0),
+		cos( 180.0 * M_PI / 180.0)
 };
 
 const float omni_wheel::_wheel_directions_y[] = {
-		 1.0f / sqrt(2.0f),
-		-1.0f / sqrt(2.0f),
-		 0.0f
+		sin( 60.0 * M_PI / 180.0),
+		sin(-60.0 * M_PI / 180.0),
+		sin(180.0 * M_PI / 180.0)
 };
 
-omni_wheel::omni_wheel() : _velocity_x(float()),
+omni_wheel::omni_wheel() : _velocity_propotion(0.5f),
+		   	   	   	   	   _velocity_x(float()),
 						   _velocity_y(float()),
-						   _velocity_propotion{0.5f},
 						   _angular_velocity{float()} {}
 
 omni_wheel::~omni_wheel() {}
@@ -43,9 +41,10 @@ void omni_wheel::write() {
 		p[i] *= _velocity_propotion;
 		p[i] += (1.0f - _velocity_propotion) * _angular_velocity;
 	}
-	for (size_t i = 0; i < _wheel_num; ++i) {
-		i2c::instance().set(i2c_device_name[i], p[i]);
-	}
+
+	i2c::instance().set("wheel0", p[0]);
+	i2c::instance().set("wheel1", p[1]);
+	i2c::instance().set("wheel2", p[2]);
 }
 
 void omni_wheel::set_velocity(float x, float y) {

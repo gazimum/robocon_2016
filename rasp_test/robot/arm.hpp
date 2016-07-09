@@ -9,6 +9,7 @@
 #define ARM_HPP_
 
 #include <servo.hpp>
+#include <pid/speed_type_pid.hpp>
 
 class arm {
 public:

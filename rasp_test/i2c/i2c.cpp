@@ -12,13 +12,15 @@
 #include <string>
 #include <wiringPiI2C.h>
 #include "i2c.hpp"
-#include "i2c_profile.hpp"
+#include <ini_parser.hpp>
 
 #include <iostream>
 
-i2c::i2c() {
-	for (const auto& i : i2c_device_name) {
-		_filehandles[i] = wiringPiI2CSetup(i2c_address.at(i));
+i2c::i2c() : _i2c_device_num(ini_parser::instance().i2c_profile<size_t>("i2c_device_num")) {
+	for (size_t i = 0; i < _i2c_device_num; ++i) {
+		std::string name = ini_parser::instance().i2c_profile<std::string>("i2c_device_name" + std::to_string(i));
+		int address = ini_parser::instance().i2c_profile<int>("i2c_address" + std::to_string(i));
+		_filehandles[name] =wiringPiI2CSetup(address);
 	}
 }
 
@@ -27,14 +29,15 @@ void i2c::set(std::string name, float p) {
 }
 
 void i2c::write() {
-	for (const auto& i : i2c_device_name) {
-		char buff = abs(_buffers[i] * 100.0f);
+	for (size_t i = 0; i < _i2c_device_num; ++i) {
+		std::string name = ini_parser::instance().i2c_profile<std::string>("i2c_device_name" + std::to_string(i));
+		char buff = abs(_buffers[name] * 127.0f);
 
-		if (_buffers[i] < 0.0f) {
+		if (_buffers[name] < 0.0f) {
 			buff |= 0x80;
 		}
 
-		wiringPiI2CWrite(_filehandles[i], buff);
+		wiringPiI2CWrite(_filehandles[name], buff);
 	}
 }
 

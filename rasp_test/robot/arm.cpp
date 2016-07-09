@@ -14,21 +14,26 @@
 arm::arm() : _length(float()),
 			 _angle(float()),
 			 _width(float()),
-			 _length_servo(ini_parser::instance().setting<float>("arm_length_pid_kp"),
-					 0.0f,//ini_parser::instance().setting<float>("arm_length_pid_ki"),
-					 0.0f),//ini_parser::instance().setting<float>("arm_length_pid_kd")),
-			 _angle_servo(0.0f,//ini_parser::instance().setting<float>("arm_angle_pid_kp"),
-					 0.0f,//ini_parser::instance().setting<float>("arm_angle_pid_ki"),
-					 0.0f),//ini_parser::instance().setting<float>("arm_angle_pid_kd")),
-			 _width_servo(0.0f,//ini_parser::instance().setting<float>("arm_width_pid_kp"),
-					 0.0f,//ini_parser::instance().setting<float>("arm_width_pid_ki"),
-					 0.0f) {}//ini_parser::instance().setting<float>("arm_width_pid_kd")) {}
+			 _length_servo(
+					 ini_parser::instance().setting<float>("arm_length_pid_kp"),
+					 ini_parser::instance().setting<float>("arm_length_pid_ki"),
+					 ini_parser::instance().setting<float>("arm_length_pid_kd")
+			),
+			 _angle_servo(
+					 ini_parser::instance().setting<float>("arm_angle_pid_kp"),
+					 ini_parser::instance().setting<float>("arm_angle_pid_ki"),
+					 ini_parser::instance().setting<float>("arm_angle_pid_kd")
+			),
+			 _width_servo(
+					 ini_parser::instance().setting<float>("arm_width_pid_kp"),
+					 ini_parser::instance().setting<float>("arm_width_pid_ki"),
+					 ini_parser::instance().setting<float>("arm_width_pid_kd")) {}
 
 void arm::update() {
-	/*
 	_length += controller::instance().get("lengther");
 	_angle += controller::instance().get("angle_adjuster");
-	*/
+	_width += controller::instance().get("widener");
+
 	/*
 	_controller_map["grab"] = controller[config.key_config("grab")];
 	_controller_map["lengther"] = controller[config.key_config("lengther")];

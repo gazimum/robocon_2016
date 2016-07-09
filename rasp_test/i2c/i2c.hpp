@@ -10,8 +10,8 @@
 
 #include <string>
 #include <array>
+#include <map>
 #include "singleton.hpp"
-#include "i2c_profile.hpp"
 
 class i2c : public singleton<i2c> {
 public:
@@ -22,6 +22,7 @@ private:
 	friend class singleton<i2c>;
 	i2c();
 
+	const size_t _i2c_device_num;
 	std::map<std::string, float> _buffers;
 	std::map<std::string, int> _filehandles;
 };
