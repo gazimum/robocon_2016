@@ -26,8 +26,9 @@ const float omni_wheel::_wheel_directions_y[] = {
 		sin(180.0 * M_PI / 180.0)
 };
 
-omni_wheel::omni_wheel() : _velocity_propotion(0.5f),
-		   	   	   	   	   _velocity_x(float()),
+omni_wheel::omni_wheel() : //_velocity_propotion(1.0f),
+						  _velocity_propotion(0.5f),
+				   	   	   	   	   _velocity_x(float()),
 						   _velocity_y(float()),
 						   _angular_velocity{float()} {}
 

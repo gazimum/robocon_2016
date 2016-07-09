@@ -30,9 +30,16 @@ arm::arm() : _length(float()),
 					 ini_parser::instance().setting<float>("arm_width_pid_kd")) {}
 
 void arm::update() {
+	/*
 	_length += controller::instance().get("lengther");
 	_angle += controller::instance().get("angle_adjuster");
 	_width += controller::instance().get("widener");
+	*/
+
+
+	_length_servo.set(controller::instance().get("lengther"));
+	_angle_servo.set(controller::instance().get("angle_adjuster"));
+	_width_servo.set(controller::instance().get("widener"));
 
 	/*
 	_controller_map["grab"] = controller[config.key_config("grab")];

@@ -32,8 +32,10 @@ moving_object::~moving_object() {}
 
 void moving_object::update() {
 	// 平行移動の速度設定
-	float target_vx = _lpf_velocity_x(controller::instance().get("velocity_x"));
-	float target_vy = _lpf_velocity_x(controller::instance().get("velocity_y"));
+	float target_vx = controller::instance().get("velocity_x");
+	float target_vy = controller::instance().get("velocity_y");
+	//float target_vx = _lpf_velocity_x(controller::instance().get("velocity_x"));
+	//float target_vy = _lpf_velocity_x(controller::instance().get("velocity_y"));
 
 	_omni_wheel.set_velocity(
 		target_vx,//_pid_velocity_x(target_vx - 0.0f),

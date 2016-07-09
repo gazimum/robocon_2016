@@ -33,8 +33,8 @@ void controller::update() {
 	ini_parser& config{
 		ini_parser::instance()
 	};
-	float vx = controller[config.key_config<std::string>("velocity_x")] * _controller_analog_coeff;
-	float vy = controller[config.key_config<std::string>("velocity_y")] * _controller_analog_coeff;
+	float vx =  controller[config.key_config<std::string>("velocity_x")] * _controller_analog_coeff;
+	float vy = -controller[config.key_config<std::string>("velocity_y")] * _controller_analog_coeff;
 	_controller_map["velocity_x"] = vx;
 	_controller_map["velocity_y"] = vy;
 
