@@ -23,8 +23,8 @@ private:
 	static constexpr size_t _wheel_num = 3;
 	static const float _wheel_directions_x[_wheel_num];
 	static const float _wheel_directions_y[_wheel_num];
+	static const float _wheel_position_angles[_wheel_num];
 
-	float _velocity_propotion;
 	float _velocity_x;
 	float _velocity_y;
 	float _angular_velocity;

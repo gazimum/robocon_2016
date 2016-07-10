@@ -9,26 +9,31 @@
 #include <cmath>
 #include <algorithm>
 #include <i2c/i2c.hpp>
+#include <iostream>
 /*
  *  1      2
  *
  *      3
  */
 const float omni_wheel::_wheel_directions_x[] = {
-		cos( 60.0  * M_PI / 180.0),
-		cos(-60.0  * M_PI / 180.0),
-		cos( 180.0 * M_PI / 180.0)
+	cos( 60.0  * M_PI / 180.0),
+	cos(-60.0  * M_PI / 180.0),
+	cos( 180.0 * M_PI / 180.0)
 };
 
 const float omni_wheel::_wheel_directions_y[] = {
-		sin( 60.0 * M_PI / 180.0),
-		sin(-60.0 * M_PI / 180.0),
-		sin(180.0 * M_PI / 180.0)
+	sin( 60.0 * M_PI / 180.0),
+	sin(-60.0 * M_PI / 180.0),
+	sin(180.0 * M_PI / 180.0)
 };
 
-omni_wheel::omni_wheel() : //_velocity_propotion(1.0f),
-						  _velocity_propotion(0.5f),
-				   	   	   	   	   _velocity_x(float()),
+const float omni_wheel::_wheel_position_angles[] = {
+	 30.0f * M_PI / 180.0f,
+	150.0f * M_PI / 180.0f,
+	-90.0f * M_PI / 180.0f
+};
+
+omni_wheel::omni_wheel() : _velocity_x(float()),
 						   _velocity_y(float()),
 						   _angular_velocity{float()} {}
 
@@ -37,15 +42,28 @@ omni_wheel::~omni_wheel() {}
 void omni_wheel::write() {
 	float p[_wheel_num];
 
+	float max = 0.0f;
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		p[i] = _velocity_x * _wheel_directions_x[i] + _velocity_y * _wheel_directions_y[i];
-		p[i] *= _velocity_propotion;
-		p[i] += (1.0f - _velocity_propotion) * _angular_velocity;
+		p[i] += _angular_velocity;
+
+		if (std::abs(p[i]) > 1.0f ) {
+			max = std::max(std::abs(p[i]), max);
+		}
 	}
 
-	i2c::instance().set("wheel0", p[0]);
-	i2c::instance().set("wheel1", p[1]);
-	i2c::instance().set("wheel2", p[2]);
+	if (max != 0.0f) {
+		for (size_t i = 0; i < _wheel_num; ++i) {
+			p[i] /= max;
+		}
+	}
+
+	std::cout << max << " ";
+	for (size_t i = 0; i < _wheel_num; ++i) {
+		std::cout << p[i] << " ";
+		i2c::instance().set("wheel" + std::to_string(i), p[i]);
+	}
+	std::cout << std::endl;
 }
 
 void omni_wheel::set_velocity(float x, float y) {

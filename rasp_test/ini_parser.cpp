@@ -27,6 +27,3 @@ ini_parser::ini_parser() {
 	boost::property_tree::read_ini(_network_profile_file_directory_name, _network_profile_ptree);
 	boost::property_tree::read_ini(_i2c_profile_file_directory_name, _i2c_profile_ptree);
 }
-
-/*
-*/

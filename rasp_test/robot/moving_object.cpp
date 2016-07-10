@@ -15,8 +15,6 @@
 #include "../controller.hpp"
 #include "../pid/speed_type_pid.hpp"
 
-const float moving_object::_angular_velocity_coefficient = 0.8f;
-
 moving_object::moving_object() : _lpf_velocity_x(float()),
 								 _lpf_velocity_y(float()),
 								 _lpf_angular_velocity(float()),
@@ -32,10 +30,10 @@ moving_object::~moving_object() {}
 
 void moving_object::update() {
 	// 平行移動の速度設定
-	float target_vx = controller::instance().get("velocity_x");
-	float target_vy = controller::instance().get("velocity_y");
-	//float target_vx = _lpf_velocity_x(controller::instance().get("velocity_x"));
-	//float target_vy = _lpf_velocity_x(controller::instance().get("velocity_y"));
+	//float target_vx = controller::instance().get("velocity_x");
+	//float target_vy = controller::instance().get("velocity_y");
+	float target_vx = _lpf_velocity_x(controller::instance().get("velocity_x"));
+	float target_vy = _lpf_velocity_y(controller::instance().get("velocity_y"));
 
 	_omni_wheel.set_velocity(
 		target_vx,//_pid_velocity_x(target_vx - 0.0f),

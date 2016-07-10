@@ -20,11 +20,10 @@ public:
 	void update();
 
 private:
-	static const float _angular_velocity_coefficient;
 	omni_wheel _omni_wheel;
-	basic_low_pass_filter _lpf_velocity_x;
-	basic_low_pass_filter _lpf_velocity_y;
-	basic_low_pass_filter _lpf_angular_velocity;
+	lpf<98, float> _lpf_velocity_x;
+	lpf<98, float> _lpf_velocity_y;
+	lpf<98, float> _lpf_angular_velocity;
 	speed_type_pid<float> _pid_velocity_x;
 	speed_type_pid<float> _pid_velocity_y;
 };
