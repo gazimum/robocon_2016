@@ -45,8 +45,8 @@ void controller::update() {
 		vy /= l;
 	}
 
-	_controller_map["angular_velocity"]  = controller[config.key_config<std::string>("turn_+")];
-	_controller_map["angular_velocity"] -= controller[config.key_config<std::string>("turn_-")];
+	_controller_map["angular_velocity"]  = controller[config.key_config<std::string>("turn_+")] * _controller_analog_coeff;
+	_controller_map["angular_velocity"] -= controller[config.key_config<std::string>("turn_-")] * _controller_analog_coeff;
 	_controller_map["angular_velocity"] *= ini_parser::instance().setting<float>("angular_velocity_coeff");
 
 	_controller_map["grab"] = controller[config.key_config<std::string>("grab")];

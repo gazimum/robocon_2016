@@ -8,16 +8,19 @@
 #ifndef SERVO_HPP_
 #define SERVO_HPP_
 
+#include <string>
+
 template <class T>
 class servo {
 public:
-	servo(float kp, float ki, float kd);
+	servo(int id, float kp, float ki, float kd);
 
 	float operator()(float p);
 	float set(float p);
 	float get() const;
 
 private:
+	const int _id;
 	float _position;
 	T _pid;
 };

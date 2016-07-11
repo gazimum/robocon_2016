@@ -31,13 +31,15 @@ void i2c::set(std::string name, float p) {
 void i2c::write() {
 	for (size_t i = 0; i < _i2c_device_num; ++i) {
 		std::string name = ini_parser::instance().i2c_profile<std::string>("i2c_device_name" + std::to_string(i));
+
+		/*
 		char buff = abs(_buffers[name] * 127.0f);
 
 		if (_buffers[name] < 0.0f) {
 			buff |= 0x80;
 		}
-
-		wiringPiI2CWrite(_filehandles[name], buff);
+		*/;
+		wiringPiI2CWrite(_filehandles[name], std::round(_buffers[name] * 127.0f));
 	}
 }
 

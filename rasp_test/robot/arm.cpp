@@ -1,50 +1,33 @@
-/*
- * arm.cpp
- *
- *  Created on: 2016/06/20
- *      Author: tomoya
- */
-
-#include "arm.hpp"
-#include "server_shared_data.hpp"
-#include <controller.hpp>
+#include <robot/arm.hpp>
 #include <ini_parser.hpp>
-#include <servo.hpp>
+#include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 
-arm::arm() : _length(float()),
-			 _angle(float()),
-			 _width(float()),
-			 _length_servo(
-					 ini_parser::instance().setting<float>("arm_length_pid_kp"),
-					 ini_parser::instance().setting<float>("arm_length_pid_ki"),
-					 ini_parser::instance().setting<float>("arm_length_pid_kd")
+#include <iostream>
+
+arm::arm() : _length_servo(
+				serial_connected_mcu::ESC1,
+				ini_parser::instance().setting<float>("arm_length_pid_kp"),
+				ini_parser::instance().setting<float>("arm_length_pid_ki"),
+				ini_parser::instance().setting<float>("arm_length_pid_kd")
 			),
-			 _angle_servo(
-					 ini_parser::instance().setting<float>("arm_angle_pid_kp"),
-					 ini_parser::instance().setting<float>("arm_angle_pid_ki"),
-					 ini_parser::instance().setting<float>("arm_angle_pid_kd")
+			_angle_servo(
+				serial_connected_mcu::ESC2,
+				ini_parser::instance().setting<float>("arm_angle_pid_kp"),
+				ini_parser::instance().setting<float>("arm_angle_pid_ki"),
+				ini_parser::instance().setting<float>("arm_angle_pid_kd")
 			),
-			 _width_servo(
-					 ini_parser::instance().setting<float>("arm_width_pid_kp"),
-					 ini_parser::instance().setting<float>("arm_width_pid_ki"),
-					 ini_parser::instance().setting<float>("arm_width_pid_kd")) {}
+			_width_servo(
+				serial_connected_mcu::ESC3,
+				ini_parser::instance().setting<float>("arm_width_pid_kp"),
+				ini_parser::instance().setting<float>("arm_width_pid_ki"),
+				ini_parser::instance().setting<float>("arm_width_pid_kd")
+			) {}
 
 void arm::update() {
-	/*
-	_length += controller::instance().get("lengther");
-	_angle += controller::instance().get("angle_adjuster");
-	_width += controller::instance().get("widener");
-	*/
-
-
-	_length_servo.set(controller::instance().get("lengther"));
-	_angle_servo.set(controller::instance().get("angle_adjuster"));
-	_width_servo.set(controller::instance().get("widener"));
-
-	/*
-	_controller_map["grab"] = controller[config.key_config("grab")];
-	_controller_map["lengther"] = controller[config.key_config("lengther")];
-	_controller_map["widener"] = controller[config.key_config("widener")];
-	_controller_map["height_adjuster"] = controller[config.key_config("height_adjuster")];
-	*/
+	int16_t p = serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER1);
+	std::cout <<
+		//serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::ENCODER1)
+		p
+	<< std::endl;
+	serial_connected_mcu::serial_connected_mcu_master::instance().set(serial_connected_mcu::ESC1, p);
 }

@@ -58,12 +58,9 @@ void omni_wheel::write() {
 		}
 	}
 
-	std::cout << max << " ";
 	for (size_t i = 0; i < _wheel_num; ++i) {
-		std::cout << p[i] << " ";
 		i2c::instance().set("wheel" + std::to_string(i), p[i]);
 	}
-	std::cout << std::endl;
 }
 
 void omni_wheel::set_velocity(float x, float y) {
