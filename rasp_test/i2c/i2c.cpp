@@ -16,6 +16,8 @@
 
 #include <iostream>
 
+const size_t i2c::_i2c_try_num = 10;
+
 i2c::i2c() : _i2c_device_num(ini_parser::instance().i2c_profile<size_t>("i2c_device_num")) {
 	for (size_t i = 0; i < _i2c_device_num; ++i) {
 		std::string name = ini_parser::instance().i2c_profile<std::string>("i2c_device_name" + std::to_string(i));
@@ -32,14 +34,15 @@ void i2c::write() {
 	for (size_t i = 0; i < _i2c_device_num; ++i) {
 		std::string name = ini_parser::instance().i2c_profile<std::string>("i2c_device_name" + std::to_string(i));
 
-		/*
-		char buff = abs(_buffers[name] * 127.0f);
+		for (size_t j = 1; wiringPiI2CWrite(_filehandles[name], std::round(_buffers[name] * 127.0f)) != 0; ++j) {
+			if (j > _i2c_try_num) {
+				std::cerr << "error:I2C bus is dead." << std::endl;
+				break;
+			}
 
-		if (_buffers[name] < 0.0f) {
-			buff |= 0x80;
+			int address = ini_parser::instance().i2c_profile<int>("i2c_address" + std::to_string(i));
+			_filehandles[name] = wiringPiI2CSetup(address);
 		}
-		*/;
-		wiringPiI2CWrite(_filehandles[name], std::round(_buffers[name] * 127.0f));
 	}
 }
 

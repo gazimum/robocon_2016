@@ -22,6 +22,7 @@ private:
 	friend class singleton<i2c>;
 	i2c();
 
+	static const size_t _i2c_try_num;
 	const size_t _i2c_device_num;
 	std::map<std::string, float> _buffers;
 	std::map<std::string, int> _filehandles;

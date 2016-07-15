@@ -19,6 +19,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <ini_parser.hpp>
 
 communication::communication() {}
 
@@ -31,12 +32,27 @@ void communication::operator()() {
 
 	while (true) {
 		/*
+		for (size_t i = 0; i < ini_parser::instance().network_profile<int>("network_node_num"); ++i) {
+			std::string name{
+				ini_parser::instance().network_profile<std::string>("network_device_name" + std::to_string(i))
+			};
+			int port = ini_parser::instance().network_profile<int>("port_for_" + name);
+
+			server_shared_data::_mutex.lock();
+			server_shared_data::_data[port] = client.get(port);
+			std::this_thread::sleep_for(std::chrono::milliseconds(80));
+			server_shared_data::_mutex.unlock();
+		}
+		*/
+		/*
 		for (const auto& port : network::ports_for_clients) {
 			server_shared_data::_mutex.lock();
 			server_shared_data::_data[port.second] = client.get(port.second);
 			std::this_thread::sleep_for(std::chrono::milliseconds(80));
 			server_shared_data::_mutex.unlock();
-		}*/
+		}
+		*/
+
 		std::map<std::string, int> d;
 		server_shared_data::_mutex.lock();
 		d = server_shared_data::_data[5000] = client.get(5000);

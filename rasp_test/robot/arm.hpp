@@ -18,9 +18,9 @@ public:
 	void update();
 
 private:
+	float _width;
 	float _length;
 	float _angle;
-	float _width;
 
 	basic_servo _length_servo;
 	basic_servo _angle_servo;

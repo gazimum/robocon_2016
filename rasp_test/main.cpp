@@ -16,7 +16,7 @@ void main_thread_func() {
 	using namespace serial_connected_mcu;
 	std::this_thread::sleep_for(std::chrono::milliseconds(80));
 
-	int16_t init_data[SIZE_OF_WRITE_DATA] {
+	int16_t init_data[SIZE_OF_WRITE_DATA] = {
 		0, // ESC1
 		0, // ESC2
 		0  // ESC3
