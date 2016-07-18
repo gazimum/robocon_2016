@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
-#include "singleton.hpp"
+#include <singleton.hpp>
 
 namespace serial_connected_mcu{
     enum write_id {
@@ -43,15 +43,21 @@ namespace serial_connected_mcu{
 		void communicate();
 		void set(int index_of_data, int16_t setting_data);
 		int16_t get(int index_of_data);
+		void init();
 	private:
 		static const std::string PORTNAME;
 		static const int BAUDRATE;
+		static const int16_t _init_write_data[];
+
 		friend class singleton<serial_connected_mcu_master>;
+
 		serial_connected_mcu_master();
-	    boost::asio::serial_port* port;
+
+		boost::asio::serial_port* port;
 		boost::asio::io_service* io;
 		int16_t* array_of_write_data;
 		int16_t* array_of_read_data;
+
 		void string_to_int(const std::string data_as_string);
         std::string int_to_string();
 	};

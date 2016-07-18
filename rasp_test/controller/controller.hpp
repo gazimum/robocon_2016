@@ -10,7 +10,9 @@
 
 #include <string>
 #include <map>
-#include "singleton.hpp"
+#include <singleton.hpp>
+
+class controller_impl;
 
 class controller : public singleton<controller> {
 public:
@@ -22,9 +24,7 @@ private:
 	friend class singleton<controller>;
 	controller();
 
-	static constexpr float _controller_analog_coeff = 1.0f / 32767.0f;
-
-	std::map<std::string, float> _controller_map;
+	controller_impl* _controller_impl;
 };
 
 #endif /* CONTROLLER_HPP_ */

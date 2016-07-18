@@ -1,7 +1,7 @@
 #include <robot/arm.hpp>
 #include <ini_parser.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
-#include <controller.hpp>
+#include <controller/controller.hpp>
 
 #include <iostream>
 

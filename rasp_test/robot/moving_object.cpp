@@ -8,12 +8,12 @@
 #include <ini_parser.hpp>
 #include <map>
 #include <string>
-#include "moving_object.hpp"
-#include "omni_wheel.hpp"
-#include "server_shared_data.hpp"
-#include "../communication.hpp"
-#include "../controller.hpp"
-#include "../pid/speed_type_pid.hpp"
+#include <robot/moving_object.hpp>
+#include <robot/omni_wheel.hpp>
+#include <server_shared_data.hpp>
+#include <communication.hpp>
+#include <controller/controller.hpp>
+#include <pid/speed_type_pid.hpp>
 
 moving_object::moving_object() : _lpf_velocity_x(float()),
 								 _lpf_velocity_y(float()),

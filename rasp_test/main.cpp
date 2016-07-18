@@ -5,28 +5,25 @@
 #define BOOST_SYSTEM_NO_LIB
 */
 
+// todo : add ini file
+// config.setting<int>("arm_abilities_position_num")
+// config.setting<int>("arm_abilities_position_num")
+// config.key_config<std::string>("arm_abilities_position_index_" + std::to_string(i))
+// ini_parser::instance().setting<float>("normalization_coeff_" + i.first)
+// "command_coeff_" + i.first
+
 #include <thread>
 #include <communication.hpp>
 #include <robot/robot.hpp>
 #include <i2c/i2c.hpp>
-#include <controller.hpp>
+#include <controller/controller.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 
 void main_thread_func() {
 	using namespace serial_connected_mcu;
 	std::this_thread::sleep_for(std::chrono::milliseconds(80));
 
-	int16_t init_data[SIZE_OF_WRITE_DATA] = {
-		0, // ESC1
-		0, // ESC2
-		0  // ESC3
-	};
-
-	// 書き込みデータ初期化して書きこむ
-	for (size_t i = 0; i < SIZE_OF_WRITE_DATA; ++i) {
-		serial_connected_mcu_master::instance().set(i, init_data[i]);
-	}
-	serial_connected_mcu_master::instance().communicate();
+	serial_connected_mcu_master::instance().init();
 
 	while (true) {
 		robot::instance().update();

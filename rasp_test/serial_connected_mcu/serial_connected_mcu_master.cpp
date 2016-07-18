@@ -3,6 +3,11 @@
 namespace serial_connected_mcu{
     const std::string serial_connected_mcu_master::PORTNAME = "/dev/ttyACM0";
     const int serial_connected_mcu_master::BAUDRATE = 9600;
+	const int16_t serial_connected_mcu_master::_init_write_data[] {
+		0, // ESC1
+		0, // ESC2
+		0  // ESC3
+	};
 
     serial_connected_mcu_master::serial_connected_mcu_master(){
 		io = new boost::asio::io_service();
@@ -60,5 +65,12 @@ namespace serial_connected_mcu{
 
 	int16_t serial_connected_mcu_master::get(int index_of_data){
 		return (array_of_read_data[index_of_data]);
+	}
+
+	void serial_connected_mcu_master::init() {
+		for (size_t i = 0; i < SIZE_OF_WRITE_DATA; ++i) {
+			set(i, _init_write_data[i]);
+		}
+		communicate();
 	}
 }
