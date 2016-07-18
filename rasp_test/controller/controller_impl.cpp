@@ -29,7 +29,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 		normalized_controller_state[i.first] = i.second * ini_parser::instance().setting<float>(key);
 	}
 
-	controller_impl* phase = update(normalized_controller_state);
+	controller_impl* state = update(normalized_controller_state);
 
 	// ロボットの操作値に係数をかける
 	for (const auto& i : _command) {
@@ -39,7 +39,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 		_command[i.first] = i.second * ini_parser::instance().setting<float>(key);
 	}
 
-	return phase;
+	return state;
 }
 
 float controller_impl::get(std::string key) {

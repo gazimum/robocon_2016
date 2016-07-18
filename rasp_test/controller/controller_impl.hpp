@@ -26,6 +26,8 @@ protected:
 	static const float _command_threshold;
 
 	std::map<std::string, float> _command;
+
+
 };
 
 #endif /* CONTROLLER_CONTROLLER_IMPL_HPP_ */
