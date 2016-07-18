@@ -80,7 +80,7 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 			} else {
 				// 1. IB : 状態を1ずつ遷移
 				if (++_arm_abilities_position_index[i] >= config.setting<int>("arm_abilities_position_num")) {
-					_arm_abilities_position_index[i];
+					_arm_abilities_position_index[i] = 0;
 				}
 			}
 
