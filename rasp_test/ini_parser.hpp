@@ -9,8 +9,10 @@
 #define INI_PARSER_HPP_
 
 #include <string>
-#include <boost/property_tree/ptree.hpp>
 #include <singleton.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+#include <boost/optional.hpp>
 
 class ini_parser : public singleton<ini_parser> {
 public:
@@ -77,21 +79,25 @@ public:
 	template <class T>
 	inline void set_key_config(std::string key, T config) {
 		_key_config_ptree.put(_key_config_file_section_name + "." + key, config);
+		write_ini(_key_config_file_directory_name, _key_config_ptree);
 	}
 
 	template <class T>
 	inline void set_setting(std::string key, T an) {
 		_setting_ptree.put(_setting_file_section_name + "." + key, an);
+		write_ini(_setting_file_directory_name, _setting_ptree);
 	}
 
 	template <class T>
 	inline void set_network_profile(std::string key, T value) {
 		_network_profile_ptree.put(_network_profile_file_section_name + "." + key, value);
+		write_ini(_network_profile_file_directory_name, _network_profile_ptree);
 	}
 
 	template <class T>
 	inline void set_i2c_profile(std::string key, T value) {
 		_i2c_profile_ptree.put(_i2c_profile_file_section_name + "." + key, value);
+		write_ini(_i2c_profile_file_directory_name, _i2c_profile_ptree);
 	}
 
 private:
