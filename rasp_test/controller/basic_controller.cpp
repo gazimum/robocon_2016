@@ -65,7 +65,7 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 	bool is_ib_pushed = false;
 
 	// * IB : Identifier Button (識別ボタン) : 腕の機能が割り当てられたボタン
-	// 1. IB						 : 状態を1ずつ遷移
+	// 1. IB : 状態を1ずつ遷移
 	// 2. index + IB + (+ or - or nothing) : 指定番号の状態に遷移.さらにそこから微調整可能.
 	for (const auto& i : _arm_abilities_name) {
 		float ib_state = normalized_controller_state[config.key_config<std::string>("IB_" + i)];

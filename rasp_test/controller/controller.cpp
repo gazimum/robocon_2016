@@ -34,10 +34,10 @@ void controller::update() {
 	};
 	server_shared_data::_mutex.unlock();
 
-	controller_impl* d = _controller_impl->update(command);
+	controller_impl* state = _controller_impl->update(command);
 	// 状態遷移の処理
-	if (d != _controller_impl) {
+	if (state != _controller_impl) {
 		delete _controller_impl;
-		_controller_impl = d;
+		_controller_impl = state;
 	}
 }
