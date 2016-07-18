@@ -62,33 +62,48 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 		ini_parser::instance()
 	};
 
-	// まず各機能はインデックスに応じて値が設定される
-	update_arm_abilities_position();
+	bool is_ib_pushed = false;
 
 	// * IB : Identifier Button (識別ボタン) : 腕の機能が割り当てられたボタン
 	// 1. IB						 : 状態を1ずつ遷移
 	// 2. index + IB + (+ or - or 0) : 指定番号の状態に遷移.さらにそこから微調整可能.
 	for (const auto& i : _arm_abilities_name) {
-		float ib = normalized_controller_state[config.key_config<std::string>("IB_" + i)];
+		float ib_state = normalized_controller_state[config.key_config<std::string>("IB_" + i)];
 
-		if (ib > _command_threshold) {
+		if (ib_state > _command_threshold) {
+			is_ib_pushed = true;
+
 			if (update_arm_abilities_position_index(normalized_controller_state)) {
 				// 2. index + IB + (+ or - or 0) : 指定番号の状態に遷移.さらにそこから微調整可能.
 				_arm_adjusting_values[i] += normalized_controller_state[config.key_config<std::string>("arm_adjusting_+")];
 				_arm_adjusting_values[i] -= normalized_controller_state[config.key_config<std::string>("arm_adjusting_-")];
-
-				int index =  _command["arm_abilities_position_index"];
-				std::string key {
-					i + "_position_" + std::to_string(index)
-				};
-				_command[i] = config.setting<float>(key);
-				_command[i] += _arm_adjusting_values[i];
 			} else {
 				// 1. IB : 状態を1ずつ遷移
-				_arm_abilities_position_index;
+				if (++_arm_abilities_position_index[i] >= config.setting<int>("arm_abilities_position_num")) {
+					_arm_abilities_position_index[i];
+				}
 			}
+
+			break;
 		}
 	}
+
+	if (is_ib_pushed) {
+		// 操作が終わったら微調整分を適用してファイルに書き込む
+		for (const auto& i : _arm_abilities_name) {
+			std::string key {
+				i + "_position_" + std::to_string(_arm_abilities_position_index[i])
+			};
+
+			if (_arm_adjusting_values[i] != 0.0f) {
+				config.set_setting(i, config.setting<float>(key) + _arm_adjusting_values[i]);
+			}
+			_arm_adjusting_values[i] = 0.0f;
+		}
+	}
+
+	// 各機能はインデックスと微調整に応じて値が設定される
+	update_arm_abilities_position();
 }
 
 controller_impl* basic_controller::update_sequence(std::map<std::string, float>& command) {
