@@ -41,8 +41,8 @@ namespace serial_connected_mcu{
 	public:
 		~serial_connected_mcu_master();
 		void communicate();
-		void set(int index_of_data, int16_t setting_data);
-		int16_t get(int index_of_data);
+		void set(int index_of_data, float setting_data);
+		float get(int index_of_data);
 		void init();
 	private:
 		static const std::string PORTNAME;
@@ -58,6 +58,8 @@ namespace serial_connected_mcu{
 		int16_t* array_of_write_data;
 		int16_t* array_of_read_data;
 
+		void _set(int index_of_data, int16_t setting_data);
+		int16_t _get(int index_of_data);
 		void string_to_int(const std::string data_as_string);
         std::string int_to_string();
 	};

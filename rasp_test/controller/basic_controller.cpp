@@ -62,33 +62,10 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 		ini_parser::instance()
 	};
 
-	bool is_ib_pushed = false;
+	static bool prev_ib_state = false;
+	bool ib_state = udpate_arm_index_and_adjustment(normalized_controller_state);
 
-	// * IB : Identifier Button (識別ボタン) : 腕の機能が割り当てられたボタン
-	// 1. IB : 状態を1ずつ遷移
-	// 2. index + IB + (+ or - or nothing) : 指定番号の状態に遷移.さらにそこから微調整可能.
-	for (const auto& i : _arm_abilities_name) {
-		float ib_state = normalized_controller_state[config.key_config<std::string>("IB_" + i)];
-
-		if (ib_state > _command_threshold) {
-			is_ib_pushed = true;
-
-			if (update_arm_abilities_position_index(normalized_controller_state)) {
-				// 2. index + IB + (+ or - or 0) : 指定番号の状態に遷移.さらにそこから微調整可能.
-				_arm_adjusting_values[i] += normalized_controller_state[config.key_config<std::string>("arm_adjusting_+")];
-				_arm_adjusting_values[i] -= normalized_controller_state[config.key_config<std::string>("arm_adjusting_-")];
-			} else {
-				// 1. IB : 状態を1ずつ遷移
-				if (++_arm_abilities_position_index[i] >= config.setting<size_t>("arm_abilities_position_num")) {
-					_arm_abilities_position_index[i] = 0;
-				}
-			}
-
-			break;
-		}
-	}
-
-	if (is_ib_pushed) {
+	if (!ib_state && prev_ib_state) {
 		// 操作が終わったら微調整分を適用してファイルに書き込む
 		for (const auto& i : _arm_abilities_name) {
 			std::string key {
@@ -101,9 +78,42 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 			_arm_adjusting_values[i] = 0.0f;
 		}
 	}
+	prev_ib_state = ib_state;
 
 	// 各機能はインデックスと微調整に応じて値が設定される
 	update_arm_abilities_position();
+}
+
+bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, float>& normalized_controller_state) {
+	ini_parser& config{
+		ini_parser::instance()
+	};
+
+	// * IB : Identifier Button (識別ボタン) : 腕の機能が割り当てられたボタン
+	// 1. IB : 状態を1ずつ遷移
+	// 2. index + IB + (+ or - or nothing) : 指定番号の状態に遷移.さらにそこから微調整可能.
+	for (const auto& i : _arm_abilities_name) {
+		std::string key{
+			config.key_config<std::string>("IB_" + i)
+		};
+
+		if (normalized_controller_state[key] > _command_threshold) {
+			if (update_arm_abilities_position_index(normalized_controller_state)) {
+				// 2. index + IB + (+ or - or 0) : 指定番号の状態に遷移.さらにそこから微調整可能.
+				_arm_adjusting_values[i] += normalized_controller_state[config.key_config<std::string>("arm_adjusting_+")];
+				_arm_adjusting_values[i] -= normalized_controller_state[config.key_config<std::string>("arm_adjusting_-")];
+			} else {
+				// 1. IB : 状態を1ずつ遷移
+				if (++_arm_abilities_position_index[i] >= config.setting<size_t>("arm_abilities_position_num")) {
+					_arm_abilities_position_index[i] = 0;
+				}
+			}
+
+			return true;	// 操作があった
+		}
+	}
+
+	return false;	// 操作がなかった
 }
 
 controller_impl* basic_controller::update_sequence(std::map<std::string, float>& command) {

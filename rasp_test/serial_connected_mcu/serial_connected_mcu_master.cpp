@@ -39,6 +39,13 @@ namespace serial_connected_mcu{
 		string_to_int(std::string(boost::asio::buffer_cast<const char*>(response_buffer.data())));
 	}
 
+	void serial_connected_mcu_master::set(int index_of_data, float setting_data) {
+		_set(index_of_data, setting_data * 32767.0f);
+	}
+	float serial_connected_mcu_master::get(int index_of_data) {
+		return _get(index_of_data) / 32767.0f;
+	}
+
 	void serial_connected_mcu_master::string_to_int(const std::string data_as_string){
 		std::vector<std::string> converting_data;
 
@@ -59,11 +66,11 @@ namespace serial_connected_mcu{
 		return (boost::join(converting_data, ","));
 	}
 
-	void serial_connected_mcu_master::set(int index_of_data, int16_t setting_data){
+	void serial_connected_mcu_master::_set(int index_of_data, int16_t setting_data){
 		array_of_write_data[index_of_data] = setting_data;
 	}
 
-	int16_t serial_connected_mcu_master::get(int index_of_data){
+	int16_t serial_connected_mcu_master::_get(int index_of_data){
 		return (array_of_read_data[index_of_data]);
 	}
 

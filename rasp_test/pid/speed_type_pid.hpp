@@ -14,7 +14,7 @@ template <class T>
 class speed_type_pid : public pid<T> {
 public:
 	speed_type_pid(const T& kp, const T& ki, const T& kd);
-	~speed_type_pid();
+	virtual ~speed_type_pid();
 
 	virtual T update(const T& e);
 

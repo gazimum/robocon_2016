@@ -7,7 +7,7 @@
 
 #ifndef SERVO_HPP_
 #define SERVO_HPP_
-
+/*
 #include <string>
 
 template <class T>
@@ -29,5 +29,5 @@ private:
 
 #include <pid/speed_type_pid.hpp>
 typedef servo<speed_type_pid<float>> basic_servo;
-
+*/
 #endif /* SERVO_HPP_ */

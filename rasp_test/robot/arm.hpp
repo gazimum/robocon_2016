@@ -8,7 +8,6 @@
 #ifndef ARM_HPP_
 #define ARM_HPP_
 
-#include <servo.hpp>
 #include <pid/speed_type_pid.hpp>
 
 class arm {
@@ -18,13 +17,13 @@ public:
 	void update();
 
 private:
+	void update_angle();
+
 	float _width;
 	float _length;
-	float _angle;
 
-	basic_servo _length_servo;
-	basic_servo _angle_servo;
-	basic_servo _width_servo;
+	speed_type_pid<float> _length_pid;
+	speed_type_pid<float> _width_pid;
 };
 
 #endif /* ARM_HPP_ */

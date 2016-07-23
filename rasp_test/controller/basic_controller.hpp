@@ -16,14 +16,16 @@ public:
 	virtual ~basic_controller();
 
 private:
-	virtual controller_impl* update(std::map<std::string, float>& command);
+	virtual controller_impl* update(std::map<std::string, float>& normalized_controller_state);
 
-	void update_arm(std::map<std::string, float>& command);
-	void update_movement(std::map<std::string, float>& command);
-	controller_impl* update_sequence(std::map<std::string, float>& command);
+	void update_arm(std::map<std::string, float>& normalized_controller_state);
+	void update_movement(std::map<std::string, float>& normalized_controller_state);
+	controller_impl* update_sequence(std::map<std::string, float>& normalized_controller_state);
 
 	bool update_arm_abilities_position_index(std::map<std::string, float>& normalized_controller_state);
 	void update_arm_abilities_position();
+
+	bool udpate_arm_index_and_adjustment(std::map<std::string, float>& normalized_controller_state);
 
 	static const std::string _arm_abilities_name[];
 	static const std::map<std::string, size_t> _arm_abilities_init_position_index;
