@@ -7,6 +7,8 @@
 
 #include "robot.hpp"
 
+#include <iostream>
+
 robot::robot() {}
 
 void robot::update() {

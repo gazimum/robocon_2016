@@ -13,11 +13,11 @@
 
 template <class T>
 speed_type_pid<T>::speed_type_pid(const T& kp, const T& ki, const T& kd) :	pid<T>(kp, ki, kd),
-																			_F1(kp + ki / 2 + kd),
-																			_F2(-kp + ki / 2 - 2 * kd),
-																			_J(T()),
-																			_mv(T()),
-																			_prev_error(T()) {}
+																					_F1(kp + ki / 2 + kd),
+																					_F2(-kp + ki / 2 - 2 * kd),
+																					_J(T()),
+																					_mv(T()),
+																					_prev_error(T()) {}
 
 template <class T>
 speed_type_pid<T>::~speed_type_pid() {}

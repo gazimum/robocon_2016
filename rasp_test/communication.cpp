@@ -51,8 +51,13 @@ void communication::operator()() {
 		server_shared_data::_mutex.unlock();
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 
+		/*
+
 		for (const auto& i : d) {
-			std::cout << i.first << " " << i.second << std::endl;
+			std::cout << i.first << "," << i.second << " ";
 		}
+		std::cout << std::endl;
+
+		*/
 	}
 }

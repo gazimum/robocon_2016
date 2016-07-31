@@ -16,13 +16,13 @@ void main_thread_func() {
 	using namespace serial_connected_mcu;
 	std::this_thread::sleep_for(std::chrono::milliseconds(80));
 
-	serial_connected_mcu_master::instance().init();
+	//serial_connected_mcu_master::instance().init();
 
 	while (true) {
 		robot::instance().update();
 		i2c::instance().write();
 		controller::instance().update();
-		serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
+		//serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
 	}
 }
 

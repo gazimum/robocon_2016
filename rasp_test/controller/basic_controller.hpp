@@ -26,12 +26,14 @@ private:
 	void update_arm_abilities_position();
 
 	bool udpate_arm_index_and_adjustment(std::map<std::string, float>& normalized_controller_state);
+	void update_arm_adjustment(std::map<std::string, float> normalized_controller_state, std::string name);
 
 	static const std::string _arm_abilities_name[];
 	static const std::map<std::string, size_t> _arm_abilities_init_position_index;
 
-	std::map<std::string, float> _arm_adjusting_values;
+	std::map<std::string, float> _arm_adjustment;
 	std::map<std::string, size_t> _arm_abilities_position_index;
+	std::map<std::string, bool> _prev_ib_buttons_state;
 };
 
 #endif /* CONTROLLER_BASIC_CONTROLLER_HPP_ */

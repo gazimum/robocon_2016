@@ -7,6 +7,7 @@
 
 #include <controller/basic_controller.hpp>
 #include <ini_parser.hpp>
+#include <iostream>
 
 const std::string basic_controller::_arm_abilities_name[] {
 	"length",
@@ -75,10 +76,10 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 				i + "_position_" + std::to_string(_arm_abilities_position_index[i])
 			};
 
-			if (_arm_adjusting_values[i] != 0.0f) {
-				config.set_setting(i, config.setting<float>(key) + _arm_adjusting_values[i]);
+			if (_arm_adjustment[i] != 0.0f) {
+				config.set_setting(key, config.setting<float>(key) + _arm_adjustment[i]);
 			}
-			_arm_adjusting_values[i] = 0.0f;
+			_arm_adjustment[i] = 0.0f;
 		}
 	}
 	prev_ib_state = ib_state;
@@ -97,22 +98,31 @@ bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, flo
 	// * IB : Identifier Button (識別ボタン) : 腕の機能が割り当てられたボタン
 	// 1. IB : 状態を1ずつ遷移
 	// 2. index + IB + (+ or - or nothing) : 指定番号の状態に遷移.さらにそこから微調整可能.
+	std::map<std::string, bool> ib_buttons_state;
 	for (const auto& i : _arm_abilities_name) {
 		std::string key{
 			config.key_config<std::string>("IB_" + i)
 		};
+		ib_buttons_state[key] = (normalized_controller_state[key] > _command_threshold);
+	}
 
-		if (normalized_controller_state[key] > _command_threshold) {
+	for (const auto& i : _arm_abilities_name) {
+		std::string key{
+			config.key_config<std::string>("IB_" + i)
+		};
+		if (ib_buttons_state[key]) {
 			if (update_arm_abilities_position_index(normalized_controller_state)) {
 				// 2. index + IB + (+ or - or 0) : 指定番号の状態に遷移.さらにそこから微調整可能.
-				_arm_adjusting_values[i] += normalized_controller_state[config.key_config<std::string>("arm_adjusting_+")];
-				_arm_adjusting_values[i] -= normalized_controller_state[config.key_config<std::string>("arm_adjusting_-")];
-			} else {
+				update_arm_adjustment(normalized_controller_state, i);
+			} else if (!_prev_ib_buttons_state[key]) {
+				// 	立ち上がりなら
 				// 1. IB : 状態を1ずつ遷移
 				if (++_arm_abilities_position_index[i] >= config.setting<size_t>("arm_abilities_position_num")) {
 					_arm_abilities_position_index[i] = 0;
 				}
 			}
+
+			_prev_ib_buttons_state = ib_buttons_state;
 
 			bool is_ib_state_changed = (i == prev_enabled_ib_name);
 			is_ib_state_changed &= (i.size() != 0);
@@ -121,9 +131,29 @@ bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, flo
 			return is_ib_state_changed;
 		}
 	}
+	_prev_ib_buttons_state = ib_buttons_state;
 
 	prev_enabled_ib_name.erase();
 	return false;
+}
+
+void basic_controller::update_arm_adjustment(std::map<std::string, float> normalized_controller_state, std::string name) {
+	ini_parser& config{
+		ini_parser::instance()
+	};
+
+	float adj = normalized_controller_state[config.key_config<std::string>("arm_adjusting_+")];
+	adj -= normalized_controller_state[config.key_config<std::string>("arm_adjusting_-")];
+	_arm_adjustment[name] += adj * config.setting<float>("command_coeff_arm_adjustment");
+
+	float p = config.setting<float>(name + "_position_" + std::to_string(_arm_abilities_position_index[name]));
+	if (p + _arm_adjustment[name] > 1.0f) {
+		_arm_adjustment[name] = 1.0f - p;
+	} else if (p + _arm_adjustment[name] < -1.0f) {
+		_arm_adjustment[name] = -1.0f - p;
+	}
+
+	std::cout << name << ":" << _arm_abilities_position_index[name] << p + _arm_adjustment[name] << std::endl;
 }
 
 controller_impl* basic_controller::update_sequence(std::map<std::string, float>& command) {
@@ -141,6 +171,7 @@ bool basic_controller::update_arm_abilities_position_index(std::map<std::string,
 		};
 		if (command[config.key_config<std::string>(key)] > _command_threshold) {
 			_command["arm_abilities_position_index"] = i;
+			std::cout << "index" << std::endl;
 			return true;
 		}
 	}
@@ -154,7 +185,7 @@ void basic_controller::update_arm_abilities_position() {
 			i + "_position_" + std::to_string(_arm_abilities_position_index[i])
 		};
 		_command[i] = ini_parser::instance().setting<float>(key);
-		_command[i] += _arm_adjusting_values[i];
+		_command[i] += _arm_adjustment[i];
 	}
 }
 

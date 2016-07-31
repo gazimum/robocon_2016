@@ -23,10 +23,12 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 
 	// 正規化 : コントローラの操作値の範囲を [-1.0f, 1.0f] にする
 	for (const auto& i : controller_state) {
-		std::string key {
-			"normalization_coeff_" + i.first
-		};
-		normalized_controller_state[i.first] = i.second * ini_parser::instance().setting<float>(key);
+		if (i.first.size() != 0) {
+			std::string key {
+				"normalization_coeff_" + i.first
+			};
+			normalized_controller_state[i.first] = i.second * ini_parser::instance().setting<float>(key);
+		}
 	}
 
 	controller_impl* state = update(normalized_controller_state);
