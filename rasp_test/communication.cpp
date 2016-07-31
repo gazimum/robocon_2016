@@ -44,27 +44,15 @@ void communication::operator()() {
 			server_shared_data::_mutex.unlock();
 		}
 		*/
-		/*
-		for (const auto& port : network::ports_for_clients) {
-			server_shared_data::_mutex.lock();
-			server_shared_data::_data[port.second] = client.get(port.second);
-			std::this_thread::sleep_for(std::chrono::milliseconds(80));
-			server_shared_data::_mutex.unlock();
-		}
-		*/
 
 		std::map<std::string, int> d;
 		server_shared_data::_mutex.lock();
 		d = server_shared_data::_data[5000] = client.get(5000);
 		server_shared_data::_mutex.unlock();
-
-		/*
-		for (const auto& i : d) {
-			std::cout << i.first << "," << i.second << " ";
-		}
-		std::cout << std::endl;
-		*/
-
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
+
+		for (const auto& i : d) {
+			std::cout << i.first << " " << i.second << std::endl;
+		}
 	}
 }

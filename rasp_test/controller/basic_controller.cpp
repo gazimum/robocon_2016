@@ -9,9 +9,10 @@
 #include <ini_parser.hpp>
 
 const std::string basic_controller::_arm_abilities_name[] {
-	"lengther",
-	"widener",
-	"angle_adjuster"
+	"length",
+	"width",
+	"height",
+	"angle"
 };
 
 const std::map<std::string, size_t> basic_controller::_arm_abilities_init_position_index {
@@ -51,6 +52,8 @@ void basic_controller::update_movement(std::map<std::string, float>& normalized_
 		vx /= l;
 		vy /= l;
 	}
+	_command["velocity_x"] = vx;
+	_command["velocity_y"] = vy;
 
 	// 旋回
 	_command["angular_velocity"]  = normalized_controller_state[config.key_config<std::string>("turn_+")];
@@ -85,6 +88,8 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 }
 
 bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, float>& normalized_controller_state) {
+	static std::string prev_enabled_ib_name;
+
 	ini_parser& config{
 		ini_parser::instance()
 	};
@@ -109,11 +114,16 @@ bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, flo
 				}
 			}
 
-			return true;	// 操作があった
+			bool is_ib_state_changed = (i == prev_enabled_ib_name);
+			is_ib_state_changed &= (i.size() != 0);
+
+			prev_enabled_ib_name = i;
+			return is_ib_state_changed;
 		}
 	}
 
-	return false;	// 操作がなかった
+	prev_enabled_ib_name.erase();
+	return false;
 }
 
 controller_impl* basic_controller::update_sequence(std::map<std::string, float>& command) {

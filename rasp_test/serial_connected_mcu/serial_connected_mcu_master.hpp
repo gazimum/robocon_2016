@@ -28,6 +28,9 @@ namespace serial_connected_mcu{
 	};
 
 	enum read_id {
+		ENCODER_SPEED1,
+		ENCODER_SPEED2,
+		ENCODER_SPEED3,
         ENCODER1,
         ENCODER2,
         ENCODER3,

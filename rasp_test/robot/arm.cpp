@@ -20,12 +20,12 @@ arm::arm() : _width(0.0f),
 
 void arm::update() {
 	update_angle();
-	_length_pid.update(controller::instance().get("lengther"));
-	_width_pid.update(controller::instance().get("widener"));
+	_length_pid.update(controller::instance().get("length"));
+	_width_pid.update(controller::instance().get("width"));
 }
 
 void arm::update_angle() {
-	float angle = controller::instance().get("angle_adjuster");
+	float angle = controller::instance().get("angle");
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(serial_connected_mcu::ESC1, angle);
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(serial_connected_mcu::ESC2, 1.0f - angle);
 }

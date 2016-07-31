@@ -5,15 +5,6 @@
 #define BOOST_SYSTEM_NO_LIB
 */
 
-// todo : add ini file
-// config.setting<int>("arm_abilities_position_num")
-// config.setting<int>("arm_abilities_position_num")
-// config.key_config<std::string>("arm_abilities_position_index_" + std::to_string(i))
-// ini_parser::instance().setting<float>("normalization_coeff_" + i.first)
-// "command_coeff_" + i.first
-// _arm_adjusting_values[i] += normalized_controller_state[config.key_config<std::string>("arm_adjusting_+")];
-// _arm_adjusting_values[i] -= normalized_controller_state[config.key_config<std::string>("arm_adjusting_-")];
-
 #include <thread>
 #include <communication.hpp>
 #include <robot/robot.hpp>
