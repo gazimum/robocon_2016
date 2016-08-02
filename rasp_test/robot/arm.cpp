@@ -5,6 +5,7 @@
 #include <i2c/i2c.hpp>
 
 #include <iostream>
+#include <array>
 
 arm::arm() : _width(0.0f),
 			 _length(0.0f),
@@ -17,6 +18,11 @@ arm::arm() : _width(0.0f),
 				ini_parser::instance().setting<float>("arm_width_pid_kp"),
 				ini_parser::instance().setting<float>("arm_width_pid_ki"),
 				ini_parser::instance().setting<float>("arm_width_pid_kd")
+			),
+			_height_pid(
+				ini_parser::instance().setting<float>("arm_height_pid_kp"),
+				ini_parser::instance().setting<float>("arm_height_pid_ki"),
+				ini_parser::instance().setting<float>("arm_height_pid_kd")
 			) {}
 
 void arm::update() {
@@ -26,15 +32,37 @@ void arm::update() {
 	i2c::instance().set("length", _length_pid.update(controller::instance().get("length")));
 	i2c::instance().set("width",  _length_pid.update(controller::instance().get("width")));
 	*/
+	float pos[]{
+		serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER1),
+		serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER2),
+		serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER3)
+		//0.0f,
+		//0.0f,
+		//0.0f
+	};
+	std::array<std::string, 3> name = {
+			"length",
+			"height",
+			"width"
+	};/*
+	for (size_t i = 0; i < name.size(); ++i) {
+		//std::cout << pos[i] << " ";
 
-	float pos[3];
-	pos[0] = serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER1);
-	pos[1] = serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER2);
-	pos[2] = serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER3);
+		float err = controller::instance().get(name[i]) - pos[i];
+		i2c::instance().set(name[i], err * 2.5f);
+	}
+	*/
 
-	i2c::instance().set("length", controller::instance().get("length") - pos[0]);
-	i2c::instance().set("height",  controller::instance().get("height") - pos[1]);
-	i2c::instance().set("width",  controller::instance().get("width") - pos[2]);
+	float err = controller::instance().get("length");
+	i2c::instance().set("length", err * 2.5f);
+
+	err = controller::instance().get("height");// - pos[1];
+	i2c::instance().set("height", err * 2.5f);
+
+	err = controller::instance().get("width");
+	i2c::instance().set("width", err * 2.5f);
+
+	//std::cout << std::endl;
 }
 
 void arm::update_angle() {

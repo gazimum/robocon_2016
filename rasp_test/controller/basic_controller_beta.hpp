@@ -4,7 +4,7 @@
  *  Created on: 2016/07/18
  *      Author: u
  */
-
+/*
 #ifndef CONTROLLER_BASIC_CONTROLLER_HPP_
 #define CONTROLLER_BASIC_CONTROLLER_HPP_
 
@@ -36,4 +36,4 @@ private:
 	std::map<std::string, bool> _prev_ib_buttons_state;
 };
 
-#endif /* CONTROLLER_BASIC_CONTROLLER_HPP_ */
+#endif*/ /* CONTROLLER_BASIC_CONTROLLER_HPP_ */

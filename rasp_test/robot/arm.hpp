@@ -24,6 +24,7 @@ private:
 
 	speed_type_pid<float> _length_pid;
 	speed_type_pid<float> _width_pid;
+	speed_type_pid<float> _height_pid;
 };
 
 #endif /* ARM_HPP_ */

@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <i2c/i2c.hpp>
 #include <iostream>
+#include <cstdio>
 /*
  *  1      2
  *
@@ -58,15 +59,33 @@ void omni_wheel::write() {
 		}
 	}
 
+	// 回転数制御
+	for (size_t i = 0; i < _wheel_num; ++i) {
+		p[i] = p[i] * 300.0f - _wheel_odometry.get_tire_advanced_speed_cm_per_sec(i);
+		p[i] *= 0.05f;
+		p[i] = std::max(-1.0f, std::min(p[i], 1.0f));
+	}
+	//
+
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		i2c::instance().set("wheel" + std::to_string(i), p[i]);
 	}
+
+	//static float lpf[3] = {};
+	/*
+	printf("\r");
+	for (size_t i = 0; i < 3; ++i) {
+		//lpf[i] = lpf[i] * 0.9f + _wheel_odometry.get_tire_advanced_speed_cm_per_sec(i) * 0.1f;
+		//std::cout << lpf[i] << " ";
+		std::cout << _wheel_odometry.get_tire_advanced_speed_cm_per_sec(i) << " ";
+	}
+	*/
 }
 
 void omni_wheel::set_velocity(float x, float y) {
-	float l2 = x * x + y * y;
-	if (l2 > 1.0f) { // ベクトルの大きさが1より大きいなら1に調整する
-		float l = sqrt(l2);
+	float l = x * x + y * y;
+	if (l > 1.0f) { // ベクトルの大きさが1より大きいなら1に調整する
+		l = sqrt(l);
 		x /= l;
 		y /= l;
 	}

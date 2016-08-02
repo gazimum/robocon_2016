@@ -9,6 +9,7 @@
 #define OMNI_WHEEL_HPP_
 
 #include <boost/numeric/ublas/vector.hpp>
+#include <robot/wheel_odometry.hpp>
 
 class omni_wheel {
 public:
@@ -28,6 +29,7 @@ private:
 	float _velocity_x;
 	float _velocity_y;
 	float _angular_velocity;
+	wheel_odometry _wheel_odometry;
 };
 
 #endif /* OMNI_WHEEL_HPP_ */

@@ -36,8 +36,8 @@ void moving_object::update() {
 	//float target_vy = _lpf_velocity_y(controller::instance().get("velocity_y"));
 
 	_omni_wheel.set_velocity(
-		target_vx,//_pid_velocity_x(target_vx - 0.0f),
-		target_vy//_pid_velocity_y(target_vy - 0.0f)
+		_lpf_velocity_x(target_vx),//_pid_velocity_x(target_vx - 0.0f),
+		_lpf_velocity_y(target_vy)//_pid_velocity_y(target_vy - 0.0f)
 	);
 	// 回転速度設定
 	_omni_wheel.set_angular_velocity(

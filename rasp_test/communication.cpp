@@ -52,12 +52,9 @@ void communication::operator()() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(40));
 
 		/*
-
 		for (const auto& i : d) {
 			std::cout << i.first << "," << i.second << " ";
 		}
-		std::cout << std::endl;
-
-		*/
+		std::cout << std::endl;*/
 	}
 }

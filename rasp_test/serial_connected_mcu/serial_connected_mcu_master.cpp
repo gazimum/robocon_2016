@@ -3,6 +3,7 @@
 namespace serial_connected_mcu{
     const std::string serial_connected_mcu_master::PORTNAME = "/dev/ttyACM0";
     const int serial_connected_mcu_master::BAUDRATE = 9600;
+    //const int serial_connected_mcu_master::BAUDRATE = 57600;
 	const int16_t serial_connected_mcu_master::_init_write_data[] {
 		0, // ESC1
 		0, // ESC2
@@ -44,6 +45,13 @@ namespace serial_connected_mcu{
 	}
 	float serial_connected_mcu_master::get(int index_of_data) {
 		return _get(index_of_data) / 32767.0f;
+	}
+
+	void serial_connected_mcu_master::set_raw(int index_of_data, int16_t setting_data) {
+		_set(index_of_data, setting_data);
+	}
+	int16_t serial_connected_mcu_master::get_raw(int index_of_data) {
+		return _get(index_of_data);
 	}
 
 	void serial_connected_mcu_master::string_to_int(const std::string data_as_string){

@@ -5,6 +5,7 @@
  *      Author: u
  */
 
+/*
 #include <controller/basic_controller.hpp>
 #include <ini_parser.hpp>
 #include <iostream>
@@ -181,14 +182,8 @@ void basic_controller::update_arm_abilities_position() {
 		std::string key {
 			i + "_position_" + std::to_string(_arm_abilities_position_index[i])
 		};
-
-		// todo : remove this when beta mode end
-		if (i == "angle") {
-			_command[i] = ini_parser::instance().setting<float>(key);
-			_command[i] += _arm_adjustment[i];
-		} else if ((i == "length") || (i == "width") || (i == "height")) {
-			_command[i] = _arm_adjustment[i];
-		}
+		_command[i] = ini_parser::instance().setting<float>(key);
+		_command[i] += _arm_adjustment[i];
 	}
 }
-
+*/

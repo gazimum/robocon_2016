@@ -34,6 +34,7 @@ void i2c::write() {
 	for (size_t i = 0; i < _i2c_device_num; ++i) {
 		std::string name = ini_parser::instance().i2c_profile<std::string>("i2c_device_name" + std::to_string(i));
 
+		/**/
 		size_t try_num = 1;
 		while (wiringPiI2CWrite(_filehandles[name], std::round(_buffers[name] * 127.0f)) != 0) {
 			if (try_num++ > _i2c_try_num) {
@@ -44,6 +45,7 @@ void i2c::write() {
 			int address = ini_parser::instance().i2c_profile<int>("i2c_address" + std::to_string(i));
 			_filehandles[name] = wiringPiI2CSetup(address);
 		}
+		/**/
 
 		/*
 		for (size_t j = 1; wiringPiI2CWrite(_filehandles[name], std::round(_buffers[name] * 127.0f)) != 0; ++j) {
