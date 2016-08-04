@@ -8,27 +8,38 @@
 #include <robot/wheel_odometry.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <cmath>
+#include <ini_parser.hpp>
 
 #include <iostream>
 
-const int wheel_odometry::_encoder_resolution = 300 * 4;
-const float wheel_odometry::_tire_radius_cm = 10.0f;
+const float wheel_odometry::_encoder_resolution = 300.0f * 4.0f;
+const float wheel_odometry::_tire_radius_cm = 5.31f;
+const float wheel_odometry::_tire_encoder_gear_ratio = 9.0f / 32.0f;
 
-wheel_odometry::wheel_odometry() {
-	// TODO 自動生成されたコンストラクター・スタブ
+wheel_odometry::wheel_odometry() : _encoder_raw_data_lpf{
+											ini_parser::instance().setting<float>("encoder_raw_data_lpf_p"),
+											ini_parser::instance().setting<float>("encoder_raw_data_lpf_p"),
+											ini_parser::instance().setting<float>("encoder_raw_data_lpf_p")
+										} {}
 
-}
-
-wheel_odometry::~wheel_odometry() {
-	// TODO Auto-generated destructor stub
-}
+wheel_odometry::~wheel_odometry() {}
 
 float wheel_odometry::get_tire_frequency_kHz(int id) {
-	return serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::ENCODER_SPEED1 + id) / _encoder_resolution;
+	return _tire_encoder_gear_ratio * get_raw(id) / _encoder_resolution;
+}
+
+float wheel_odometry::get_tire_frequency_Hz(int id) {
+	return get_tire_frequency_kHz(id) * 1000.0f;
 }
 
 float wheel_odometry::get_tire_advanced_speed_cm_per_sec(int id) {
-	return get_tire_frequency_kHz(id) * 2 * M_PI * _tire_radius_cm;
+	return get_tire_frequency_Hz(id) * 2.0f * M_PI * _tire_radius_cm;
+}
+
+float wheel_odometry::get_raw(int id) {
+	return //_encoder_raw_data_lpf[id](
+				serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(serial_connected_mcu::ENCODER_SPEED1 + id);
+			//);
 }
 
 float wheel_odometry::get_heading_rad() {

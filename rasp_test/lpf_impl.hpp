@@ -7,28 +7,28 @@
 
 #include <lpf.hpp>
 
-template <size_t P, class T>
-lpf<P, T>::lpf(T n) : _value(n) {}
+template <class T>
+lpf<T>::lpf(T p, T new_value) : _p(p),
+					 	  	  	  _value(new_value) {}
 
-template <size_t P, class T>
-T lpf<P, T>::operator()(const T& n) {
-	return update(n);
+template <class T>
+T lpf<T>::operator()(const T& new_value) {
+	return update(new_value);
 }
 
-template <size_t P, class T>
-T lpf<P, T>::update(const T& n) {
-	_value = _value * P + n * (100 - P);
-	_value *= 0.01f;
+template <class T>
+T lpf<T>::update(const T& new_value) {
+	_value = _value * _p + new_value * (1.0f - _p);
 	return _value;
 }
 
-template <size_t P, class T>
-T lpf<P, T>::operator()(T&& n) {
-	return update(n);
+template <class T>
+T lpf<T>::operator()(T&& new_value) {
+	return update(new_value);
 }
 
-template <size_t P, class T>
-T lpf<P, T>::update(T&& n) {
-	return update(n);
+template <class T>
+T lpf<T>::update(T&& new_value) {
+	return update(new_value);
 }
 

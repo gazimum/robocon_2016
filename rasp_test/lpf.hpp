@@ -8,23 +8,24 @@
 #ifndef LPF_HPP_
 #define LPF_HPP_
 
-template <size_t P, class T>
+template <class T>
 class lpf {
 public:
-	explicit lpf(T n = T());
+	lpf(T p, T n = T());
 
-	inline T operator()(const T& n);
-	inline T update(const T& n);
-	inline T operator()(T&& n);
-	inline T update(T&& n);
+	inline T operator()(const T& new_value);
+	inline T update(const T& new_value);
+	inline T operator()(T&& new_value);
+	inline T update(T&& new_value);
 
 private:
+	const float _p;
 	T _value;
 };
 
 #include "lpf_impl.hpp"
 
-typedef lpf<90, float> lpf_90f;
-typedef lpf<90, float> basic_low_pass_filter;
+typedef lpf<float> lpf_f;
+typedef lpf<float> basic_low_pass_filter;
 
 #endif /* LPF_HPP_ */

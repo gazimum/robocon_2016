@@ -12,6 +12,11 @@
 #include <controller/controller.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 
+//#include <iostream>
+//#include <pid/speed_type_pid.hpp>
+// serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::ENCODER1 + i)
+// i2c::instance().set("wheel" + std::to_string(i), p[i]);
+
 void main_thread_func() {
 	using namespace serial_connected_mcu;
 	std::this_thread::sleep_for(std::chrono::milliseconds(80));

@@ -15,16 +15,24 @@
 #include <controller/controller.hpp>
 #include <pid/speed_type_pid.hpp>
 
-moving_object::moving_object() : _lpf_velocity_x(float()),
-								 _lpf_velocity_y(float()),
-								 _lpf_angular_velocity(float()),
-								 _pid_velocity_x(ini_parser::instance().setting<float>("velocity_x_pid_kp"),
-												 ini_parser::instance().setting<float>("velocity_x_pid_ki"),
-												 ini_parser::instance().setting<float>("velocity_x_pid_kd")
-								 ),
-								 _pid_velocity_y(ini_parser::instance().setting<float>("velocity_y_pid_kp"),
-												 ini_parser::instance().setting<float>("velocity_y_pid_ki"),
-												 ini_parser::instance().setting<float>("velocity_y_pid_kd")) {}
+moving_object::moving_object() : _lpf_velocity_x(
+											ini_parser::instance().setting<float>("velocity_x_lpf_p")
+									 ),
+									 _lpf_velocity_y(
+											ini_parser::instance().setting<float>("velocity_y_lpf_p")
+									 ),
+									 _lpf_angular_velocity(
+											ini_parser::instance().setting<float>("angular_velocity_lpf_p")
+									 ),
+									 _pid_velocity_x(
+											ini_parser::instance().setting<float>("velocity_x_pid_kp"),
+											ini_parser::instance().setting<float>("velocity_x_pid_ki"),
+											ini_parser::instance().setting<float>("velocity_x_pid_kd")
+									 ),
+									 _pid_velocity_y(
+											ini_parser::instance().setting<float>("velocity_y_pid_kp"),
+											ini_parser::instance().setting<float>("velocity_y_pid_ki"),
+											ini_parser::instance().setting<float>("velocity_y_pid_kd")) {}
 
 moving_object::~moving_object() {}
 
@@ -36,12 +44,12 @@ void moving_object::update() {
 	//float target_vy = _lpf_velocity_y(controller::instance().get("velocity_y"));
 
 	_omni_wheel.set_velocity(
-		_lpf_velocity_x(target_vx),//_pid_velocity_x(target_vx - 0.0f),
-		_lpf_velocity_y(target_vy)//_pid_velocity_y(target_vy - 0.0f)
+		target_vx,//_lpf_velocity_x(target_vx),//_pid_velocity_x(target_vx - 0.0f),
+		target_vy//_lpf_velocity_y(target_vy)//_pid_velocity_y(target_vy - 0.0f)
 	);
-	// 回転速度設定
+	// 旋回速度設定
 	_omni_wheel.set_angular_velocity(
-		_lpf_angular_velocity(controller::instance().get("angular_velocity"))
+		controller::instance().get("angular_velocity")//_lpf_angular_velocity(controller::instance().get("angular_velocity"))
 	);
 
 	_omni_wheel.write();
