@@ -66,7 +66,6 @@ omni_wheel::~omni_wheel() {}
 
 void omni_wheel::write() {
 	static float mv[_wheel_num] = {};
-	static float prev_e[_wheel_num] = {};
 
 	float p[_wheel_num];
 	float max = 0.0f;
@@ -90,18 +89,13 @@ void omni_wheel::write() {
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		float f = _wheel_odometry->get_raw(i) * 1000.0f / ini_parser::instance().setting<int>("encoder_resolution");
 		float target_f = p[i] * ini_parser::instance().setting<float>("target_tire_frequency");
-		//p[i] += 0.05f * (target_f - f);//_tire_frequency_pid[i](target_f - f);
 		if (std::abs(p[i]) > 0.01f) {
 			float e = target_f - f;
-			mv[i] -= 0.00004f * e;//_tire_frequency_pid[i](target_f - f);
-			//p[i] += mv[i] + 0.00005f * (e - prev_e[i]);
-			//mv[i] += 0.0005f * (e - prev_e[i]);
+			mv[i] -= 0.00004f * e;
 			p[i] += mv[i];
-			prev_e[i] = e;
 		} else {
 			mv[i] = 0.0f;
 			p[i] = 0.0f;
-			prev_e[i] = 0.0f;
 		}
 		std::cout << target_f << " " << f << ":";
 
