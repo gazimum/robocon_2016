@@ -9,10 +9,6 @@
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <cmath>
 #include <ini_parser.hpp>
-
-#include <iostream>
-
-const float wheel_odometry::_encoder_resolution = 300.0f * 4.0f;
 const float wheel_odometry::_tire_radius_cm = 5.31f;
 const float wheel_odometry::_tire_encoder_gear_ratio = 9.0f / 32.0f;
 
@@ -25,7 +21,7 @@ wheel_odometry::wheel_odometry() : _encoder_raw_data_lpf{
 wheel_odometry::~wheel_odometry() {}
 
 float wheel_odometry::get_tire_frequency_kHz(int id) {
-	return _tire_encoder_gear_ratio * get_raw(id) / _encoder_resolution;
+	return _tire_encoder_gear_ratio * get_raw(id) / ini_parser::instance().setting<int>("encoder_resolution");
 }
 
 float wheel_odometry::get_tire_frequency_Hz(int id) {

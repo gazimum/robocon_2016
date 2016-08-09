@@ -13,26 +13,27 @@
 #include <server_shared_data.hpp>
 #include <communication.hpp>
 #include <controller/controller.hpp>
-#include <pid/speed_type_pid.hpp>
+#include <pid/position_pid.hpp>
 
 moving_object::moving_object() : _lpf_velocity_x(
-											ini_parser::instance().setting<float>("velocity_x_lpf_p")
-									 ),
-									 _lpf_velocity_y(
-											ini_parser::instance().setting<float>("velocity_y_lpf_p")
-									 ),
-									 _lpf_angular_velocity(
-											ini_parser::instance().setting<float>("angular_velocity_lpf_p")
-									 ),
-									 _pid_velocity_x(
-											ini_parser::instance().setting<float>("velocity_x_pid_kp"),
-											ini_parser::instance().setting<float>("velocity_x_pid_ki"),
-											ini_parser::instance().setting<float>("velocity_x_pid_kd")
-									 ),
-									 _pid_velocity_y(
-											ini_parser::instance().setting<float>("velocity_y_pid_kp"),
-											ini_parser::instance().setting<float>("velocity_y_pid_ki"),
-											ini_parser::instance().setting<float>("velocity_y_pid_kd")) {}
+									ini_parser::instance().setting<float>("velocity_x_lpf_p")
+								 ),
+								 _lpf_velocity_y(
+									ini_parser::instance().setting<float>("velocity_y_lpf_p")
+								 ),
+								 _lpf_angular_velocity(
+									ini_parser::instance().setting<float>("angular_velocity_lpf_p")
+								 ),
+								 _pid_velocity_x(
+									ini_parser::instance().setting<float>("velocity_x_pid_kp"),
+									ini_parser::instance().setting<float>("velocity_x_pid_ki"),
+									ini_parser::instance().setting<float>("velocity_x_pid_kd")
+								 ),
+								 _pid_velocity_y(
+									ini_parser::instance().setting<float>("velocity_y_pid_kp"),
+									ini_parser::instance().setting<float>("velocity_y_pid_ki"),
+									ini_parser::instance().setting<float>("velocity_y_pid_kd")
+								) {}
 
 moving_object::~moving_object() {}
 

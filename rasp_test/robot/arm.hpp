@@ -8,7 +8,7 @@
 #ifndef ARM_HPP_
 #define ARM_HPP_
 
-#include <pid/speed_type_pid.hpp>
+#include <pid/speed_pid.hpp>
 
 class arm {
 public:
@@ -22,9 +22,9 @@ private:
 	float _width;
 	float _length;
 
-	speed_type_pid<float> _length_pid;
-	speed_type_pid<float> _width_pid;
-	speed_type_pid<float> _height_pid;
+	speed_pid<float> _length_pid;
+	speed_pid<float> _width_pid;
+	speed_pid<float> _height_pid;
 };
 
 #endif /* ARM_HPP_ */

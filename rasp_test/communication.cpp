@@ -24,10 +24,13 @@
 communication::communication() {}
 
 void communication::operator()() {
+	int my_port = ini_parser::instance().network_profile<int>(
+				  	  "port_for_" + ini_parser::instance().network_profile<std::string>("my_name")
+				  );
+
 	boost::asio::io_service io;
 	network::RobotClient client(ini_parser::instance().network_profile<std::string>("server_ip_address"),
-								ini_parser::instance().network_profile<int>("my_port"),
-								40, "\n", io);
+								my_port, 40, "\n", io);
 	client.connect();
 
 	while (true) {
