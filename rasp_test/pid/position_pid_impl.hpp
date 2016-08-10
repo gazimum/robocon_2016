@@ -21,17 +21,12 @@ T position_pid<T>::update(const T& e) {
 	static float mv = 0.0f;
 
 	// todo : implement ini file
-	const float threshold = 0.1f;
+	const float threshold = 0.01f;
 	if (std::abs(e) < threshold) {
+		prev_e = 0.0f;
 		accum_e = 0.0f;
 		mv = 0.0f;
 		return mv;
-	}
-
-	if (e * prev_e < T()) {
-		accum_e = T();
-	} else {
-		accum_e += e;
 	}
 
 	float dmv = pid<T>::_kp * e;

@@ -16,6 +16,8 @@
 
 class ini_parser : public singleton<ini_parser> {
 public:
+	void init();
+
 	template <class T>
 	inline T key_config(std::string key) {
 		boost::optional<T> t{

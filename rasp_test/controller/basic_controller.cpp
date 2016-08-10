@@ -33,9 +33,24 @@ basic_controller::~basic_controller() {
 }
 
 controller_impl* basic_controller::update(std::map<std::string, float>& normalized_controller_state) {
+	update_ini_parser(normalized_controller_state);
 	update_movement(normalized_controller_state);
 	update_arm(normalized_controller_state);
 	return update_sequence(normalized_controller_state);
+}
+
+void basic_controller::update_ini_parser(std::map<std::string, float>& normalized_controller_state) {
+	static float prev_state = false;
+
+	std::string key {
+		ini_parser::instance().key_config<std::string>("reload_ini_file")
+	};
+	float state = (normalized_controller_state[key] > _command_threshold);
+
+	if (state && !prev_state) {
+		ini_parser::instance().init();
+	}
+	prev_state = state;
 }
 
 void basic_controller::update_movement(std::map<std::string, float>& normalized_controller_state) {

@@ -18,6 +18,8 @@ public:
 private:
 	virtual controller_impl* update(std::map<std::string, float>& normalized_controller_state);
 
+	void update_ini_parser(std::map<std::string, float>& normalized_controller_state);
+
 	void update_arm(std::map<std::string, float>& normalized_controller_state);
 	void update_movement(std::map<std::string, float>& normalized_controller_state);
 	controller_impl* update_sequence(std::map<std::string, float>& normalized_controller_state);

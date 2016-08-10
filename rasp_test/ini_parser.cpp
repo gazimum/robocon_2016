@@ -22,6 +22,10 @@ const std::string ini_parser::_network_profile_file_section_name = "network_prof
 const std::string ini_parser::_i2c_profile_file_section_name = "i2c_profile";
 
 ini_parser::ini_parser() {
+	init();
+}
+
+void ini_parser::init() {
 	boost::property_tree::read_ini(_key_config_file_directory_name, _key_config_ptree);
 	boost::property_tree::read_ini(_setting_file_directory_name, _setting_ptree);
 	boost::property_tree::read_ini(_network_profile_file_directory_name, _network_profile_ptree);
