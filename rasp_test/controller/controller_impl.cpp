@@ -27,7 +27,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 			std::string key {
 				"normalization_coeff_" + i.first
 			};
-			normalized_controller_state[i.first] = i.second * ini_parser::instance().setting<float>(key);
+			normalized_controller_state[i.first] = i.second * ini_parser::instance().get<float>("normalization_coeff", key);
 		}
 	}
 
@@ -38,7 +38,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 		std::string key {
 			"command_coeff_" + i.first
 		};
-		_command[i.first] = i.second * ini_parser::instance().setting<float>(key);
+		_command[i.first] = i.second * ini_parser::instance().get<float>("setting", key);
 	}
 
 	return state;

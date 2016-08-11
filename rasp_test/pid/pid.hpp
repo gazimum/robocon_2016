@@ -19,10 +19,16 @@ public:
 	virtual T update(const T& e) = 0;
 	T update(T&& e);
 
+	virtual void init() = 0;
+	void update_coeff(float kp, float ki, float kd);
+
 protected:
-	const T _kp;
-	const T _ki;
-	const T _kd;
+	virtual void update_specific_coeff() {};
+
+	T _kp;
+	T _ki;
+	T _kd;
+	T _mv;
 };
 
 #include "pid_impl.hpp"

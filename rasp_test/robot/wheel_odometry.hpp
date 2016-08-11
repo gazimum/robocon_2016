@@ -23,6 +23,7 @@ public:
 	float get_heading_rad();
 
 private:
+	static const float _encoder_normalize_coeff;
 	static const float _encoder_resolution;
 	static const float _tire_radius_cm;
 	static const float _tire_encoder_gear_ratio;

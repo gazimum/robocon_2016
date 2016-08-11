@@ -10,19 +10,19 @@
 arm::arm() : _width(0.0f),
 			 _length(0.0f),
 			 _length_pid(
-				ini_parser::instance().setting<float>("arm_length_pid_kp"),
-				ini_parser::instance().setting<float>("arm_length_pid_ki"),
-				ini_parser::instance().setting<float>("arm_length_pid_kd")
+				ini_parser::instance().get<float>("setting", "arm_length_pid_kp"),
+				ini_parser::instance().get<float>("setting", "arm_length_pid_ki"),
+				ini_parser::instance().get<float>("setting", "arm_length_pid_kd")
 			),
 			_width_pid(
-				ini_parser::instance().setting<float>("arm_width_pid_kp"),
-				ini_parser::instance().setting<float>("arm_width_pid_ki"),
-				ini_parser::instance().setting<float>("arm_width_pid_kd")
+				ini_parser::instance().get<float>("setting", "arm_width_pid_kp"),
+				ini_parser::instance().get<float>("setting", "arm_width_pid_ki"),
+				ini_parser::instance().get<float>("setting", "arm_width_pid_kd")
 			),
 			_height_pid(
-				ini_parser::instance().setting<float>("arm_height_pid_kp"),
-				ini_parser::instance().setting<float>("arm_height_pid_ki"),
-				ini_parser::instance().setting<float>("arm_height_pid_kd")
+				ini_parser::instance().get<float>("setting", "arm_height_pid_kp"),
+				ini_parser::instance().get<float>("setting", "arm_height_pid_ki"),
+				ini_parser::instance().get<float>("setting", "arm_height_pid_kd")
 			) {}
 
 void arm::update() {

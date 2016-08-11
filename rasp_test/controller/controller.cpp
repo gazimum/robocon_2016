@@ -25,8 +25,8 @@ float controller::get(std::string key) {
 }
 
 void controller::update() {
-	std::string key = "port_for_" + ini_parser::instance().network_profile<std::string>("my_controller_name");
-	int my_controllers_port = ini_parser::instance().network_profile<int>(key);
+	std::string key = "port_for_" + ini_parser::instance().get<std::string>("network_profile", "my_controller_name");
+	int my_controllers_port = ini_parser::instance().get<int>("network_profile", key);
 
 	server_shared_data::_mutex.lock();
 	std::map<std::string, int> command {

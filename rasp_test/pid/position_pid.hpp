@@ -12,6 +12,13 @@ public:
 	virtual ~position_pid();
 
 	virtual T update(const T& e);
+	virtual void init();
+
+private:
+	virtual void update_specific_coeff();
+
+	float _prev_error;
+	float _accum_error;
 };
 
 #include <pid/position_pid_impl.hpp>

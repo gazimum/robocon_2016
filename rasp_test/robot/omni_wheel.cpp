@@ -44,19 +44,19 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 						   _angular_velocity{float()},
 						   _tire_frequency_pid{
 							   {
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kd")
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
 							   },
 							   {
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kd")
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
 							   },
 							   {
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kd")
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
+								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
 							   }
 						   } {
 	_wheel_odometry = new wheel_odometry;
@@ -65,9 +65,10 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 omni_wheel::~omni_wheel() {}
 
 void omni_wheel::write() {
+	/*
 	static float mv[_wheel_num] = {};
 	static float prev_e[_wheel_num] = {};
-
+	 */
 	float p[_wheel_num];
 	float max = 0.0f;
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -85,37 +86,22 @@ void omni_wheel::write() {
 			p[i] /= max;
 		}
 	}
-
-	const float encoder_coeff[] = {
-			-1.0f,
-			1.0f,
-			1.0f
-	};
 	// 回転数制御
 	for (size_t i = 0; i < _wheel_num; ++i) {
-		float f = _wheel_odometry->get_raw(i) * 1000.0f / ini_parser::instance().setting<int>("encoder_resolution");
-		float target_f = p[i] * ini_parser::instance().setting<float>("target_tire_frequency");
-
-		/*
-		const float threshold = 0.01f;
-		if (std::abs(target_f) < threshold) {
-			p[i] = _tire_frequency_pid[i].update(0.0f);
-		} else {
-			p[i] = _tire_frequency_pid[i].update(target_f + f);
-		}
-		*/
+		float f = _wheel_odometry->get_raw(i) * 1000.0f / ini_parser::instance().get<int>("setting", "encoder_resolution");
+		float target_f = p[i] * ini_parser::instance().get<float>("setting", "target_tire_frequency");
 
 		float threshold = 0.01f;
-		if (std::abs(target_f) > threshold) {
-			float e = target_f + f;
-			//float e = f - target_f;
+		if (std::fabs(target_f) > threshold) {
+			float e = target_f - f;
+			p[i] = _tire_frequency_pid[i](e);
+			/*
 			mv[i] += e * ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kp");
-			//mv[i] += (prev_e[i] - e) * ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kd");
 			p[i] = mv[i] + e * ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kd");
 			prev_e[i] = e;
+			*/
 		} else {
-			mv[i] = 0.0f;
-			prev_e[i] = 0.0f;
+			_tire_frequency_pid[i].init();
 		}
 
 		std::cout << target_f << " " << f << ":";
@@ -144,3 +130,10 @@ void omni_wheel::set_velocity(float x, float y) {
 void omni_wheel::set_angular_velocity(float v) {
 	_angular_velocity = std::max(-1.0f, std::min(1.0f, v));
 }
+
+void omni_wheel::set_tire_frequency_pid_coeff(float kp, float ki, float kd) {
+	for (size_t i = 0; i < _wheel_num; ++i) {
+		_tire_frequency_pid[i].update_coeff(kp, ki, kd);
+	}
+}
+

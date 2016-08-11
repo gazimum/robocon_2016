@@ -14,7 +14,7 @@
 
 void main_thread_func() {
 	using namespace serial_connected_mcu;
-	std::this_thread::sleep_for(std::chrono::milliseconds(80));
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	serial_connected_mcu_master::instance().init();
 

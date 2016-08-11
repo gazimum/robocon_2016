@@ -10,24 +10,26 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/optional.hpp>
 #include <ini_parser.hpp>
+#include <fstream>
 
-const std::string ini_parser::_key_config_file_directory_name = "/home/pi/2016robocon/key_config.ini";
-const std::string ini_parser::_setting_file_directory_name = "/home/pi/2016robocon/setting.ini";
-const std::string ini_parser::_network_profile_file_directory_name = "/home/pi/2016robocon/network_profile.ini";
-const std::string ini_parser::_i2c_profile_file_directory_name = "/home/pi/2016robocon/i2c_profile.ini";
+#include <iostream>
 
-const std::string ini_parser::_key_config_file_section_name = "key_config";
-const std::string ini_parser::_setting_file_section_name = "setting";
-const std::string ini_parser::_network_profile_file_section_name = "network_profile";
-const std::string ini_parser::_i2c_profile_file_section_name = "i2c_profile";
+const std::string ini_parser::_directory_name = "/home/pi/2016robocon/";
+const std::string ini_parser::_ini_file_list_file_name = "ini_file_list.ini";
 
 ini_parser::ini_parser() {
-	init();
+	read();
 }
 
-void ini_parser::init() {
-	boost::property_tree::read_ini(_key_config_file_directory_name, _key_config_ptree);
-	boost::property_tree::read_ini(_setting_file_directory_name, _setting_ptree);
-	boost::property_tree::read_ini(_network_profile_file_directory_name, _network_profile_ptree);
-	boost::property_tree::read_ini(_i2c_profile_file_directory_name, _i2c_profile_ptree);
+void ini_parser::read() {
+	std::ifstream list;
+	list.open(_directory_name + _ini_file_list_file_name, std::ios::in);
+
+	std::string name;
+	while (std::getline(list, name)) {
+		ptree p;
+		boost::property_tree::read_ini(_directory_name + name, p);
+		_ptrees.insert(ptree_container_type::value_type(name, p));
+
+	}
 }

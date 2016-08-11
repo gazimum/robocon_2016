@@ -24,12 +24,13 @@
 communication::communication() {}
 
 void communication::operator()() {
-	int my_port = ini_parser::instance().network_profile<int>(
-				  	  "port_for_" + ini_parser::instance().network_profile<std::string>("my_name")
+	int my_port = ini_parser::instance().get<int>(
+				  	  "network_profile",
+				  	  "port_for_" + ini_parser::instance().get<std::string>("network_profile", "my_name")
 				  );
 
 	boost::asio::io_service io;
-	network::RobotClient client(ini_parser::instance().network_profile<std::string>("server_ip_address"),
+	network::RobotClient client(ini_parser::instance().get<std::string>("network_profile", "server_ip_address"),
 								my_port, 40, "\n", io);
 	client.connect();
 
@@ -52,7 +53,7 @@ void communication::operator()() {
 		server_shared_data::_mutex.lock();
 		d = server_shared_data::_data[5000] = client.get(5000);
 		server_shared_data::_mutex.unlock();
-		std::this_thread::sleep_for(std::chrono::milliseconds(40));
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
 		/*
 		for (const auto& i : d) {

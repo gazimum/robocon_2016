@@ -17,12 +17,14 @@ public:
 	virtual ~speed_pid();
 
 	virtual T update(const T& e);
+	virtual void init();
 
 private:
-	const T _F1;
-	const T _F2;
+	virtual void update_specific_coeff();
+
+	T _F1;
+	T _F2;
 	T _J;
-	T _mv;
 	T _prev_error;
 };
 

@@ -8,7 +8,7 @@
 #ifndef MOVING_OBJECT_HPP_
 #define MOVING_OBJECT_HPP_
 
-#include <pid/speed_pid.hpp>
+#include <pid/position_pid.hpp>
 #include "omni_wheel.hpp"
 #include "lpf.hpp"
 
@@ -24,8 +24,6 @@ private:
 	lpf<float> _lpf_velocity_x;
 	lpf<float> _lpf_velocity_y;
 	lpf<float> _lpf_angular_velocity;
-	position_pid<float> _pid_velocity_x;
-	position_pid<float> _pid_velocity_y;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */

@@ -8,6 +8,7 @@
 #ifndef INI_PARSER_HPP_
 #define INI_PARSER_HPP_
 
+#include <map>
 #include <string>
 #include <singleton.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -16,17 +17,19 @@
 
 class ini_parser : public singleton<ini_parser> {
 public:
-	void init();
+	typedef boost::property_tree::ptree ptree;
+	typedef std::map<std::string, ptree> ptree_container_type;
+
+	void read();
 
 	template <class T>
-	inline T key_config(std::string key) {
+	inline T get(std::string ptree_name, std::string key) {
 		boost::optional<T> t{
-			_key_config_ptree.get_optional<T>(_key_config_file_section_name + "." + key)
+			_ptrees.at(ptree_name + ".ini").get_optional<T>(ptree_name + "." + key)
 		};
 
 		if (!t) {
-			std::cerr << "\"" << key << "\" is not found in " << _key_config_file_directory_name << "\""
-					"" << std::endl;
+			std::cerr << "\"" << key << "\" is not found in \"" << ptree_name << "\"" << std::endl;
 			return T();
 		}
 
@@ -34,72 +37,9 @@ public:
 	}
 
 	template <class T>
-	inline T setting(std::string key) {
-		boost::optional<T> t{
-			_setting_ptree.get_optional<T>(_setting_file_section_name + "." + key)
-		};
-
-		if (!t) {
-			std::cerr << "\"" << key << "\" is not found in " << _setting_file_directory_name << "\"" << std::endl;
-			return T();
-		}
-
-		return t.get();
-	//	return _setting_ptree.get_optional<T>(_setting_file_section_name + "." + key).get();
-	}
-
-	template <class T>
-	inline T network_profile(std::string key) {
-		boost::optional<T> t{
-			_network_profile_ptree.get_optional<T>(_network_profile_file_section_name + "." + key)
-		};
-
-		if (!t) {
-			std::cerr << "\"" << key << "\" is not found in \"" << _network_profile_file_directory_name << "\"" << std::endl;
-			return T();
-		}
-
-		return t.get();
-	//	return _network_profile_ptree.get_optional<T>(_network_profile_file_section_name + "." + key).get();
-	}
-
-	template <class T>
-	inline T i2c_profile(std::string key) {
-		boost::optional<T> t{
-			_i2c_profile_ptree.get_optional<T>(_i2c_profile_file_section_name + "." + key)
-		};
-
-		if (!t) {
-			std::cerr << "\"" << key << "\" is not found in \"" << _i2c_profile_file_directory_name << "\"" << std::endl;
-			return T();
-		}
-
-		return t.get();
-	//	return _network_profile_ptree.get_optional<T>(_network_profile_file_section_name + "." + key).get();
-	}
-
-	template <class T>
-	inline void set_key_config(std::string key, T config) {
-		_key_config_ptree.put(_key_config_file_section_name + "." + key, config);
-		write_ini(_key_config_file_directory_name, _key_config_ptree);
-	}
-
-	template <class T>
-	inline void set_setting(std::string key, T an) {
-		_setting_ptree.put(_setting_file_section_name + "." + key, an);
-		write_ini(_setting_file_directory_name, _setting_ptree);
-	}
-
-	template <class T>
-	inline void set_network_profile(std::string key, T value) {
-		_network_profile_ptree.put(_network_profile_file_section_name + "." + key, value);
-		write_ini(_network_profile_file_directory_name, _network_profile_ptree);
-	}
-
-	template <class T>
-	inline void set_i2c_profile(std::string key, T value) {
-		_i2c_profile_ptree.put(_i2c_profile_file_section_name + "." + key, value);
-		write_ini(_i2c_profile_file_directory_name, _i2c_profile_ptree);
+	inline void set(std::string ptree_name, std::string key, T value) {
+		_ptrees.at(ptree_name + ".ini").put(ptree_name + "." + key, value);
+		write_ini(_directory_name + ptree_name, _ptrees.at(ptree_name));
 	}
 
 private:
@@ -107,20 +47,11 @@ private:
 
 	ini_parser();
 
-	static const std::string _key_config_file_directory_name;
-	static const std::string _setting_file_directory_name;
-	static const std::string _network_profile_file_directory_name;
-	static const std::string _i2c_profile_file_directory_name;
+	static const std::string _directory_name;
+	static const std::string _ini_file_list_file_name;
 
-	static const std::string _key_config_file_section_name;
-	static const std::string _setting_file_section_name;
-	static const std::string _network_profile_file_section_name;
-	static const std::string _i2c_profile_file_section_name;
-
-	boost::property_tree::ptree _key_config_ptree;
-	boost::property_tree::ptree _setting_ptree;
-	boost::property_tree::ptree _network_profile_ptree;
-	boost::property_tree::ptree _i2c_profile_ptree;
+	ptree _ptree_name_list_ptree;
+	ptree_container_type _ptrees;
 };
 
 
