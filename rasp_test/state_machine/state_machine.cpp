@@ -17,7 +17,7 @@ state_machine::~state_machine() {
 }
 
 void state_machine::add_state(std::string name, std::function<std::string(void)> action) {
-	_state_map.insert(state_map_type::value_type(name, action));
+	_state_map[name] = action;
 }
 
 void state_machine::update() {

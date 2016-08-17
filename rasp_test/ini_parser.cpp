@@ -15,7 +15,7 @@
 #include <iostream>
 
 const std::string ini_parser::_directory_name = "/home/pi/2016robocon/";
-const std::string ini_parser::_ini_file_list_file_name = "ini_file_list.ini";
+const std::string ini_parser::_ini_file_list_file_name = "ini_file_list.txt";
 
 ini_parser::ini_parser() {
 	read();
