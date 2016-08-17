@@ -6,6 +6,7 @@
  */
 
 #include <controller/basic_controller.hpp>
+#include <controller/simple_controller.hpp>
 #include <ini_parser.hpp>
 #include <iostream>
 #include <functional>
@@ -23,32 +24,30 @@ const std::map<std::string, size_t> basic_controller::_arm_abilities_init_positi
 	{_arm_abilities_name[2], 0}
 };
 
-basic_controller::basic_controller() {
+basic_controller::basic_controller()  {
 	for (auto&& i : _arm_abilities_position_index) {
 		i.second = _arm_abilities_init_position_index.at(i.first);
 	}
-
-	//_state_machine.add_state("waiting", std::function<std::string(void)>());
 }
 
 basic_controller::~basic_controller() {
 	// TODO Auto-generated destructor stub
 }
 
-controller_impl* basic_controller::update(std::map<std::string, float>& normalized_controller_state) {
-	update_ini_parser(normalized_controller_state);
-	update_movement(normalized_controller_state);
-	update_arm(normalized_controller_state);
-	return update_sequence(normalized_controller_state);
+controller_impl* basic_controller::update() {
+	update_ini_parser();
+	update_movement();
+	update_arm();
+	return update_sequence();
 }
 
-void basic_controller::update_ini_parser(std::map<std::string, float>& normalized_controller_state) {
+void basic_controller::update_ini_parser() {
 	static float prev_state = false;
 
 	std::string key {
 		ini_parser::instance().get<std::string>("key_config", "reload_ini_file")
 	};
-	float state = (normalized_controller_state[key] > _command_threshold);
+	float state = (_normalized_controller_state[key] > _command_threshold);
 
 	if (state && !prev_state) {
 		ini_parser::instance().read();
@@ -59,14 +58,14 @@ void basic_controller::update_ini_parser(std::map<std::string, float>& normalize
 	prev_state = state;
 }
 
-void basic_controller::update_movement(std::map<std::string, float>& normalized_controller_state) {
+void basic_controller::update_movement() {
 	ini_parser& ini {
 		ini_parser::instance()
 	};
 
 	// 平行移動
-	float vx = normalized_controller_state[ini.get<std::string>("key_config", "velocity_x")];
-	float vy = normalized_controller_state[ini.get<std::string>("key_config", "velocity_y")];
+	float vx = _normalized_controller_state[ini.get<std::string>("key_config", "velocity_x")];
+	float vy = _normalized_controller_state[ini.get<std::string>("key_config", "velocity_y")];
 
 	float l = vx * vx + vy * vy;
 	if (l > 1.0f) {
@@ -78,17 +77,17 @@ void basic_controller::update_movement(std::map<std::string, float>& normalized_
 	_command["velocity_y"] = vy;
 
 	// 旋回
-	_command["angular_velocity"]  = normalized_controller_state[ini.get<std::string>("key_config", "turn_+")];
-	_command["angular_velocity"] -= normalized_controller_state[ini.get<std::string>("key_config", "turn_-")];
+	_command["angular_velocity"]  = _normalized_controller_state[ini.get<std::string>("key_config", "turn_+")];
+	_command["angular_velocity"] -= _normalized_controller_state[ini.get<std::string>("key_config", "turn_-")];
 }
 
-void basic_controller::update_arm(std::map<std::string, float>& normalized_controller_state) {
+void basic_controller::update_arm() {
 	ini_parser& ini {
 		ini_parser::instance()
 	};
 
 	static bool prev_ib_state = false;
-	bool ib_state = udpate_arm_index_and_adjustment(normalized_controller_state);
+	bool ib_state = udpate_arm_index_and_adjustment();
 
 	if (!ib_state && prev_ib_state) {
 		// 操作が終わったら微調整分を適用してファイルに書き込む
@@ -102,6 +101,7 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 			}
 			_arm_adjustment[i] = 0.0f;
 		}
+		ini.write();
 	}
 	prev_ib_state = ib_state;
 
@@ -109,7 +109,7 @@ void basic_controller::update_arm(std::map<std::string, float>& normalized_contr
 	update_arm_abilities_position();
 }
 
-bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, float>& normalized_controller_state) {
+bool basic_controller::udpate_arm_index_and_adjustment() {
 	static std::string prev_enabled_ib_name;
 
 	ini_parser& ini {
@@ -124,7 +124,7 @@ bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, flo
 		std::string key{
 			ini.get<std::string>("key_config", "IB_" + i)
 		};
-		ib_buttons_state[key] = (normalized_controller_state[key] > _command_threshold);
+		ib_buttons_state[key] = (_normalized_controller_state[key] > _command_threshold);
 	}
 
 	for (const auto& i : _arm_abilities_name) {
@@ -132,9 +132,9 @@ bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, flo
 			ini.get<std::string>("key_config", "IB_" + i)
 		};
 		if (ib_buttons_state[key]) {
-			if (update_arm_abilities_position_index(normalized_controller_state, i)) {
+			if (update_arm_abilities_position_index(i)) {
 				// 2. index + IB + (+ or - or 0) : 指定番号の状態に遷移.さらにそこから微調整可能.
-				update_arm_adjustment(normalized_controller_state, i);
+				update_arm_adjustment(i);
 			} else if (!_prev_ib_buttons_state[key]) {
 				// 	立ち上がりなら
 				// 1. IB : 状態を1ずつ遷移
@@ -158,30 +158,45 @@ bool basic_controller::udpate_arm_index_and_adjustment(std::map<std::string, flo
 	return false;
 }
 
-void basic_controller::update_arm_adjustment(std::map<std::string, float> normalized_controller_state, std::string name) {
+void basic_controller::update_arm_adjustment(std::string name) {
 	ini_parser& ini{
 		ini_parser::instance()
 	};
 
-	float adj = normalized_controller_state[ini.get<std::string>("key_config", "arm_adjusting_+")];
-	adj -= normalized_controller_state[ini.get<std::string>("key_config", "arm_adjusting_-")];
-	_arm_adjustment[name] += adj * ini.get<float>("setting", "command_coeff_arm_adjustment");
+	float adj = _normalized_controller_state[ini.get<std::string>("key_config", "arm_adjusting_+")];
+	adj -= _normalized_controller_state[ini.get<std::string>("key_config", "arm_adjusting_-")];
+	_arm_adjustment[name] += adj * ini.get<float>("command_coeff", "command_coeff_arm_adjustment");
 
-	float p = ini.get<float>(
-					"setting", name + "_position_" + std::to_string(_arm_abilities_position_index[name])
-			   );
-	if (p + _arm_adjustment[name] > 1.0f) {
-		_arm_adjustment[name] = 1.0f - p;
-	} else if (p + _arm_adjustment[name] < -1.0f) {
-		_arm_adjustment[name] = -1.0f - p;
+	float pos = ini.get<float>(
+				 	 "setting", name + "_position_" + std::to_string(_arm_abilities_position_index[name])
+			   	 );
+	if (pos + _arm_adjustment[name] > 1.0f) {
+		_arm_adjustment[name] = 1.0f - pos;
+	} else if (pos + _arm_adjustment[name] < -1.0f) {
+		_arm_adjustment[name] = -1.0f - pos;
 	}
 }
 
-controller_impl* basic_controller::update_sequence(std::map<std::string, float>& normalized_controller_state) {
+controller_impl* basic_controller::update_sequence() {
+	std::string key[] {
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_1"),
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_2")
+	};
+
+	bool is_change_key_pressed = (_normalized_controller_state[key[0]] > _command_threshold);
+	is_change_key_pressed |= (_normalized_controller_state[key[1]] > _command_threshold);
+
+	bool was_change_key_pressed = (_prev_normalized_controller_state[key[0]] > _command_threshold);
+	is_change_key_pressed |= (_prev_normalized_controller_state[key[1]] > _command_threshold);
+
+	if (is_change_key_pressed && !was_change_key_pressed) {
+		return new simple_controller();
+	}
+
 	return this;
 }
 
-bool basic_controller::update_arm_abilities_position_index(std::map<std::string, float>& normalized_controller_state, std::string name) {
+bool basic_controller::update_arm_abilities_position_index(std::string name) {
 	ini_parser& ini{
 		ini_parser::instance()
 	};
@@ -190,7 +205,7 @@ bool basic_controller::update_arm_abilities_position_index(std::map<std::string,
 		std::string key {
 			"arm_abilities_position_index_" + std::to_string(i)
 		};
-		if (normalized_controller_state[ini.get<std::string>("key_config", key)] > _command_threshold) {
+		if (_normalized_controller_state[ini.get<std::string>("key_config", key)] > _command_threshold) {
 			_arm_abilities_position_index[name] = i;
 			return true;
 		}
@@ -206,10 +221,10 @@ void basic_controller::update_arm_abilities_position() {
 		};
 
 		// todo : remove this when beta mode end
-		if (i == "angle") {
+		if ((i == "angle") || (i == "height")) {
 			_command[i] = ini_parser::instance().get<float>("setting", key);
 			_command[i] += _arm_adjustment[i];
-		} else if ((i == "length") || (i == "width") || (i == "height")) {
+		} else if ((i == "length") || (i == "width")) {
 			_command[i] = _arm_adjustment[i];
 		}
 	}

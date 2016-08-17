@@ -36,9 +36,9 @@ void moving_object::update() {
 
 	if (controller::instance().get("reload_ini_file") > 0.0f) {
 		_omni_wheel.set_tire_frequency_pid_coeff(
-			ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
-			ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
-			ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
 		);
 	}
 

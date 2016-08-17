@@ -16,7 +16,7 @@ class state_machine {
 public:
 	typedef std::map<std::string, std::function<std::string(void)> > state_map_type;
 
-	state_machine();
+	state_machine(std::string initial_state);
 	~state_machine();
 
 	void add_state(std::string name, std::function<std::string(void)> action);

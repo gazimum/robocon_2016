@@ -21,11 +21,13 @@ public:
 	float get(std::string key);
 
 protected:
-	virtual controller_impl* update(std::map<std::string, float>& normalized_controller_state) = 0;
+	virtual controller_impl* update() = 0;
 
 	static const float _command_threshold;
 
 	std::map<std::string, float> _command;
+	std::map<std::string, float> _normalized_controller_state;
+	std::map<std::string, float> _prev_normalized_controller_state;
 };
 
 #endif /* CONTROLLER_CONTROLLER_IMPL_HPP_ */

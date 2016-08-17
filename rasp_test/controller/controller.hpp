@@ -20,6 +20,8 @@ public:
 	float operator()(std::string key);
 	float get(std::string key);
 
+	virtual ~controller();
+
 private:
 	friend class singleton<controller>;
 	controller();

@@ -8,14 +8,14 @@
 template <class T>
 class position_pid : public pid<T> {
 public:
-	position_pid(const T& kp, const T& ki, const T& kd);
+	position_pid(const T& kp = T(), const T& ki = T(), const T& kd = T());
 	virtual ~position_pid();
 
-	virtual T update(const T& e);
-	virtual void init();
+	virtual T update(const T& e) override;
+	virtual void init() override;
 
 private:
-	virtual void update_specific_coeff();
+	virtual void update_specific_coeff() override;
 
 	float _prev_error;
 	float _accum_error;

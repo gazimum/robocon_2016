@@ -12,8 +12,6 @@
 #include <ini_parser.hpp>
 #include <fstream>
 
-#include <iostream>
-
 const std::string ini_parser::_directory_name = "/home/pi/2016robocon/";
 const std::string ini_parser::_ini_file_list_file_name = "ini_file_list.txt";
 
@@ -27,9 +25,22 @@ void ini_parser::read() {
 
 	std::string name;
 	while (std::getline(list, name)) {
-		ptree p;
-		boost::property_tree::read_ini(_directory_name + name, p);
-		_ptrees.insert(ptree_container_type::value_type(name, p));
-
+		read(name);
 	}
+}
+
+void ini_parser::read(std::string name) {
+	ptree p;
+	boost::property_tree::read_ini(_directory_name + name, p);
+	_ptrees[name] = p;
+}
+
+void ini_parser::write() {
+	for (const auto& i : _ptrees) {
+		write_ini(_directory_name + i.first, i.second);
+	}
+}
+
+void ini_parser::write(std::string name) {
+	write_ini(_directory_name + name, _ptrees.at(name));
 }

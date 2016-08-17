@@ -14,8 +14,10 @@ template <class T>
 class singleton {
 public:
 	static T& instance() {
-		static typename T::singleton_pointer_type instance(create());
-		return reference(instance);
+		static std::unique_ptr<T> instance {
+			create()
+		};
+		return *instance;
 	}
 
 protected:
@@ -23,14 +25,8 @@ protected:
 	virtual ~singleton() {}
 
 private:
-	typedef std::unique_ptr<T> singleton_pointer_type;
-
 	inline static T* create() {
 		return new T();
-	}
-
-	inline static T& reference(const singleton_pointer_type& ptr) {
-		return *ptr;
 	}
 
 	singleton(const singleton&) = delete;

@@ -13,14 +13,14 @@
 template <class T>
 class speed_pid : public pid<T> {
 public:
-	speed_pid(const T& kp, const T& ki, const T& kd);
+	speed_pid(const T& kp = T(), const T& ki = T(), const T& kd = T());
 	virtual ~speed_pid();
 
-	virtual T update(const T& e);
-	virtual void init();
+	virtual T update(const T& e) override;
+	virtual void init() override;
 
 private:
-	virtual void update_specific_coeff();
+	virtual void update_specific_coeff() override;
 
 	T _F1;
 	T _F2;

@@ -44,19 +44,19 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 						   _angular_velocity{float()},
 						   _tire_frequency_pid{
 							   {
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
 							   },
 							   {
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
 							   },
 							   {
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().get<float>("setting", "omni_wheel_tire_frequency_pid_kd")
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
+								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
 							   }
 						   } {
 	_wheel_odometry = new wheel_odometry;
@@ -65,10 +65,6 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 omni_wheel::~omni_wheel() {}
 
 void omni_wheel::write() {
-	/*
-	static float mv[_wheel_num] = {};
-	static float prev_e[_wheel_num] = {};
-	 */
 	float p[_wheel_num];
 	float max = 0.0f;
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -95,11 +91,6 @@ void omni_wheel::write() {
 		if (std::fabs(target_f) > threshold) {
 			float e = target_f - f;
 			p[i] = _tire_frequency_pid[i](e);
-			/*
-			mv[i] += e * ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kp");
-			p[i] = mv[i] + e * ini_parser::instance().setting<float>("omni_wheel_tire_frequency_pid_kd");
-			prev_e[i] = e;
-			*/
 		} else {
 			_tire_frequency_pid[i].init();
 		}

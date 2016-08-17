@@ -27,14 +27,12 @@ T position_pid<T>::update(const T& e) {
 		return pid<T>::_mv;
 	}
 
-	float dmv = pid<T>::_kp * e;
-	dmv += pid<T>::_ki * (e - _prev_error);
-	dmv += pid<T>::_kd * _accum_error;
+	pid<T>::_mv  = pid<T>::_kp * e;
+	pid<T>::_mv += pid<T>::_ki * (e - _prev_error);
+	pid<T>::_mv += pid<T>::_kd * _accum_error;
 
 	_prev_error = e;
 	_accum_error += e;
-
-	pid<T>::_mv += dmv;
 	return pid<T>::_mv;
 }
 

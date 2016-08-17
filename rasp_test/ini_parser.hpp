@@ -21,9 +21,18 @@ public:
 	typedef std::map<std::string, ptree> ptree_container_type;
 
 	void read();
+	void read(std::string name);
+
+	void write();
+	void write(std::string name);
 
 	template <class T>
 	inline T get(std::string ptree_name, std::string key) {
+		if (_ptrees.find(ptree_name + ".ini") == _ptrees.end()) {
+			std::cerr << "\"" << ptree_name << ".ini" << "\"is not found in \"ptrees\"" << std::endl;
+			return T();
+		}
+
 		boost::optional<T> t{
 			_ptrees.at(ptree_name + ".ini").get_optional<T>(ptree_name + "." + key)
 		};
@@ -38,8 +47,12 @@ public:
 
 	template <class T>
 	inline void set(std::string ptree_name, std::string key, T value) {
+		if (_ptrees.find(ptree_name + ".ini") == _ptrees.end()) {
+			std::cerr << "\"" << ptree_name << ".ini" << "\"is not found in \"ptrees\"" << std::endl;
+			return;
+		}
+
 		_ptrees.at(ptree_name + ".ini").put(ptree_name + "." + key, value);
-		write_ini(_directory_name + ptree_name, _ptrees.at(ptree_name));
 	}
 
 private:

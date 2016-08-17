@@ -7,10 +7,7 @@
 
 #include <state_machine/state_machine.hpp>
 
-state_machine::state_machine() {
-	// TODO 自動生成されたコンストラクター・スタブ
-
-}
+state_machine::state_machine(std::string initial_state) : _current_state_name(initial_state) {}
 
 state_machine::~state_machine() {
 	// TODO Auto-generated destructor stub

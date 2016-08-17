@@ -8,23 +8,23 @@
 #ifndef ARM_HPP_
 #define ARM_HPP_
 
-#include <pid/speed_pid.hpp>
+#include <pid/position_pid.hpp>
+#include <map>
+#include <string>
 
 class arm {
 public:
+	typedef std::map<std::string, position_pid<float>> pid_container_type;
+
 	arm();
 
 	void update();
+	void update_pid_coeff();
 
 private:
 	void update_angle();
 
-	float _width;
-	float _length;
-
-	speed_pid<float> _length_pid;
-	speed_pid<float> _width_pid;
-	speed_pid<float> _height_pid;
+	pid_container_type _pid;
 };
 
 #endif /* ARM_HPP_ */

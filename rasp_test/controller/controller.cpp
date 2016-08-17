@@ -16,6 +16,10 @@ controller::controller() : _controller_impl(nullptr) {
 	_controller_impl = new basic_controller();
 }
 
+controller::~controller() {
+	delete _controller_impl;
+}
+
 float controller::operator()(std::string key) {
 	return get(key);
 }
