@@ -10,7 +10,7 @@
 #include <ini_parser.hpp>
 #include <string>
 
-const float simple_controller::_release_wait_time_ms = 6500.0f;
+const double simple_controller::_release_wait_time_ms = 6500.0f;
 
 simple_controller::simple_controller() : _state_machine("release") {
 	_state_machine.add_state("release", 		std::bind(&simple_controller::release, 		 this));
@@ -112,15 +112,13 @@ void simple_controller::update_height_by_index_and_adjust() {
 }
 
 void simple_controller::update_height_index() {
-
-
 	std::string grab_key {
 		ini_parser::instance().get<std::string>("key_config", "grab")
 	};
 	if ((     _normalized_controller_state[grab_key] >  _command_threshold) &&
 		(_prev_normalized_controller_state[grab_key] <= _command_threshold)){
 		_time = std::chrono::system_clock::now();
-		return "grab";
+		//return "grab";
 	}
 }
 

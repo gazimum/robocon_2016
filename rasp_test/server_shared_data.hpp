@@ -9,7 +9,7 @@
 class server_shared_data {
 public:
 	typedef std::map<std::string, int> server_shared_data_type;
-	typedef std::map<int, server_shared_data_type> server_shared_data_container_type;
+	typedef std::map<std::string, server_shared_data_type> server_shared_data_container_type;
 
 	static std::mutex _mutex;
 	static server_shared_data_container_type _data;
