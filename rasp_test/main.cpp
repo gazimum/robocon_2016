@@ -1,10 +1,3 @@
-/*
-#define BOOST_DATE_TIME_NO_LIB
-#define BOOST_REGEX_NO_LIB
-#define BOOST_ERROR_CODE_HEADER_ONLY
-#define BOOST_SYSTEM_NO_LIB
-*/
-
 #include <thread>
 #include <communication.hpp>
 #include <robot/robot.hpp>
@@ -18,7 +11,7 @@ void main_thread_func() {
 
 	serial_connected_mcu_master::instance().init();
 
-	while (true) {
+	while (!robot::instance().is_end()) {
 		robot::instance().update();
 		i2c::instance().write();
 		controller::instance().update();

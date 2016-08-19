@@ -40,9 +40,9 @@ const float omni_wheel::_wheel_position_angles[] = {
 };
 
 omni_wheel::omni_wheel() : _velocity_x(float()),
-						   _velocity_y(float()),
-						   _angular_velocity{float()},
-						   _tire_frequency_pid{
+							   _velocity_y(float()),
+							   _angular_velocity{float()},
+							   _tire_frequency_pid{
 							   {
 								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
 								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
@@ -64,7 +64,11 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 
 omni_wheel::~omni_wheel() {}
 
+//#include <test.hpp>
+
 void omni_wheel::write() {
+	//static test error_logger;
+
 	float p[_wheel_num];
 	float max = 0.0f;
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -73,7 +77,6 @@ void omni_wheel::write() {
 
 		if (std::abs(p[i]) > 1.0f ) {
 			max = std::max(std::abs(p[i]), max);
-
 		}
 	}
 
@@ -95,11 +98,22 @@ void omni_wheel::write() {
 			_tire_frequency_pid[i].init();
 		}
 
-		std::cout << target_f << " " << f << ":";
+		/*
+		if (i == 0) {
+			static bool prev = false;
+			bool now = (std::abs(_angular_velocity) > 0.1f);
+
+			error_logger.update(target_f - f);
+			if (now && !prev) {
+				error_logger.save();
+			}
+			prev = now;
+		}
+		*/
 
 		p[i] = std::max(-1.0f, std::min(p[i], 1.0f));
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
 
 
 	for (size_t i = 0; i < _wheel_num; ++i) {

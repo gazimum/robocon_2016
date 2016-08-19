@@ -16,6 +16,8 @@ class robot : public singleton<robot> {
 public:
 	void update();
 
+	bool is_end();
+
 private:
 	friend class singleton<robot>;
 	robot();

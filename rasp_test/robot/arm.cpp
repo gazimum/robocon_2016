@@ -42,7 +42,6 @@ void arm::update() {
 
 	err = controller::instance().get("height") - pos[1];
 	i2c::instance().set("height", _pid.at("height").update(err));
-	std::cout << err << std::endl;
 
 	err = controller::instance().get("width");
 	i2c::instance().set("width", err * 2.5f);

@@ -16,3 +16,6 @@ void robot::update() {
 	_moving_object.update();
 }
 
+bool robot::is_end() {
+	return false;
+}

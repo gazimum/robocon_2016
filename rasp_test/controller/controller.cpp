@@ -29,12 +29,12 @@ float controller::get(std::string key) {
 }
 
 void controller::update() {
-	std::string key = "port_for_" + ini_parser::instance().get<std::string>("network_profile", "my_controller_name");
-	int my_controllers_port = ini_parser::instance().get<int>("network_profile", key);
+	std::string key = "ip_for_" + ini_parser::instance().get<std::string>("network_profile", "my_controller_name");
+	std::string ip = ini_parser::instance().get<std::string>("network_profile", key);
 
 	server_shared_data::_mutex.lock();
 	std::map<std::string, int> command {
-		server_shared_data::_data[my_controllers_port]
+		server_shared_data::_data[ip]
 	};
 	server_shared_data::_mutex.unlock();
 
