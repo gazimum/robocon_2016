@@ -64,11 +64,7 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 
 omni_wheel::~omni_wheel() {}
 
-//#include <test.hpp>
-
 void omni_wheel::write() {
-	//static test error_logger;
-
 	float p[_wheel_num];
 	float max = 0.0f;
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -80,7 +76,7 @@ void omni_wheel::write() {
 		}
 	}
 
-	if (max != 0.0f) {
+	if (std::abs(max) > 1.0f) {
 		for (size_t i = 0; i < _wheel_num; ++i) {
 			p[i] /= max;
 		}
@@ -98,22 +94,8 @@ void omni_wheel::write() {
 			_tire_frequency_pid[i].init();
 		}
 
-		/*
-		if (i == 0) {
-			static bool prev = false;
-			bool now = (std::abs(_angular_velocity) > 0.1f);
-
-			error_logger.update(target_f - f);
-			if (now && !prev) {
-				error_logger.save();
-			}
-			prev = now;
-		}
-		*/
-
 		p[i] = std::max(-1.0f, std::min(p[i], 1.0f));
 	}
-	//std::cout << std::endl;
 
 
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -141,4 +123,3 @@ void omni_wheel::set_tire_frequency_pid_coeff(float kp, float ki, float kd) {
 		_tire_frequency_pid[i].update_coeff(kp, ki, kd);
 	}
 }
-

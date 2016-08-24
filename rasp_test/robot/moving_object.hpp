@@ -10,7 +10,6 @@
 
 #include <pid/position_pid.hpp>
 #include "omni_wheel.hpp"
-#include "lpf.hpp"
 
 class moving_object {
 public:
@@ -21,9 +20,6 @@ public:
 
 private:
 	omni_wheel _omni_wheel;
-	lpf<float> _lpf_velocity_x;
-	lpf<float> _lpf_velocity_y;
-	lpf<float> _lpf_angular_velocity;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */

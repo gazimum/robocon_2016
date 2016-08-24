@@ -34,10 +34,9 @@ float wheel_odometry::get_tire_advanced_speed_cm_per_sec(int id) {
 	return get_tire_frequency_Hz(id) * 2.0f * M_PI * _tire_radius_cm;
 }
 
-float wheel_odometry::get_raw(int id) {
-	return //_encoder_raw_data_lpf[id](
-				_encoder_normalize_coeff * serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(serial_connected_mcu::ENCODER_SPEED1 + id);
-			//);
+float wheel_odometry::get_raw(int index) {
+	int id = serial_connected_mcu::ENCODER_SPEED1 + index;
+	return _encoder_normalize_coeff * serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(id);
 }
 
 float wheel_odometry::get_heading_rad() {

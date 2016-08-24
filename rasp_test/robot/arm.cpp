@@ -2,9 +2,23 @@
 #include <ini_parser.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <controller/controller.hpp>
-#include <i2c/i2c.hpp>
+#include <dc_motor.hpp>
+#include <solenoid_valve.hpp>
 
-#include <iostream>
+const std::vector<std::string> arm::_dc_motor_name_dataset {
+	"length",
+	"height"
+};
+
+const std::map<std::string, serial_connected_mcu::read_id> arm::_read_id_dataset {
+	{"length", serial_connected_mcu::POTENTIONMETER1},
+	{"height", serial_connected_mcu::POTENTIONMETER3}
+};
+
+const std::vector<std::string> arm::_solenoid_valve_name_dataset {
+	"width",
+	"lock"
+};
 
 arm::arm() {
 	std::string name[] {
@@ -31,26 +45,25 @@ void arm::update() {
 
 	update_angle();
 
-	float pos[]{
-		serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER1),
-		serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER2),
-		serial_connected_mcu::serial_connected_mcu_master::instance().get(serial_connected_mcu::POTENTIONMETER3)
-	};
-
-	float err = controller::instance().get("length");
-	i2c::instance().set("length", err * 2.5f);
-
-	err = controller::instance().get("height") - pos[1];
-	i2c::instance().set("height", _pid.at("height").update(err));
-
-	err = controller::instance().get("width");
-	i2c::instance().set("width", err * 2.5f);
+	for (const auto& name : _dc_motor_name_dataset) {
+		serial_connected_mcu::read_id id = _read_id_dataset.at(name);
+		float position = serial_connected_mcu::serial_connected_mcu_master::instance().get(id);
+		float target = controller::instance().get(name);
+		float mv = _pid.at(name).update(target - position);
+		dc_motor::instance().set(name, mv);
+	}
+	for (const auto& i : _solenoid_valve_name_dataset) {
+		solenoid_valve::instance().set(i, std::round(controller::instance().get(i)));
+	}
 }
 
 void arm::update_angle() {
-	float angle = controller::instance().get("angle");
-	serial_connected_mcu::serial_connected_mcu_master::instance().set(serial_connected_mcu::ESC1,  angle);
-	serial_connected_mcu::serial_connected_mcu_master::instance().set(serial_connected_mcu::ESC2, -angle);
+	serial_connected_mcu::serial_connected_mcu_master::instance().set(
+		serial_connected_mcu::ESC1, controller::instance().get("angle_left")
+	);
+	serial_connected_mcu::serial_connected_mcu_master::instance().set(
+		serial_connected_mcu::ESC2, controller::instance().get("angle_right")
+	);
 }
 
 void arm::update_pid_coeff() {

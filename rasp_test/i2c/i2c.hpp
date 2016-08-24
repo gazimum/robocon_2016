@@ -15,7 +15,7 @@
 
 class i2c : public singleton<i2c> {
 public:
-	void set(std::string name, float p);
+	void set(std::string name, int p);
 	void write();
 
 private:
@@ -24,7 +24,7 @@ private:
 
 	static const size_t _i2c_try_num;
 	const size_t _i2c_device_num;
-	std::map<std::string, float> _buffers;
+	std::map<std::string, int> _write_dataset;
 	std::map<std::string, int> _filehandles;
 };
 

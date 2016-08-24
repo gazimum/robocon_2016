@@ -14,6 +14,7 @@
 
 controller::controller() : _controller_impl(nullptr) {
 	_controller_impl = new basic_controller();
+	_time = std::chrono::system_clock::now();
 }
 
 controller::~controller() {
@@ -40,8 +41,15 @@ void controller::update() {
 
 	controller_impl* state = _controller_impl->update(command);
 	// 状態遷移の処理
+	auto now = std::chrono::system_clock::now();
+	float t = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
+	if (t < ini_parser::instance().get<float>("setting", "controller_sequence_wait_time_ms")) {
+		return;
+	}
+
 	if (state != _controller_impl) {
 		delete _controller_impl;
 		_controller_impl = state;
+		_time = now;
 	}
 }

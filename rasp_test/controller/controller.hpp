@@ -10,6 +10,7 @@
 
 #include <string>
 #include <map>
+#include <chrono>
 #include <singleton.hpp>
 
 class controller_impl;
@@ -27,6 +28,7 @@ private:
 	controller();
 
 	controller_impl* _controller_impl;
+	std::chrono::system_clock::time_point _time;
 };
 
 #endif /* CONTROLLER_HPP_ */

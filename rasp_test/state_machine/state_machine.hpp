@@ -22,6 +22,8 @@ public:
 	void add_state(std::string name, std::function<std::string(void)> action);
 	void update();
 
+	std::string get_current_state_name() const;
+
 private:
 	state_map_type _state_map;
 	std::string _current_state_name;

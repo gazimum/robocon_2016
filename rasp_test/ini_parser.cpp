@@ -19,6 +19,8 @@ ini_parser::ini_parser() {
 	read();
 }
 
+#include <iostream>
+
 void ini_parser::read() {
 	std::ifstream list;
 	list.open(_directory_name + _ini_file_list_file_name, std::ios::in);

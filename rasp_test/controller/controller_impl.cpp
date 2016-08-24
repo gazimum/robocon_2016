@@ -11,7 +11,6 @@
 const float controller_impl::_command_threshold = 0.5f;
 
 controller_impl::controller_impl() {
-
 }
 
 controller_impl::~controller_impl() {
@@ -44,5 +43,33 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 
 float controller_impl::get(std::string key) {
 	return _command[key];
+}
+
+bool controller_impl::is_key_pushed(std::string key) {
+	return (_normalized_controller_state[key] > _command_threshold);
+}
+
+bool controller_impl::is_key_rise(std::string key) {
+	if (_normalized_controller_state[key] <= _command_threshold) {
+		return false;
+	}
+	if (_prev_normalized_controller_state[key] > _command_threshold) {
+		return false;
+	}
+	return true;
+}
+
+
+int controller_impl::read_arm_abilities_position_index() {
+	int n = ini_parser::instance().get<int>("key_config", "arm_index_num");
+	for (size_t i = 0; i < n; ++i) {
+		std::string key {
+			ini_parser::instance().get<std::string>("key_config", "arm_abilities_position_index_" + std::to_string(i))
+		};
+		if (is_key_pushed(key)) {
+			return i;
+		}
+	}
+	return -1;
 }
 

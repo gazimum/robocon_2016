@@ -18,7 +18,7 @@ public:
 
 	float get_tire_frequency_kHz(int id);
 	float get_tire_frequency_Hz(int id);
-	float get_tire_advanced_speed_cm_per_sec(int id);
+	float get_tire_advanced_speed_cm_per_sec(int index);
 	float get_raw(int id);
 	float get_heading_rad();
 

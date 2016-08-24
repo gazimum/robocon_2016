@@ -7,15 +7,25 @@
 
 void main_thread_func() {
 	using namespace serial_connected_mcu;
-	std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-	serial_connected_mcu_master::instance().init();
+	try {
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-	while (!robot::instance().is_end()) {
-		robot::instance().update();
-		i2c::instance().write();
-		controller::instance().update();
-		serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
+		serial_connected_mcu_master::instance().init();
+		robot::instance();
+
+		while (!robot::instance().is_end()) {
+			robot::instance().update();
+			i2c::instance().write();
+			controller::instance().update();
+			serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
+		}
+	}
+	catch (const char* s) {
+		std::cout << s << std::endl;
+	}
+	catch (const std::string& s) {
+		std::cout << s << std::endl;
 	}
 }
 

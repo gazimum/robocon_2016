@@ -57,7 +57,6 @@ public:
 
 private:
 	friend class singleton<ini_parser>;
-
 	ini_parser();
 
 	static const std::string _directory_name;

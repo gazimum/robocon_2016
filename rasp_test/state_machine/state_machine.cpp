@@ -20,3 +20,7 @@ void state_machine::add_state(std::string name, std::function<std::string(void)>
 void state_machine::update() {
 	_current_state_name = _state_map.at(_current_state_name)();
 }
+
+std::string state_machine::get_current_state_name() const {
+	return _current_state_name;
+}
