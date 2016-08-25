@@ -37,6 +37,7 @@ controller_impl* basic_controller::update() {
 	update_ini_parser();
 	update_movement();
 	update_arm();
+	update_angle_base();
 	return update_sequence();
 }
 
@@ -75,11 +76,25 @@ void basic_controller::update_movement() {
 	_command["angular_velocity"] -= _normalized_controller_state[ini.get<std::string>("key_config", "turn_-")];
 }
 
+controller_impl* basic_controller::update_sequence() {
+	std::string key[] {
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_1"),
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_2")
+	};
+	if (is_key_pushed(key[0]) && is_key_rise(key[1])) {
+		return new simple_controller();
+	}
+	return this;
+}
+
+void basic_controller::update_angle_base() {
+	_command["angle"] += _command["height"];
+}
+
 void basic_controller::update_arm() {
 	ini_parser& ini {
 		ini_parser::instance()
 	};
-
 	static bool prev_ib_state = false;
 	bool ib_state = udpate_arm_index_and_adjustment();
 
@@ -171,19 +186,7 @@ void basic_controller::update_arm_abilities_position() {
 		_command[i] += _arm_adjustment[i];
 	}
 
-	_command["angle_left"] = _command["angle"];
+	_command["angle_left"]  = _command["angle"];
 	_command["angle_right"] = _command["angle"];
-}
-
-controller_impl* basic_controller::update_sequence() {
-	std::string key[] {
-		ini_parser::instance().get<std::string>("key_config", "controller_switch_1"),
-		ini_parser::instance().get<std::string>("key_config", "controller_switch_2")
-	};
-	if (is_key_pushed(key[0]) && is_key_rise(key[1])) {
-		return new simple_controller();
-	}
-
-	return this;
 }
 

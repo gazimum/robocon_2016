@@ -23,6 +23,7 @@ public:
 	void set_angular_velocity(float v);
 
 	void set_tire_frequency_pid_coeff(float kp, float ki, float kd);
+	void update_tire_frequency_pid_coeff();
 
 	static constexpr size_t _wheel_num = 3;
 

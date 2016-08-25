@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <robot/wheel_odometry.hpp>
 #include <ini_parser.hpp>
+#include <dc_motor.hpp>
 
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 /*
@@ -33,33 +34,11 @@ const float omni_wheel::_wheel_directions_y[] = {
 	sin(   0.0 * M_PI / 180.0)
 };
 
-const float omni_wheel::_wheel_position_angles[] = {
-	 30.0f * M_PI / 180.0f,
-	150.0f * M_PI / 180.0f,
-	-90.0f * M_PI / 180.0f
-};
-
 omni_wheel::omni_wheel() : _velocity_x(float()),
 							   _velocity_y(float()),
-							   _angular_velocity{float()},
-							   _tire_frequency_pid{
-							   {
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
-							   },
-							   {
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
-							   },
-							   {
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
-								   ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
-							   }
-						   } {
+							   _angular_velocity(float()) {
 	_wheel_odometry = new wheel_odometry;
+	update_tire_frequency_pid_coeff();
 }
 
 omni_wheel::~omni_wheel() {}
@@ -99,7 +78,7 @@ void omni_wheel::write() {
 
 
 	for (size_t i = 0; i < _wheel_num; ++i) {
-		i2c::instance().set("wheel" + std::to_string(i), p[i]);
+		dc_motor::instance().set("wheel" + std::to_string(i), p[i]);
 	}
 }
 
@@ -118,8 +97,12 @@ void omni_wheel::set_angular_velocity(float v) {
 	_angular_velocity = std::max(-1.0f, std::min(1.0f, v));
 }
 
-void omni_wheel::set_tire_frequency_pid_coeff(float kp, float ki, float kd) {
+void omni_wheel::update_tire_frequency_pid_coeff() {
 	for (size_t i = 0; i < _wheel_num; ++i) {
-		_tire_frequency_pid[i].update_coeff(kp, ki, kd);
+		_tire_frequency_pid[i].update_coeff(
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
+		);
 	}
 }

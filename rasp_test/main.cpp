@@ -5,6 +5,8 @@
 #include <controller/controller.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 
+#include <iostream>
+
 void main_thread_func() {
 	using namespace serial_connected_mcu;
 
@@ -12,7 +14,6 @@ void main_thread_func() {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 		serial_connected_mcu_master::instance().init();
-		robot::instance();
 
 		while (!robot::instance().is_end()) {
 			robot::instance().update();

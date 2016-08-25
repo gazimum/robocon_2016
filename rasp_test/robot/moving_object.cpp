@@ -20,21 +20,14 @@ moving_object::moving_object() {}
 moving_object::~moving_object() {}
 
 void moving_object::update() {
-	// 平行移動の速度設定
-	float target_vx = controller::instance().get("velocity_x");
-	float target_vy = controller::instance().get("velocity_y");
-
 	if (controller::instance().get("reload_ini_file") > 0.0f) {
-		_omni_wheel.set_tire_frequency_pid_coeff(
-			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kp"),
-			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_ki"),
-			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
-		);
+		_omni_wheel.update_tire_frequency_pid_coeff();
 	}
 
+	// 平行移動の速度設定
 	_omni_wheel.set_velocity(
-		target_vx,
-		target_vy
+		controller::instance().get("velocity_x"),
+		controller::instance().get("velocity_y")
 	);
 	// 旋回速度設定
 	_omni_wheel.set_angular_velocity(

@@ -44,6 +44,9 @@ void controller::update() {
 	auto now = std::chrono::system_clock::now();
 	float t = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
 	if (t < ini_parser::instance().get<float>("setting", "controller_sequence_wait_time_ms")) {
+		if (state != _controller_impl) {
+			delete state;
+		}
 		return;
 	}
 

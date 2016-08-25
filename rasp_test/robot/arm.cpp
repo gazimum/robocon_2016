@@ -53,7 +53,7 @@ void arm::update() {
 		dc_motor::instance().set(name, mv);
 	}
 	for (const auto& i : _solenoid_valve_name_dataset) {
-		solenoid_valve::instance().set(i, std::round(controller::instance().get(i)));
+		solenoid_valve::instance().set(i, controller::instance().get(i));
 	}
 }
 

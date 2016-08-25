@@ -10,12 +10,9 @@
 
 const float controller_impl::_command_threshold = 0.5f;
 
-controller_impl::controller_impl() {
-}
+controller_impl::controller_impl() {}
 
-controller_impl::~controller_impl() {
-
-}
+controller_impl::~controller_impl() {}
 
 controller_impl* controller_impl::update(std::map<std::string, int>& controller_state) {
 	// 正規化 : コントローラの操作値の範囲を [-1.0f, 1.0f] にする
@@ -31,9 +28,9 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	controller_impl* state = update();
 
 	// ロボットの操作値に係数をかける
-	for (const auto& i : _command) {
-		_command[i.first] = i.second * ini_parser::instance().get<float>("command_coeff", "command_coeff_" + i.first);
-		_command[i.first] += ini_parser::instance().get<float>("command_offset", "command_offset_" + i.first);
+	for (auto&& i : _command) {
+		i.second *= ini_parser::instance().get<float>("command_coeff", "command_coeff_" + i.first);
+		i.second += ini_parser::instance().get<float>("command_offset", "command_offset_" + i.first);
 	}
 
 	_prev_normalized_controller_state = _normalized_controller_state;

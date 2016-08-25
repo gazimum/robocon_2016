@@ -44,7 +44,9 @@ controller_impl* simple_controller::update() {
 	update_state_by_state_name();
 	update_lock();
 	update_movement();
+	update_angle_base();
 	update_ini_parser();
+
 	return update_sequence();
 }
 
@@ -66,8 +68,13 @@ void simple_controller::update_lock() {
 		ini_parser::instance().get<std::string>("key_config", "lock")
 	};
 	if (is_key_rise(key)) {
-		is_on_lock =
+		is_on_lock = !is_on_lock;
+	}
+
+	if (is_on_lock) {
 		_command["lock"] = 1.0f;
+	} else {
+		_command["lock"] = -1.0f;
 	}
 }
 
@@ -92,6 +99,10 @@ void simple_controller::update_movement() {
 	// 旋回
 	_command["angular_velocity"]  = _normalized_controller_state[ini.get<std::string>("key_config", "turn_+")];
 	_command["angular_velocity"] -= _normalized_controller_state[ini.get<std::string>("key_config", "turn_-")];
+}
+
+void simple_controller::update_angle_base() {
+	_command["angle"] += _command["height"];
 }
 
 std::string simple_controller::release() {
