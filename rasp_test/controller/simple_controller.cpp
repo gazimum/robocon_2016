@@ -63,15 +63,15 @@ controller_impl* simple_controller::update_sequence() {
 }
 
 void simple_controller::update_lock() {
-	static bool is_on_lock = false;
+	static bool is_lock_enable = false;
 	std::string key {
 		ini_parser::instance().get<std::string>("key_config", "lock")
 	};
 	if (is_key_rise(key)) {
-		is_on_lock = !is_on_lock;
+		is_lock_enable = !is_lock_enable;
 	}
 
-	if (is_on_lock) {
+	if (is_lock_enable) {
 		_command["lock"] = 1.0f;
 	} else {
 		_command["lock"] = -1.0f;
