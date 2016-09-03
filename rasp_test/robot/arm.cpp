@@ -1,3 +1,4 @@
+#include <functional>
 #include <robot/arm.hpp>
 #include <ini_parser.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
@@ -20,7 +21,11 @@ const std::vector<std::string> arm::_solenoid_valve_name_dataset {
 	"lock"
 };
 
-arm::arm() {
+arm::arm() : _analog_in_lpf_dataset{
+					ini_parser::instance().get<float>("setting", "analog_in_0_lpf_p"),
+					ini_parser::instance().get<float>("setting", "analog_in_1_lpf_p"),
+					ini_parser::instance().get<float>("setting", "analog_in_2_lpf_p")
+			  } {
 	std::string name[] {
 		"length",
 		"width",
@@ -36,13 +41,12 @@ arm::arm() {
 	}
 
 	update_pid_coeff();
+	controller::instance().add_ini_file_value_reload_function(
+			std::bind(&arm::update_pid_coeff, this)
+	);
 }
 
 void arm::update() {
-	if (controller::instance().get("reload_ini_file") > 0.0f) {
-		update_pid_coeff();
-	}
-
 	update_angle();
 
 	for (const auto& name : _dc_motor_name_dataset) {
@@ -51,7 +55,10 @@ void arm::update() {
 		float target = controller::instance().get(name);
 		float mv = _pid.at(name).update(target - position);
 		dc_motor::instance().set(name, mv);
+
+		std::cout << name << " " << target - position << ", ";
 	}
+	std::cout << std::endl;
 	for (const auto& i : _solenoid_valve_name_dataset) {
 		solenoid_valve::instance().set(i, controller::instance().get(i));
 	}

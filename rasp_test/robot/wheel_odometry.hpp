@@ -13,22 +13,13 @@
 
 class wheel_odometry {
 public:
-	wheel_odometry();
-	~wheel_odometry();
-
-	float get_tire_frequency_kHz(int id);
-	float get_tire_frequency_Hz(int id);
-	float get_tire_advanced_speed_cm_per_sec(int index);
-	float get_raw(int id);
-	float get_heading_rad();
-
+	static float get_tire_frequency_kHz(int id);
+	static float get_tire_frequency_Hz(int id);
+	static float get_tire_advanced_speed_cm_per_sec(int index);
+	static float get_raw(int id);
+	static float get_heading_rad();
 private:
-	static const float _encoder_normalize_coeff;
-	static const float _encoder_resolution;
-	static const float _tire_radius_cm;
-	static const float _tire_encoder_gear_ratio;
-
-	lpf<float> _encoder_raw_data_lpf[omni_wheel::_wheel_num];
+	wheel_odometry();
 };
 
 #endif /* ROBOT_WHEEL_ODOMETRY_HPP_ */

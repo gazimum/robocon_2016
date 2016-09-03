@@ -13,7 +13,7 @@ state_machine::~state_machine() {
 	// TODO Auto-generated destructor stub
 }
 
-void state_machine::add_state(std::string name, std::function<std::string(void)> action) {
+void state_machine::add_state(std::string name, std::function<std::string()> action) {
 	_state_map[name] = action;
 }
 

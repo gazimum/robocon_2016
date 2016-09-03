@@ -8,14 +8,13 @@
 #include <ini_parser.hpp>
 #include <i2c/i2c.hpp>
 #include <solenoid_valve.hpp>
+#include <controller/controller.hpp>
 
 solenoid_valve::solenoid_valve() : _write_data(0) {
-	for (size_t i = 0; i < ini_parser::instance().get<int>("solenoid_valve", "solenoid_valve_num"); ++i) {
-		std::string name {
-			ini_parser::instance().get<std::string>("solenoid_valve", "solenoid_valve_" + std::to_string(i) + "_name")
-		};
-		_name_and_index_dataset[name] = i;
-	}
+	init();
+	controller::instance().add_ini_file_value_reload_function(
+			std::bind(&solenoid_valve::init, this)
+	);
 }
 
 void solenoid_valve::set(std::string name, float p) {
@@ -27,4 +26,13 @@ void solenoid_valve::set(std::string name, float p) {
 	_write_data |= i << _name_and_index_dataset[name];
 
 	i2c::instance().set("solenoid_valve", _write_data);
+}
+
+void solenoid_valve::init() {
+	for (size_t i = 0; i < ini_parser::instance().get<int>("solenoid_valve", "solenoid_valve_num"); ++i) {
+		std::string name {
+			ini_parser::instance().get<std::string>("solenoid_valve", "solenoid_valve_" + std::to_string(i) + "_name")
+		};
+		_name_and_index_dataset[name] = ini_parser::instance().get<int>("solenoid_valve", "solenoid_valve_" + std::to_string(i) + "_index");
+	}
 }

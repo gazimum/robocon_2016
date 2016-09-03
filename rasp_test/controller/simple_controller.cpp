@@ -46,7 +46,6 @@ controller_impl* simple_controller::update() {
 	update_movement();
 	update_angle_base();
 	update_ini_parser();
-
 	return update_sequence();
 }
 
@@ -58,7 +57,6 @@ controller_impl* simple_controller::update_sequence() {
 	if (is_key_pushed(key[0]) && is_key_rise(key[1])) {
 		return new basic_controller();
 	}
-
 	return this;
 }
 

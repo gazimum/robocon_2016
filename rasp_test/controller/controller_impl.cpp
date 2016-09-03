@@ -33,6 +33,13 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 		i.second += ini_parser::instance().get<float>("command_offset", "command_offset_" + i.first);
 	}
 
+	// iniファイルのリロード
+	if (_command["reload_ini_file"] > 0.0f) {
+		for (const auto& i : _ini_file_reload_function_dataset) {
+			i();
+		}
+	}
+
 	_prev_normalized_controller_state = _normalized_controller_state;
 
 	return state;
@@ -40,6 +47,10 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 
 float controller_impl::get(std::string key) {
 	return _command[key];
+}
+
+void controller_impl::add_ini_file_value_reload_function(std::function<void()> f) {
+	_ini_file_reload_function_dataset.push_back(f);
 }
 
 bool controller_impl::is_key_pushed(std::string key) {

@@ -19,6 +19,8 @@ private:
 	friend class singleton<solenoid_valve>;
 	solenoid_valve();
 
+	void init();
+
 	std::map<std::string, size_t> _name_and_index_dataset;
 	int _write_data;
 };

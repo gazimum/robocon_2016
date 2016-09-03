@@ -89,6 +89,8 @@ controller_impl* basic_controller::update_sequence() {
 
 void basic_controller::update_angle_base() {
 	_command["angle"] += _command["height"];
+	_command["angle_left"]  = _command["angle"];
+	_command["angle_right"] = _command["angle"];
 }
 
 void basic_controller::update_arm() {
@@ -128,6 +130,10 @@ bool basic_controller::udpate_arm_index_and_adjustment() {
 		};
 		if (is_key_pushed(key) && update_arm_abilities_position_index(i)) {
 			update_arm_adjustment(i);
+
+			// todo:delete
+			std::cout << i << "" << _arm_adjustment[i] << std::endl;
+
 			return true;
 		}
 	}
@@ -185,8 +191,5 @@ void basic_controller::update_arm_abilities_position() {
 		_command[i] = ini_parser::instance().get<float>("arm_" + i, key);
 		_command[i] += _arm_adjustment[i];
 	}
-
-	_command["angle_left"]  = _command["angle"];
-	_command["angle_right"] = _command["angle"];
 }
 

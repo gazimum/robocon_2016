@@ -20,10 +20,6 @@ moving_object::moving_object() {}
 moving_object::~moving_object() {}
 
 void moving_object::update() {
-	if (controller::instance().get("reload_ini_file") > 0.0f) {
-		_omni_wheel.update_tire_frequency_pid_coeff();
-	}
-
 	// 平行移動の速度設定
 	_omni_wheel.set_velocity(
 		controller::instance().get("velocity_x"),

@@ -12,7 +12,6 @@ void main_thread_func() {
 
 	try {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
 		serial_connected_mcu_master::instance().init();
 
 		while (!robot::instance().is_end()) {
@@ -25,7 +24,7 @@ void main_thread_func() {
 	catch (const char* s) {
 		std::cout << s << std::endl;
 	}
-	catch (const std::string& s) {
+	catch (std::string& s) {
 		std::cout << s << std::endl;
 	}
 }

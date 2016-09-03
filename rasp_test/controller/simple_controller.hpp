@@ -40,6 +40,8 @@ private:
 
 	std::chrono::system_clock::time_point _time;
 
+	bool _is_lock_enable;
+
 	std::string _state_name;
 	state_machine _state_machine;
 	std::map<std::string, int> _state_index_list;

@@ -22,15 +22,10 @@ public:
 	void set_velocity(float x, float y);
 	void set_angular_velocity(float v);
 
-	void set_tire_frequency_pid_coeff(float kp, float ki, float kd);
-	void update_tire_frequency_pid_coeff();
-
 	static constexpr size_t _wheel_num = 3;
 
 private:
-	static const float _wheel_directions_x[_wheel_num];
-	static const float _wheel_directions_y[_wheel_num];
-	static const float _wheel_position_angles[_wheel_num];
+	void update_tire_frequency_pid_coeff();
 
 	float _velocity_x;
 	float _velocity_y;

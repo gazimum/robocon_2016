@@ -12,6 +12,7 @@
 #include <map>
 #include <chrono>
 #include <singleton.hpp>
+#include <functional>
 
 class controller_impl;
 
@@ -20,6 +21,8 @@ public:
 	void update();
 	float operator()(std::string key);
 	float get(std::string key);
+
+	void add_ini_file_value_reload_function(std::function<void(void)> f);
 
 	virtual ~controller();
 

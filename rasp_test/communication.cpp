@@ -42,6 +42,7 @@ void communication::operator()() {
 				server_shared_data::_mutex.lock();
 				server_shared_data::_data[ip] = client.get(ip);
 				server_shared_data::_mutex.unlock();
+
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 		}
@@ -49,7 +50,7 @@ void communication::operator()() {
 	catch (const char* s) {
 		std::cout << s << std::endl;
 	}
-	catch (const std::string& s) {
+	catch (std::string& s) {
 		std::cout << s << std::endl;
 	}
 }

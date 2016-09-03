@@ -14,12 +14,12 @@
 
 class state_machine {
 public:
-	typedef std::map<std::string, std::function<std::string(void)> > state_map_type;
+	typedef std::map<std::string, std::function<std::string()> > state_map_type;
 
 	state_machine(std::string initial_state);
 	~state_machine();
 
-	void add_state(std::string name, std::function<std::string(void)> action);
+	void add_state(std::string name, std::function<std::string()> action);
 	void update();
 
 	std::string get_current_state_name() const;

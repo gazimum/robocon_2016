@@ -8,22 +8,11 @@
 #include <robot/wheel_odometry.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <cmath>
+#include <string>
 #include <ini_parser.hpp>
 
-const float wheel_odometry::_tire_radius_cm = 5.31f;
-const float wheel_odometry::_tire_encoder_gear_ratio = 9.0f / 32.0f;
-const float wheel_odometry::_encoder_normalize_coeff = -1.0f;
-
-wheel_odometry::wheel_odometry() : _encoder_raw_data_lpf{
-											ini_parser::instance().get<float>("setting", "encoder_raw_data_lpf_p"),
-											ini_parser::instance().get<float>("setting", "encoder_raw_data_lpf_p"),
-											ini_parser::instance().get<float>("setting", "encoder_raw_data_lpf_p")
-										} {}
-
-wheel_odometry::~wheel_odometry() {}
-
 float wheel_odometry::get_tire_frequency_kHz(int id) {
-	return _tire_encoder_gear_ratio * get_raw(id) / ini_parser::instance().get<int>("setting", "encoder_resolution");
+	return get_raw(id) / ini_parser::instance().get<int>("setting", "encoder_resolution");
 }
 
 float wheel_odometry::get_tire_frequency_Hz(int id) {
@@ -31,12 +20,15 @@ float wheel_odometry::get_tire_frequency_Hz(int id) {
 }
 
 float wheel_odometry::get_tire_advanced_speed_cm_per_sec(int id) {
-	return get_tire_frequency_Hz(id) * 2.0f * M_PI * _tire_radius_cm;
+	float circumference_cm = 2.0f * M_PI;
+	circumference_cm *= ini_parser::instance().get<float>("omni_wheel", "tire_radius_cm");
+	return get_tire_frequency_Hz(id) * circumference_cm;
 }
 
 float wheel_odometry::get_raw(int index) {
 	int id = serial_connected_mcu::ENCODER_SPEED1 + index;
-	return _encoder_normalize_coeff * serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(id);
+	float coeff = ini_parser::instance().get<float>("encoder_profile", "encoder_coeff" + std::to_string(index));
+	return coeff * serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(id);
 }
 
 float wheel_odometry::get_heading_rad() {

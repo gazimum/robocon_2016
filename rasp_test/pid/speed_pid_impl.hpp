@@ -20,6 +20,7 @@ speed_pid<T>::~speed_pid() {}
 
 template <class T>
 T speed_pid<T>::update(const T& e) {
+	// todo : implement ini file
 	float threshold = 0.01f;
 	if (std::fabs(e) < threshold) {
 		init();
