@@ -35,7 +35,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 
 	// iniファイルのリロード
 	if (_command["reload_ini_file"] > 0.0f) {
-		for (const auto& i : _ini_file_reload_function_dataset) {
+		for (const auto& i : _reload_ini_file_value_function_dataset) {
 			i();
 		}
 	}
@@ -49,8 +49,8 @@ float controller_impl::get(std::string key) {
 	return _command[key];
 }
 
-void controller_impl::add_ini_file_value_reload_function(std::function<void()> f) {
-	_ini_file_reload_function_dataset.push_back(f);
+void controller_impl::add_reload_ini_file_value_function(std::function<void()> f) {
+	_reload_ini_file_value_function_dataset.push_back(f);
 }
 
 bool controller_impl::is_key_pushed(std::string key) {

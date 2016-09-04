@@ -12,7 +12,7 @@
 
 solenoid_valve::solenoid_valve() : _write_data(0) {
 	init();
-	controller::instance().add_ini_file_value_reload_function(
+	controller::instance().add_reload_ini_file_value_function(
 			std::bind(&solenoid_valve::init, this)
 	);
 }

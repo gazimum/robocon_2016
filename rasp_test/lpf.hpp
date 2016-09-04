@@ -19,6 +19,7 @@ public:
 	inline T update(T&& new_value);
 
 	void set(float p);
+	void init();
 
 private:
 	float _p;

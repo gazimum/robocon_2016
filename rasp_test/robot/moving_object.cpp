@@ -7,6 +7,7 @@
 
 #include <ini_parser.hpp>
 #include <map>
+#include <cmath>
 #include <string>
 #include <robot/moving_object.hpp>
 #include <robot/omni_wheel.hpp>
@@ -14,21 +15,31 @@
 #include <communication.hpp>
 #include <controller/controller.hpp>
 #include <pid/position_pid.hpp>
+#include <robot/wheel_odometry.hpp>
 
 moving_object::moving_object() {}
 
 moving_object::~moving_object() {}
 
 void moving_object::update() {
-	// 平行移動の速度設定
-	_omni_wheel.set_velocity(
-		controller::instance().get("velocity_x"),
-		controller::instance().get("velocity_y")
-	);
-	// 旋回速度設定
-	_omni_wheel.set_angular_velocity(
-		controller::instance().get("angular_velocity")
-	);
+	float vx = controller::instance().get("velocity_x");
+	float vy = controller::instance().get("velocity_y");
+	float av = controller::instance().get("angular_velocity");
 
+	_omni_wheel.set_velocity(vx, vy);
+	_omni_wheel.set_angular_velocity(av);
 	_omni_wheel.write();
+
+	// 移動する状態だったらLPFは有効化
+	float l = sqrt(vx * vx + vy * vy);
+	if (l > ini_parser::instance().get<float>("setting", "lpf_enable_threshold_velocity")) {
+		wheel_odometry::instance().enable_lpf();
+		return;
+	}
+	if (av > ini_parser::instance().get<float>("setting", "lpf_enable_threshold_angular_velocity")) {
+		wheel_odometry::instance().enable_lpf();
+		return;
+	}
+	// 移動する状態でないならLPFは無効化
+	wheel_odometry::instance().disable_lpf();
 }

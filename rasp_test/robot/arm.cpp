@@ -5,16 +5,13 @@
 #include <controller/controller.hpp>
 #include <dc_motor.hpp>
 #include <solenoid_valve.hpp>
+#include <potentiometer.hpp>
 
 const std::vector<std::string> arm::_dc_motor_name_dataset {
 	"length",
 	"height"
 };
 
-const std::map<std::string, serial_connected_mcu::read_id> arm::_read_id_dataset {
-	{"length", serial_connected_mcu::POTENTIONMETER1},
-	{"height", serial_connected_mcu::POTENTIONMETER3}
-};
 
 const std::vector<std::string> arm::_solenoid_valve_name_dataset {
 	"width",
@@ -34,7 +31,7 @@ arm::arm() {
 	}
 
 	init();
-	controller::instance().add_ini_file_value_reload_function(
+	controller::instance().add_reload_ini_file_value_function(
 		std::bind(&arm::init, this)
 	);
 }
@@ -43,8 +40,7 @@ void arm::update() {
 	update_angle();
 
 	for (const auto& name : _dc_motor_name_dataset) {
-		serial_connected_mcu::read_id id = _read_id_dataset.at(name);
-		float position = serial_connected_mcu::serial_connected_mcu_master::instance().get(id);
+		float position = potentiometer::instance().get_position(name);
 		position = _analog_in_lpf_dataset.at(name).update(position);
 		float target = controller::instance().get(name);
 		float mv = _pid.at(name).update(target - position);

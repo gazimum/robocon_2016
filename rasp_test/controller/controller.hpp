@@ -22,7 +22,7 @@ public:
 	float operator()(std::string key);
 	float get(std::string key);
 
-	void add_ini_file_value_reload_function(std::function<void(void)> f);
+	void add_reload_ini_file_value_function(std::function<void(void)> f);
 
 	virtual ~controller();
 

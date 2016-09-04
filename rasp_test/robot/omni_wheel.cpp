@@ -13,6 +13,7 @@
 #include <ini_parser.hpp>
 #include <dc_motor.hpp>
 #include <controller/controller.hpp>
+#include <iomanip>
 
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 
@@ -20,7 +21,7 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 							   _velocity_y(float()),
 							   _angular_velocity(float()) {
 	update_tire_frequency_pid_coeff();
-	controller::instance().add_ini_file_value_reload_function(
+	controller::instance().add_reload_ini_file_value_function(
 			std::bind(&omni_wheel::update_tire_frequency_pid_coeff, this)
 	);
 }
@@ -39,7 +40,7 @@ void omni_wheel::write() {
 	// 回転数制御
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		//float f = _wheel_odometry->get_raw(i) * 1000.0f / ini_parser::instance().get<int>("encoder_profile", "encoder_resolution");
-		float f = wheel_odometry::get_tire_advanced_speed_cm_per_sec(i);
+		float f = wheel_odometry::instance().get_tire_advanced_speed_cm_per_sec(i);
 		float target_f = p[i] * ini_parser::instance().get<float>("setting", "target_tire_frequency");
 
 		float threshold = 0.01f;
@@ -48,9 +49,16 @@ void omni_wheel::write() {
 			p[i] = _tire_frequency_pid[i](e);
 		} else {
 			_tire_frequency_pid[i].init();
+			p[i] = 0.0f;
 		}
 		p[i] = std::max(-1.0f, std::min(p[i], 1.0f));
+
+		if (i == 0) {
+			std::cout << target_f << " " << f << std::endl;
+		}
+		//std::cout << target_f << " " << f << ",";
 	}
+	//std::cout << std::endl;
 	/*
 	// 速度制御
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -73,9 +81,8 @@ void omni_wheel::write() {
 }
 
 void omni_wheel::set_velocity(float x, float y) {
-	float l = x * x + y * y;
+	float l = sqrt(x * x + y * y);
 	if (l > 1.0f) { // ベクトルの大きさが1より大きいなら1に調整する
-		l = sqrt(l);
 		x /= l;
 		y /= l;
 	}

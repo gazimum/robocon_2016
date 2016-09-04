@@ -57,6 +57,6 @@ void controller::update() {
 	}
 }
 
-void controller::add_ini_file_value_reload_function(std::function<void(void)> f) {
-	_controller_impl->add_ini_file_value_reload_function(f);
+void controller::add_reload_ini_file_value_function(std::function<void()> f) {
+	_controller_impl->add_reload_ini_file_value_function(f);
 }

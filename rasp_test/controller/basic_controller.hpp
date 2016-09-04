@@ -33,6 +33,10 @@ private:
 	bool udpate_arm_index_and_adjustment();
 	void update_arm_adjustment(std::string name);
 
+	void teaching(std::string name);
+
+	void write_ini_file();
+
 	static const std::string _arm_abilities_name[];
 	static const std::map<std::string, size_t> _arm_abilities_init_position_index;
 

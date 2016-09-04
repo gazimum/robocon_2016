@@ -5,11 +5,12 @@
  *      Author: u
  */
 
+#include <iostream>
+#include <functional>
 #include <controller/basic_controller.hpp>
 #include <controller/simple_controller.hpp>
 #include <ini_parser.hpp>
-#include <iostream>
-#include <functional>
+#include <potentiometer.hpp>
 
 const std::string basic_controller::_arm_abilities_name[] {
 	"length",
@@ -99,20 +100,11 @@ void basic_controller::update_arm() {
 	};
 	static bool prev_ib_state = false;
 	bool ib_state = udpate_arm_index_and_adjustment();
+	// IB:Identifier Button 識別ボタン
 
 	if (!ib_state && prev_ib_state) {
 		// 操作が終わったら微調整分を適用してファイルに書き込む
-		for (const auto& i : _arm_abilities_name) {
-			std::string key {
-				"position" + std::to_string(_arm_abilities_position_index[i])
-			};
-
-			if (_arm_adjustment[i] != 0.0f) {
-				ini.set("arm_" + i, key, ini.get<float>("arm_" + i, key) + _arm_adjustment[i]);
-			}
-			_arm_adjustment[i] = 0.0f;
-		}
-		ini.write();
+		write_ini_file();
 	}
 	prev_ib_state = ib_state;
 
@@ -125,11 +117,13 @@ bool basic_controller::udpate_arm_index_and_adjustment() {
 		ini_parser::instance()
 	};
 	for (const auto& i : _arm_abilities_name) {
-		std::string key {
+		std::string ib_key {
 			ini.get<std::string>("key_config", "IB_" + i)
 		};
-		if (is_key_pushed(key) && update_arm_abilities_position_index(i)) {
+		bool is_index_key_pushed = update_arm_abilities_position_index(i);
+		if (is_key_pushed(ib_key) && is_index_key_pushed) {
 			update_arm_adjustment(i);
+			teaching(i);
 
 			// todo:delete
 			std::cout << i << "" << _arm_adjustment[i] << std::endl;
@@ -191,5 +185,41 @@ void basic_controller::update_arm_abilities_position() {
 		_command[i] = ini_parser::instance().get<float>("arm_" + i, key);
 		_command[i] += _arm_adjustment[i];
 	}
+}
+
+void basic_controller::teaching(std::string name) {
+	ini_parser& ini {
+		ini_parser::instance()
+	};
+	std::string key {
+		ini.get<std::string>("key_config", "teaching")
+	};
+	if (is_key_rise(key)) {
+		std::string key {
+			"position" + std::to_string(_arm_abilities_position_index[name])
+		};
+		float pos = potentiometer::instance().get_position(name);
+		ini.set("arm_" + name, key, pos);
+		_arm_adjustment[name] = 0.0f;
+		write_ini_file();
+	}
+}
+
+void basic_controller::write_ini_file() {
+	ini_parser& ini {
+		ini_parser::instance()
+	};
+
+	for (const auto& i : _arm_abilities_name) {
+		std::string key {
+			"position" + std::to_string(_arm_abilities_position_index[i])
+		};
+
+		if (_arm_adjustment[i] != 0.0f) {
+			ini.set("arm_" + i, key, ini.get<float>("arm_" + i, key) + _arm_adjustment[i]);
+		}
+		_arm_adjustment[i] = 0.0f;
+	}
+	ini.write();
 }
 
