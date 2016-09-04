@@ -11,15 +11,17 @@
 template <class T>
 class lpf {
 public:
-	lpf(T p, T n = T());
+	lpf(T p = T(), T n = T());
 
 	inline T operator()(const T& new_value);
 	inline T update(const T& new_value);
 	inline T operator()(T&& new_value);
 	inline T update(T&& new_value);
 
+	void set(float p);
+
 private:
-	const float _p;
+	float _p;
 	T _value;
 };
 

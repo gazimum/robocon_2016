@@ -30,7 +30,6 @@ private:
 	float _velocity_x;
 	float _velocity_y;
 	float _angular_velocity;
-	wheel_odometry* _wheel_odometry;
 
 	speed_pid<float> _tire_frequency_pid[_wheel_num];
 };

@@ -21,28 +21,21 @@ const std::vector<std::string> arm::_solenoid_valve_name_dataset {
 	"lock"
 };
 
-arm::arm() : _analog_in_lpf_dataset{
-					ini_parser::instance().get<float>("setting", "analog_in_0_lpf_p"),
-					ini_parser::instance().get<float>("setting", "analog_in_1_lpf_p"),
-					ini_parser::instance().get<float>("setting", "analog_in_2_lpf_p")
-			  } {
-	std::string name[] {
-		"length",
-		"width",
-		"height"
-	};
-
-	for (const auto& i : name) {
+arm::arm() {
+	for (const auto& i : _dc_motor_name_dataset) {
 		_pid.insert(pid_container_type::value_type(i, {
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kp"),
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_ki"),
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kd")
 		}));
+		_analog_in_lpf_dataset[i].set(
+			ini_parser::instance().get<float>("setting", "analog_in_" + i + "_lpf_p")
+		);
 	}
 
-	update_pid_coeff();
+	init();
 	controller::instance().add_ini_file_value_reload_function(
-			std::bind(&arm::update_pid_coeff, this)
+		std::bind(&arm::init, this)
 	);
 }
 
@@ -52,6 +45,7 @@ void arm::update() {
 	for (const auto& name : _dc_motor_name_dataset) {
 		serial_connected_mcu::read_id id = _read_id_dataset.at(name);
 		float position = serial_connected_mcu::serial_connected_mcu_master::instance().get(id);
+		position = _analog_in_lpf_dataset.at(name).update(position);
 		float target = controller::instance().get(name);
 		float mv = _pid.at(name).update(target - position);
 		dc_motor::instance().set(name, mv);
@@ -73,12 +67,17 @@ void arm::update_angle() {
 	);
 }
 
-void arm::update_pid_coeff() {
+void arm::init() {
 	for (auto&& i : _pid) {
 		i.second.update_coeff(
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kp"),
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_ki"),
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kd")
+		);
+	}
+	for (auto&& i : _analog_in_lpf_dataset) {
+		i.second.set(
+			ini_parser::instance().get<float>("setting", "analog_in_" + i.first + "_lpf_p")
 		);
 	}
 }

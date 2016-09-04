@@ -22,16 +22,16 @@ public:
 	arm();
 
 	void update();
-	void update_pid_coeff();
 
 private:
 	void update_angle();
+	void init();
 
 	static const std::vector<std::string> _dc_motor_name_dataset;
 	static const std::map<std::string, serial_connected_mcu::read_id> _read_id_dataset;
 	static const std::vector<std::string> _solenoid_valve_name_dataset;
 
-	lpf<float> _analog_in_lpf_dataset[3];
+	std::map<std::string, lpf<float>> _analog_in_lpf_dataset;
 
 	pid_container_type _pid;
 };

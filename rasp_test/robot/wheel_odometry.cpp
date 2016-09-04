@@ -12,7 +12,8 @@
 #include <ini_parser.hpp>
 
 float wheel_odometry::get_tire_frequency_kHz(int id) {
-	return get_raw(id) / ini_parser::instance().get<int>("setting", "encoder_resolution");
+	//float coeff = ini_parser::instance().get<float>("");
+	return get_raw(id) / ini_parser::instance().get<int>("encoder_profile", "encoder_resolution");
 }
 
 float wheel_odometry::get_tire_frequency_Hz(int id) {

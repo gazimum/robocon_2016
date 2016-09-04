@@ -31,4 +31,7 @@ template <class T>
 T lpf<T>::update(T&& new_value) {
 	return update(new_value);
 }
-
+template <class T>
+void lpf<T>::set(float p) {
+	_p = p;
+}
