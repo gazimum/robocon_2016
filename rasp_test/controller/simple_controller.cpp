@@ -100,7 +100,7 @@ void simple_controller::update_movement() {
 }
 
 void simple_controller::update_angle_base() {
-	_command["angle"] += _command["height"];
+	_command["angle_base"] += _command["height"];
 }
 
 std::string simple_controller::release() {

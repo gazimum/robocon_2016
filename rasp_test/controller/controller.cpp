@@ -42,8 +42,8 @@ void controller::update() {
 	controller_impl* state = _controller_impl->update(command);
 	// 状態遷移の処理
 	auto now = std::chrono::system_clock::now();
-	float t = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
-	if (t < ini_parser::instance().get<float>("setting", "controller_sequence_wait_time_ms")) {
+	float t_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
+	if (t_ms < ini_parser::instance().get<float>("setting", "controller_sequence_wait_time_ms")) {
 		if (state != _controller_impl) {
 			delete state;
 		}

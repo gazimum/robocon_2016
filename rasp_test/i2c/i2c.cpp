@@ -35,7 +35,6 @@ void i2c::write() {
 
 		size_t try_num = 1;
 		while (wiringPiI2CWrite(_filehandles[name], _write_dataset[name]) != 0) {
-			/*
 			if (try_num++ > ini_parser::instance().get<int>("i2c_profile", "i2c_try_num")) {
 				std::string err = "error : I2C bus to the \"" + name + "\" is not working now.\n";
 				err += "(hint : Rebooting all I2C device might be a good way to recover the I2C bus.)\n";
@@ -45,9 +44,6 @@ void i2c::write() {
 
 			int address = ini_parser::instance().get<int>("i2c_profile", "i2c_address" + std::to_string(i));
 			_filehandles[name] = wiringPiI2CSetup(address);
-			*/
-			// todo : uncommentout
-			break;
 		}
 	}
 }

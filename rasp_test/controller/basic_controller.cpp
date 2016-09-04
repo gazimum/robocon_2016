@@ -89,7 +89,7 @@ controller_impl* basic_controller::update_sequence() {
 }
 
 void basic_controller::update_angle_base() {
-	_command["angle"] += _command["height"];
+	_command["angle_base"] += _command["height"];
 	_command["angle_left"]  = _command["angle"];
 	_command["angle_right"] = _command["angle"];
 }

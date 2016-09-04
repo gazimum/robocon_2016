@@ -21,7 +21,7 @@ private:
 	friend class singleton<potentiometer>;
 	potentiometer();
 
-	std::map<std::string, serial_connected_mcu::read_id> _read_id_dataset;
+	static const std::map<std::string, serial_connected_mcu::read_id> _read_id_dataset;
 };
 
 #endif /* SERIAL_CONNECTED_MCU_POTENTIOMETER_HPP_ */

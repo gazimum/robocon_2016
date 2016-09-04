@@ -33,7 +33,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 		i.second += ini_parser::instance().get<float>("command_offset", "command_offset_" + i.first);
 	}
 
-	// iniファイルのリロード
+	// 設定ファイルをリロードしたときに設定ファイルから値を設定しなおす
 	if (_command["reload_ini_file"] > 0.0f) {
 		for (const auto& i : _reload_ini_file_value_function_dataset) {
 			i();

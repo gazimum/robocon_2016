@@ -41,8 +41,6 @@ void wheel_odometry::enable_lpf() {
 		_is_lpf_enable = true;
 		init();
 	}
-	_is_lpf_enable = true;
-	init();
 }
 
 void wheel_odometry::disable_lpf() {
@@ -50,8 +48,6 @@ void wheel_odometry::disable_lpf() {
 		_is_lpf_enable = false;
 		init();
 	}
-	_is_lpf_enable = false;
-	init();
 }
 
 float wheel_odometry::get_tire_frequency_kHz(int index) {

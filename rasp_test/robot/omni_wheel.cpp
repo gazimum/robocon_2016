@@ -44,7 +44,7 @@ void omni_wheel::write() {
 		float target_f = p[i] * ini_parser::instance().get<float>("setting", "target_tire_frequency");
 
 		float threshold = 0.01f;
-		if (std::fabs(target_f) > threshold) {
+		if (std::abs(target_f) > threshold) {
 			float e = target_f - f;
 			p[i] = _tire_frequency_pid[i](e);
 		} else {
@@ -66,7 +66,7 @@ void omni_wheel::write() {
 		float target_v = p[i] * ini_parser::instance().get<float>("setting", "target_tire_speed");
 
 		float threshold = 0.01f;
-		if (std::fabs(target_v) > threshold) {
+		if (std::abs(target_v) > threshold) {
 			float e = target_v - v;
 			p[i] = _tire_frequency_pid[i](e);
 		} else {

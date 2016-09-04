@@ -20,17 +20,18 @@ const std::vector<std::string> arm::_solenoid_valve_name_dataset {
 
 arm::arm() {
 	for (const auto& i : _dc_motor_name_dataset) {
-		_pid.insert(pid_container_type::value_type(i, {
-			ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kp"),
-			ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_ki"),
-			ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kd")
-		}));
+		_pid.insert(
+			pid_container_type::value_type(i, {
+					ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kp"),
+					ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_ki"),
+					ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kd")
+				}
+			)
+		);
 		_analog_in_lpf_dataset[i].set(
 			ini_parser::instance().get<float>("setting", "analog_in_" + i + "_lpf_p")
 		);
 	}
-
-	init();
 	controller::instance().add_reload_ini_file_value_function(
 		std::bind(&arm::init, this)
 	);
@@ -56,10 +57,12 @@ void arm::update() {
 
 void arm::update_angle() {
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(
-		serial_connected_mcu::ESC1, controller::instance().get("angle_left")
+		serial_connected_mcu::ESC1,
+		controller::instance().get("angle_left") + controller::instance().get("angle_base")
 	);
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(
-		serial_connected_mcu::ESC2, controller::instance().get("angle_right")
+		serial_connected_mcu::ESC2,
+		controller::instance().get("angle_right") + controller::instance().get("angle_base")
 	);
 }
 
