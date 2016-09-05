@@ -10,8 +10,6 @@
 
 #include <map>
 #include <string>
-#include <vector>
-#include <functional>
 
 class controller_impl {
 public:
@@ -21,8 +19,6 @@ public:
 	controller_impl* update(std::map<std::string, int>& controller_state);
 
 	float get(std::string key);
-
-	void add_reload_ini_file_value_function(std::function<void()> f);
 
 protected:
 	virtual controller_impl* update() = 0;
@@ -37,8 +33,6 @@ protected:
 	std::map<std::string, float> _command;
 	std::map<std::string, float> _normalized_controller_state;
 	std::map<std::string, float> _prev_normalized_controller_state;
-
-	std::vector<std::function<void()>> _reload_ini_file_value_function_dataset;
 };
 
 #endif /* CONTROLLER_CONTROLLER_IMPL_HPP_ */

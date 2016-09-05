@@ -28,7 +28,7 @@ void wheel_odometry::init() {
 	for (auto&& i : _lpf_dataset) {
 		if (_is_lpf_enable) {
 			i.second.set(
-				ini_parser::instance().get<float>("setting", "encoder_" + std::to_string(i.first) + "_lpf_p")
+				ini_parser::instance().get<float>("lpf", "encoder_" + std::to_string(i.first) + "_lpf_p")
 			);
 		} else {
 			i.second.set(0.0f);

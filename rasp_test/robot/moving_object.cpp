@@ -32,11 +32,11 @@ void moving_object::update() {
 
 	// 移動する状態だったらLPFは有効化
 	float l = sqrt(vx * vx + vy * vy);
-	if (l > ini_parser::instance().get<float>("setting", "lpf_enable_threshold_velocity")) {
+	if (l > ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_velocity")) {
 		wheel_odometry::instance().enable_lpf();
 		return;
 	}
-	if (av > ini_parser::instance().get<float>("setting", "lpf_enable_threshold_angular_velocity")) {
+	if (std::fabs(av) > ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_angular_velocity")) {
 		wheel_odometry::instance().enable_lpf();
 		return;
 	}

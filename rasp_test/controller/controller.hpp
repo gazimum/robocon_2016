@@ -11,8 +11,9 @@
 #include <string>
 #include <map>
 #include <chrono>
-#include <singleton.hpp>
+#include <vector>
 #include <functional>
+#include <singleton.hpp>
 
 class controller_impl;
 
@@ -32,6 +33,8 @@ private:
 
 	controller_impl* _controller_impl;
 	std::chrono::system_clock::time_point _time;
+
+	std::vector<std::function<void()>> _reload_ini_file_value_function_dataset;
 };
 
 #endif /* CONTROLLER_HPP_ */

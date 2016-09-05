@@ -89,7 +89,7 @@ controller_impl* basic_controller::update_sequence() {
 }
 
 void basic_controller::update_angle_base() {
-	_command["angle_base"] += _command["height"];
+	_command["angle_base"] = _command["height"];
 	_command["angle_left"]  = _command["angle"];
 	_command["angle_right"] = _command["angle"];
 }
@@ -120,8 +120,7 @@ bool basic_controller::udpate_arm_index_and_adjustment() {
 		std::string ib_key {
 			ini.get<std::string>("key_config", "IB_" + i)
 		};
-		bool is_index_key_pushed = update_arm_abilities_position_index(i);
-		if (is_key_pushed(ib_key) && is_index_key_pushed) {
+		if (is_key_pushed(ib_key) && update_arm_abilities_position_index(i)) {
 			update_arm_adjustment(i);
 			teaching(i);
 

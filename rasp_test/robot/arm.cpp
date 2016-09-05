@@ -29,7 +29,7 @@ arm::arm() {
 			)
 		);
 		_analog_in_lpf_dataset[i].set(
-			ini_parser::instance().get<float>("setting", "analog_in_" + i + "_lpf_p")
+			ini_parser::instance().get<float>("lpf", "analog_in_" + i + "_lpf_p")
 		);
 	}
 	controller::instance().add_reload_ini_file_value_function(
@@ -73,10 +73,14 @@ void arm::init() {
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_ki"),
 			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kd")
 		);
+		std::cout << i.first << " " <<
+				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kp") << " " <<
+				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_ki") << " " <<
+				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kd") << std::endl;
 	}
 	for (auto&& i : _analog_in_lpf_dataset) {
 		i.second.set(
-			ini_parser::instance().get<float>("setting", "analog_in_" + i.first + "_lpf_p")
+			ini_parser::instance().get<float>("lpf", "analog_in_" + i.first + "_lpf_p")
 		);
 	}
 }

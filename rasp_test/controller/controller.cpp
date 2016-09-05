@@ -55,8 +55,15 @@ void controller::update() {
 		_controller_impl = state;
 		_time = now;
 	}
+
+	// 設定ファイルをリロードしたときに設定ファイルから値を設定しなおす
+	if (_controller_impl->get("reload_ini_file") > 0.0f) {
+		for (const auto& i : _reload_ini_file_value_function_dataset) {
+			i();
+		}
+	}
 }
 
 void controller::add_reload_ini_file_value_function(std::function<void()> f) {
-	_controller_impl->add_reload_ini_file_value_function(f);
+	_reload_ini_file_value_function_dataset.push_back(f);
 }
