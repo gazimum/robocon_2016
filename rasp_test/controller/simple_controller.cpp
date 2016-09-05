@@ -108,16 +108,22 @@ void simple_controller::update_angle_base() {
 std::string simple_controller::release() {
 	_command["width"] = -1.0f;
 
+	std::string grab_key {
+		ini_parser::instance().get<std::string>("key_config", "grab")
+	};
+
 	double elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - _time).count();
 	if (elapsed_ms > ini_parser::instance().get<float>("setting", "release_wait_time_ms")) {
-		return "height_low";
+		if (is_key_rise(grab_key)) {
+			return "height_low";
+		}
 	}
 
 	return "release";
 }
 
 std::string simple_controller::height_low() {
-	_state_name = "vety_low";
+	_state_name = "very_low";
 
 	std::string grab_key {
 		ini_parser::instance().get<std::string>("key_config", "grab")
@@ -135,7 +141,6 @@ std::string simple_controller::grab() {
 
 	double elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - _time).count();
 	if (elapsed_ms > ini_parser::instance().get<float>("setting", "release_wait_time_ms")) {
-		_state_name = "low";
 		return "height_adjust";
 	}
 	return "grab";
