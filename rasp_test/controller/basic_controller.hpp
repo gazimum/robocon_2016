@@ -27,8 +27,8 @@ private:
 
 	void update_angle_base();
 
-	bool update_arm_abilities_position_index(std::string name);
-	void update_arm_abilities_position();
+	bool update_arm_ability_position_index(std::string name);
+	void update_arm_ability_position();
 
 	bool udpate_arm_index_and_adjustment();
 	void update_arm_adjustment(std::string name);
@@ -37,11 +37,7 @@ private:
 
 	void write_ini_file();
 
-	static const std::string _arm_abilities_name[];
-	static const std::map<std::string, size_t> _arm_abilities_init_position_index;
-
 	std::map<std::string, float> _arm_adjustment;
-	std::map<std::string, size_t> _arm_abilities_position_index;
 	std::map<std::string, bool> _prev_ib_buttons_state;
 };
 

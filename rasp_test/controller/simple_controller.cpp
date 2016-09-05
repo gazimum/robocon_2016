@@ -10,8 +10,9 @@
 #include <ini_parser.hpp>
 #include <string>
 
-simple_controller::simple_controller() : _state_machine("release"),
-											   _state_name("very_low") {
+simple_controller::simple_controller() : 	_is_lock_enable(false),
+												_state_name("very_low"),
+												_state_machine("release") {
 	_state_machine.add_state("release", 		std::bind(&simple_controller::release, 		 this));
 	_state_machine.add_state("height_low",		std::bind(&simple_controller::height_low, 	 this));
 	_state_machine.add_state("grab", 			std::bind(&simple_controller::grab, 		 this));
@@ -19,7 +20,7 @@ simple_controller::simple_controller() : _state_machine("release"),
 
 	for (size_t i = 0; i < ini_parser::instance().get<int>("arm_state", "arm_state_num"); ++i) {
 		std::string name = ini_parser::instance().get<std::string>("arm_state", "state" + std::to_string(i) + "_name");
-		_state_index_list[name] = i;
+		_state_index_dataset[name] = i;
 	}
 
 	_time = std::chrono::system_clock::now();
@@ -113,10 +114,10 @@ std::string simple_controller::release() {
 	};
 
 	double elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - _time).count();
-	if (elapsed_ms > ini_parser::instance().get<float>("setting", "release_wait_time_ms")) {
-		if (is_key_rise(grab_key)) {
-			return "height_low";
-		}
+	bool is_transition = elapsed_ms > ini_parser::instance().get<float>("setting", "release_wait_time_ms");
+	is_transition = is_transition && is_key_rise(grab_key);
+	if (is_transition) {
+		return "height_low";
 	}
 
 	return "release";
@@ -161,7 +162,7 @@ std::string simple_controller::height_adjust() {
 }
 
 void simple_controller::update_state_name() {
-	int index = controller_impl::read_arm_abilities_position_index();
+	int index = controller_impl::read_arm_ability_position_index();
 	if (index < 0) {
 		return;
 	}
@@ -179,17 +180,12 @@ void simple_controller::update_state_name() {
 }
 
 void simple_controller::update_state_by_state_name() {
-	std::string abilities[] {
-		"length",
-		"height",
-		"angle"
-	};
-
-	for (const auto& i : abilities) {
+	for (const auto& i : _arm_ability_name_dataset) {
 		std::string key {
-			"state" + std::to_string(_state_index_list[_state_name]) + "_" + i + "_index"
+			"state" + std::to_string(_state_index_dataset[_state_name]) + "_" + i + "_index"
 		};
 		int index = ini_parser::instance().get<int>("arm_state", key);
+		_arm_ability_position_index_dataset[i] = index;
 		_command[i] = ini_parser::instance().get<float>("arm_" + i, "position" + std::to_string(index));
 	}
 }

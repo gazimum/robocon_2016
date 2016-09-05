@@ -9,6 +9,13 @@
 #include <ini_parser.hpp>
 
 const float controller_impl::_command_threshold = 0.5f;
+std::map<std::string, size_t> controller_impl::_arm_ability_position_index_dataset = {};
+const std::vector<std::string> controller_impl::_arm_ability_name_dataset {
+	"length",
+	"width",
+	"height",
+	"angle"
+};
 
 controller_impl::controller_impl() {}
 
@@ -57,7 +64,7 @@ bool controller_impl::is_key_rise(std::string key) {
 }
 
 
-int controller_impl::read_arm_abilities_position_index() {
+int controller_impl::read_arm_ability_position_index() {
 	int n = ini_parser::instance().get<int>("key_config", "arm_index_num");
 	for (size_t i = 0; i < n; ++i) {
 		std::string key {

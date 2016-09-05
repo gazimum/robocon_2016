@@ -12,24 +12,7 @@
 #include <ini_parser.hpp>
 #include <potentiometer.hpp>
 
-const std::string basic_controller::_arm_abilities_name[] {
-	"length",
-	"width",
-	"height",
-	"angle"
-};
-
-const std::map<std::string, size_t> basic_controller::_arm_abilities_init_position_index {
-	{"length", 0},
-	{"width",  0},
-	{"height", 0},
-	{"angle",  0}
-};
-
 basic_controller::basic_controller()  {
-	for (const auto& i : _arm_abilities_init_position_index) {
-		_arm_abilities_position_index[i.first] = i.second;
-	}
 }
 
 basic_controller::~basic_controller() {}
@@ -109,18 +92,19 @@ void basic_controller::update_arm() {
 	prev_ib_state = ib_state;
 
 	// 各機能はインデックスと微調整に応じて値が設定される
-	update_arm_abilities_position();
+	update_arm_ability_position();
 }
 
 bool basic_controller::udpate_arm_index_and_adjustment() {
 	ini_parser& ini {
 		ini_parser::instance()
 	};
-	for (const auto& i : _arm_abilities_name) {
+	for (const auto& i : _arm_ability_name_dataset) {
 		std::string ib_key {
 			ini.get<std::string>("key_config", "IB_" + i)
 		};
-		if (is_key_pushed(ib_key) && update_arm_abilities_position_index(i)) {
+		if (is_key_pushed(ib_key) && update_arm_ability_position_index(i)) {
+			// IB + index key
 			update_arm_adjustment(i);
 			teaching(i);
 
@@ -142,7 +126,10 @@ void basic_controller::update_arm_adjustment(std::string name) {
 	adj -= _normalized_controller_state[ini.get<std::string>("key_config", "arm_adjusting_-")];
 	_arm_adjustment[name] += adj * ini.get<float>("command_coeff", "command_coeff_arm_adjustment");
 
-	float pos = ini.get<float>("arm_" + name, "position" + std::to_string(_arm_abilities_position_index[name]));
+	std::string key {
+		"position" + std::to_string(_arm_ability_position_index_dataset[name])
+	};
+	float pos = ini.get<float>("arm_" + name, key);
 	if (pos + _arm_adjustment[name] > 1.0f) {
 		_arm_adjustment[name] = 1.0f - pos;
 	} else if (pos + _arm_adjustment[name] < -1.0f) {
@@ -150,8 +137,8 @@ void basic_controller::update_arm_adjustment(std::string name) {
 	}
 }
 
-bool basic_controller::update_arm_abilities_position_index(std::string name) {
-	int index = read_arm_abilities_position_index();
+bool basic_controller::update_arm_ability_position_index(std::string name) {
+	int index = read_arm_ability_position_index();
 	if (index < 0) {
 		return false;
 	}
@@ -172,14 +159,14 @@ bool basic_controller::update_arm_abilities_position_index(std::string name) {
 	if (index >= position_num) {
 		index = position_num - 1;
 	}
-	_arm_abilities_position_index[name] = index;
+	_arm_ability_position_index_dataset[name] = index;
 	return true;
 }
 
-void basic_controller::update_arm_abilities_position() {
-	for (const auto& i : _arm_abilities_name) {
+void basic_controller::update_arm_ability_position() {
+	for (const auto& i : _arm_ability_name_dataset) {
 		std::string key {
-			"position" + std::to_string(_arm_abilities_position_index[i])
+			"position" + std::to_string(_arm_ability_position_index_dataset[i])
 		};
 		_command[i] = ini_parser::instance().get<float>("arm_" + i, key);
 		_command[i] += _arm_adjustment[i];
@@ -195,7 +182,7 @@ void basic_controller::teaching(std::string name) {
 	};
 	if (is_key_rise(key)) {
 		std::string key {
-			"position" + std::to_string(_arm_abilities_position_index[name])
+			"position" + std::to_string(_arm_ability_position_index_dataset[name])
 		};
 		float pos = potentiometer::instance().get_position(name);
 		ini.set("arm_" + name, key, pos);
@@ -209,9 +196,9 @@ void basic_controller::write_ini_file() {
 		ini_parser::instance()
 	};
 
-	for (const auto& i : _arm_abilities_name) {
+	for (const auto& i : _arm_ability_name_dataset) {
 		std::string key {
-			"position" + std::to_string(_arm_abilities_position_index[i])
+			"position" + std::to_string(_arm_ability_position_index_dataset[i])
 		};
 
 		if (_arm_adjustment[i] != 0.0f) {

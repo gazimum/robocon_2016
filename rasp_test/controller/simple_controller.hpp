@@ -44,7 +44,7 @@ private:
 
 	std::string _state_name;
 	state_machine _state_machine;
-	std::map<std::string, int> _state_index_list;
+	std::map<std::string, int> _state_index_dataset;
 };
 
 #endif /* CONTROLLER_SIMPLE_CONTROLLER_HPP_ */

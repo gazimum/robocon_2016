@@ -10,6 +10,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 class controller_impl {
 public:
@@ -26,9 +27,11 @@ protected:
 	bool is_key_pushed(std::string key);
 	bool is_key_rise(std::string key);
 
-	int read_arm_abilities_position_index();
+	int read_arm_ability_position_index();
 
 	static const float _command_threshold;
+	static std::map<std::string, size_t> _arm_ability_position_index_dataset;
+	static const std::vector<std::string> _arm_ability_name_dataset;
 
 	std::map<std::string, float> _command;
 	std::map<std::string, float> _normalized_controller_state;
