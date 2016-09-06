@@ -17,7 +17,21 @@
 #include <pid/position_pid.hpp>
 #include <robot/wheel_odometry.hpp>
 
-moving_object::moving_object() {}
+moving_object::moving_object() {
+	_command_lpf.insert(
+			std::pair<std::string, lpf<float>>("velocity_x", {})
+	);
+	_command_lpf.insert(
+			std::pair<std::string, lpf<float>>("velocity_y", {})
+	);
+	_command_lpf.insert(
+			std::pair<std::string, lpf<float>>("angular_velocity", {})
+	);
+	init_lpf();
+	controller::instance().add_reload_ini_file_value_function(
+			std::bind(&moving_object::init_lpf, this)
+	);
+}
 
 moving_object::~moving_object() {}
 
@@ -26,20 +40,44 @@ void moving_object::update() {
 	float vy = controller::instance().get("velocity_y");
 	float av = controller::instance().get("angular_velocity");
 
+	// 移動する状態だったらエンコーダのLPFは有効化
+	float l = sqrt(vx * vx + vy * vy);
+	float threshold = ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_velocity");
+	bool is_enable_lpf = (l > threshold);
+	threshold = ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_angular_velocity");
+	is_enable_lpf = is_enable_lpf || (std::fabs(av) > threshold);
+	if (is_enable_lpf) {
+		wheel_odometry::instance().enable_lpf();
+		enable_lpf();
+	} else {
+		// 移動する状態でないならエンコーダLPFは無効化
+		wheel_odometry::instance().disable_lpf();
+		disable_lpf();
+	}
+
+	vx = _command_lpf.at("velocity_x").update(vx);
+	vy = _command_lpf.at("velocity_y").update(vy);
+	av = _command_lpf.at("angular_velocity").update(av);
+
 	_omni_wheel.set_velocity(vx, vy);
 	_omni_wheel.set_angular_velocity(av);
 	_omni_wheel.write();
+}
 
-	// 移動する状態だったらLPFは有効化
-	float l = sqrt(vx * vx + vy * vy);
-	if (l > ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_velocity")) {
-		wheel_odometry::instance().enable_lpf();
-		return;
+void moving_object::enable_lpf() {
+	init_lpf();
+}
+
+void moving_object::disable_lpf() {
+	for (auto&& i : _command_lpf) {
+		i.second.set(0.0f);
 	}
-	if (std::fabs(av) > ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_angular_velocity")) {
-		wheel_odometry::instance().enable_lpf();
-		return;
+}
+
+void moving_object::init_lpf() {
+	for (auto&& i : _command_lpf) {
+		i.second.set(
+			ini_parser::instance().get<float>("lpf", i.first + "_lpf_p")
+		);
 	}
-	// 移動する状態でないならLPFは無効化
-	wheel_odometry::instance().disable_lpf();
 }

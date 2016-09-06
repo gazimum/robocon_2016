@@ -7,6 +7,7 @@
 
 #include <controller/simple_controller.hpp>
 #include <controller/basic_controller.hpp>
+#include <controller/flexible_controller.hpp>
 #include <ini_parser.hpp>
 #include <string>
 
@@ -27,7 +28,6 @@ simple_controller::simple_controller() : _is_lock_enable(false) {
 	// 初期状態で腕は開いている
 	_command["width"] = -1.0f;
 
-
 	_time = std::chrono::system_clock::now();
 }
 
@@ -45,10 +45,14 @@ controller_impl* simple_controller::update() {
 controller_impl* simple_controller::update_sequence() {
 	std::string key[] {
 		ini_parser::instance().get<std::string>("key_config", "controller_switch_1"),
-		ini_parser::instance().get<std::string>("key_config", "controller_switch_2")
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_2"),
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_3")
 	};
 	if (is_key_pushed(key[0]) && is_key_rise(key[1])) {
-		return new basic_controller();
+		if (is_key_pushed(key[2])) {
+			return new flexible_controller;
+		}
+		return new basic_controller;
 	}
 	return this;
 }

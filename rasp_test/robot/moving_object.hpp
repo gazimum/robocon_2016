@@ -8,8 +8,10 @@
 #ifndef MOVING_OBJECT_HPP_
 #define MOVING_OBJECT_HPP_
 
+#include <map>
 #include <pid/position_pid.hpp>
-#include "omni_wheel.hpp"
+#include <robot/omni_wheel.hpp>
+#include <lpf.hpp>
 
 class moving_object {
 public:
@@ -19,7 +21,12 @@ public:
 	void update();
 
 private:
+	void enable_lpf();
+	void disable_lpf();
+	void init_lpf();
+
 	omni_wheel _omni_wheel;
+	std::map<std::string, lpf<float>> _command_lpf;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */

@@ -10,10 +10,10 @@
 #include <controller/controller.hpp>
 #include <server_shared_data.hpp>
 #include <controller/controller_impl.hpp>
-#include <controller/simple_controller.hpp>
+#include <controller/flexible_controller.hpp>
 
 controller::controller() : _controller_impl(nullptr) {
-	_controller_impl = new simple_controller();
+	_controller_impl = new flexible_controller();
 	_time = std::chrono::system_clock::now();
 }
 

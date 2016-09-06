@@ -9,6 +9,7 @@
 #include <functional>
 #include <controller/basic_controller.hpp>
 #include <controller/simple_controller.hpp>
+#include <controller/flexible_controller.hpp>
 #include <ini_parser.hpp>
 #include <potentiometer.hpp>
 
@@ -50,10 +51,14 @@ void basic_controller::update_movement() {
 controller_impl* basic_controller::update_sequence() {
 	std::string key[] {
 		ini_parser::instance().get<std::string>("key_config", "controller_switch_1"),
-		ini_parser::instance().get<std::string>("key_config", "controller_switch_2")
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_2"),
+		ini_parser::instance().get<std::string>("key_config", "controller_switch_3")
 	};
 	if (is_key_pushed(key[0]) && is_key_rise(key[1])) {
-		return new simple_controller();
+		if (is_key_pushed(key[2])) {
+			return new simple_controller;
+		}
+		return new flexible_controller;
 	}
 	return this;
 }
@@ -90,8 +95,8 @@ bool basic_controller::udpate_arm_index_and_adjustment() {
 		std::string ib_key {
 			ini.get<std::string>("key_config", "IB_" + i)
 		};
-		if (is_key_pushed(ib_key) && update_arm_ability_position_index(i)) {
-			// IB + index key
+		if (is_key_pushed(ib_key)) {
+			update_arm_ability_position_index(i);
 			update_arm_adjustment(i);
 			teaching(i);
 
