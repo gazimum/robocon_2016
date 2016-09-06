@@ -19,8 +19,6 @@ public:
 private:
 	virtual controller_impl* update() override;
 
-	void update_ini_parser();
-
 	void update_arm();
 	void update_movement();
 	controller_impl* update_sequence();

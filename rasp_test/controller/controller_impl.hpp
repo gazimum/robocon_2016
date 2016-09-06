@@ -28,6 +28,7 @@ protected:
 	bool is_key_rise(std::string key);
 
 	int read_arm_ability_position_index();
+	void update_ini_parser();
 
 	static const float _command_threshold;
 	static std::map<std::string, size_t> _arm_ability_position_index_dataset;

@@ -18,23 +18,10 @@ basic_controller::basic_controller()  {
 basic_controller::~basic_controller() {}
 
 controller_impl* basic_controller::update() {
-	update_ini_parser();
 	update_movement();
 	update_arm();
 	update_angle_base();
 	return update_sequence();
-}
-
-void basic_controller::update_ini_parser() {
-	std::string key {
-		ini_parser::instance().get<std::string>("key_config", "reload_ini_file")
-	};
-	if (is_key_rise(key)) {
-		ini_parser::instance().read();
-		_command["reload_ini_file"] = 1.0f;
-	} else {
-		_command["reload_ini_file"] = -1.0f;
-	}
 }
 
 void basic_controller::update_movement() {

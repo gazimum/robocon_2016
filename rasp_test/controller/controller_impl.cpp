@@ -12,7 +12,6 @@ const float controller_impl::_command_threshold = 0.5f;
 std::map<std::string, size_t> controller_impl::_arm_ability_position_index_dataset = {};
 const std::vector<std::string> controller_impl::_arm_ability_name_dataset {
 	"length",
-	"width",
 	"height",
 	"angle"
 };
@@ -33,6 +32,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	}
 
 	controller_impl* state = update();
+	update_ini_parser();
 
 	// ロボットの操作値に係数をかける
 	for (auto&& i : _command) {
@@ -75,5 +75,17 @@ int controller_impl::read_arm_ability_position_index() {
 		}
 	}
 	return -1;
+}
+
+void controller_impl::update_ini_parser() {
+	std::string key {
+		ini_parser::instance().get<std::string>("key_config", "reload_ini_file")
+	};
+	if (is_key_rise(key)) {
+		ini_parser::instance().read();
+		_command["reload_ini_file"] = 1.0f;
+	} else {
+		_command["reload_ini_file"] = -1.0f;
+	}
 }
 

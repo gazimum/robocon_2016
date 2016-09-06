@@ -10,9 +10,10 @@
 #include <ini_parser.hpp>
 #include <string>
 
-simple_controller::simple_controller() : 	_is_lock_enable(false),
-												_state_name("very_low"),
-												_state_machine("release") {
+std::string simple_controller::_state_name = "very_low";
+state_machine simple_controller::_state_machine("height_low");
+
+simple_controller::simple_controller() : _is_lock_enable(false) {
 	_state_machine.add_state("release", 		std::bind(&simple_controller::release, 		 this));
 	_state_machine.add_state("height_low",		std::bind(&simple_controller::height_low, 	 this));
 	_state_machine.add_state("grab", 			std::bind(&simple_controller::grab, 		 this));
@@ -23,22 +24,14 @@ simple_controller::simple_controller() : 	_is_lock_enable(false),
 		_state_index_dataset[name] = i;
 	}
 
+	// 初期状態で腕は開いている
+	_command["width"] = -1.0f;
+
+
 	_time = std::chrono::system_clock::now();
 }
 
 simple_controller::~simple_controller() {}
-
-void simple_controller::update_ini_parser() {
-	std::string key {
-		ini_parser::instance().get<std::string>("key_config", "reload_ini_file")
-	};
-	if (is_key_rise(key)) {
-		ini_parser::instance().read();
-		_command["reload_ini_file"] = 1.0f;
-	} else {
-		_command["reload_ini_file"] = -1.0f;
-	}
-}
 
 controller_impl* simple_controller::update() {
 	_state_machine.update();
@@ -46,7 +39,6 @@ controller_impl* simple_controller::update() {
 	update_lock();
 	update_movement();
 	update_angle_base();
-	update_ini_parser();
 	return update_sequence();
 }
 

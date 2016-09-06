@@ -21,8 +21,6 @@ public:
 private:
 	virtual controller_impl* update() override;
 
-	void update_ini_parser();
-
 	controller_impl* update_sequence();
 	void update_lock();
 	void update_movement();
@@ -38,12 +36,11 @@ private:
 	void update_state_name();
 	void update_state_by_state_name();
 
+	static std::string _state_name;
+	static state_machine _state_machine;
+
 	std::chrono::system_clock::time_point _time;
-
 	bool _is_lock_enable;
-
-	std::string _state_name;
-	state_machine _state_machine;
 	std::map<std::string, int> _state_index_dataset;
 };
 
