@@ -12,6 +12,7 @@
 #include <map>
 #include <singleton.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
+#include <lpf.hpp>
 
 class potentiometer : public singleton<potentiometer> {
 public:
@@ -21,7 +22,10 @@ private:
 	friend class singleton<potentiometer>;
 	potentiometer();
 
+	void init();
+
 	static const std::map<std::string, serial_connected_mcu::read_id> _read_id_dataset;
+	static std::map<std::string, lpf<float>> _lpf;
 };
 
 #endif /* SERIAL_CONNECTED_MCU_POTENTIOMETER_HPP_ */

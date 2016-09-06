@@ -29,6 +29,7 @@ protected:
 
 	int read_arm_ability_position_index();
 	void update_ini_parser();
+	void update_angle();
 
 	static const float _command_threshold;
 	static std::map<std::string, size_t> _arm_ability_position_index_dataset;

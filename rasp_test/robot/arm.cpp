@@ -28,9 +28,6 @@ arm::arm() {
 				}
 			)
 		);
-		_analog_in_lpf_dataset[i].set(
-			ini_parser::instance().get<float>("lpf", "analog_in_" + i + "_lpf_p")
-		);
 	}
 	controller::instance().add_reload_ini_file_value_function(
 		std::bind(&arm::init, this)
@@ -42,7 +39,6 @@ void arm::update() {
 
 	for (const auto& name : _dc_motor_name_dataset) {
 		float position = potentiometer::instance().get_position(name);
-		position = _analog_in_lpf_dataset.at(name).update(position);
 		float target = controller::instance().get(name);
 		float mv = _pid.at(name).update(target - position);
 		dc_motor::instance().set(name, mv);
@@ -58,11 +54,11 @@ void arm::update() {
 void arm::update_angle() {
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(
 		serial_connected_mcu::ESC1,
-		controller::instance().get("angle_left") + controller::instance().get("angle_base")
+		controller::instance().get("angle_left") + controller::instance().get("angle_base_left")
 	);
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(
 		serial_connected_mcu::ESC2,
-		controller::instance().get("angle_right") + controller::instance().get("angle_base")
+		controller::instance().get("angle_right") + controller::instance().get("angle_base_right")
 	);
 }
 
@@ -77,10 +73,5 @@ void arm::init() {
 				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kp") << " " <<
 				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_ki") << " " <<
 				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kd") << std::endl;
-	}
-	for (auto&& i : _analog_in_lpf_dataset) {
-		i.second.set(
-			ini_parser::instance().get<float>("lpf", "analog_in_" + i.first + "_lpf_p")
-		);
 	}
 }

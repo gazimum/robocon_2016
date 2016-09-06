@@ -24,7 +24,6 @@ private:
 	controller_impl* update_sequence();
 	void update_lock();
 	void update_movement();
-	void update_angle_base();
 
 	int read_arm_abilities_position_index();
 

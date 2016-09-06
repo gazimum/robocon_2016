@@ -21,7 +21,6 @@ basic_controller::~basic_controller() {}
 controller_impl* basic_controller::update() {
 	update_movement();
 	update_arm();
-	update_angle_base();
 	return update_sequence();
 }
 
@@ -61,12 +60,6 @@ controller_impl* basic_controller::update_sequence() {
 		return new flexible_controller;
 	}
 	return this;
-}
-
-void basic_controller::update_angle_base() {
-	_command["angle_base"] = _command["height"];
-	_command["angle_left"]  = _command["angle"];
-	_command["angle_right"] = _command["angle"];
 }
 
 void basic_controller::update_arm() {

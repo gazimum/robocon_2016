@@ -38,7 +38,6 @@ controller_impl* simple_controller::update() {
 	update_state_by_state_name();
 	update_lock();
 	update_movement();
-	update_angle_base();
 	return update_sequence();
 }
 
@@ -94,12 +93,6 @@ void simple_controller::update_movement() {
 	// 旋回
 	_command["angular_velocity"]  = _normalized_controller_state[ini.get<std::string>("key_config", "turn_+")];
 	_command["angular_velocity"] -= _normalized_controller_state[ini.get<std::string>("key_config", "turn_-")];
-}
-
-void simple_controller::update_angle_base() {
-	_command["angle_base"] = _command["height"];
-	_command["angle_left"]  = _command["angle"];
-	_command["angle_right"] = _command["angle"];
 }
 
 std::string simple_controller::release() {

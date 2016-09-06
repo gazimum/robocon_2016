@@ -26,7 +26,6 @@ flexible_controller::~flexible_controller() {}
 
 controller_impl* flexible_controller::update() {
 	update_movement();
-	update_angle_base();
 	update_grab();
 	update_lock();
 
@@ -121,12 +120,6 @@ void flexible_controller::update_movement() {
 	// 旋回
 	_command["angular_velocity"]  = _normalized_controller_state[ini.get<std::string>("key_config", "turn_+")];
 	_command["angular_velocity"] -= _normalized_controller_state[ini.get<std::string>("key_config", "turn_-")];
-}
-
-void flexible_controller::update_angle_base() {
-	_command["angle_base"] = _command["height"];
-	_command["angle_left"]  = _command["angle"];
-	_command["angle_right"] = _command["angle"];
 }
 
 void flexible_controller::update_state_by_state_name() {

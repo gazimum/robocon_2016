@@ -22,9 +22,6 @@ private:
 	void update_arm();
 	void update_movement();
 	controller_impl* update_sequence();
-
-	void update_angle_base();
-
 	bool update_arm_ability_position_index(std::string name);
 	void update_arm_ability_position();
 

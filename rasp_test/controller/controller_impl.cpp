@@ -7,6 +7,7 @@
 
 #include <controller/controller_impl.hpp>
 #include <ini_parser.hpp>
+#include <potentiometer.hpp>
 
 const float controller_impl::_command_threshold = 0.5f;
 std::map<std::string, size_t> controller_impl::_arm_ability_position_index_dataset = {};
@@ -32,6 +33,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	}
 
 	controller_impl* state = update();
+	update_angle();
 	update_ini_parser();
 
 	// ロボットの操作値に係数をかける
@@ -87,5 +89,12 @@ void controller_impl::update_ini_parser() {
 	} else {
 		_command["reload_ini_file"] = -1.0f;
 	}
+}
+
+void controller_impl::update_angle() {
+	_command["angle_base_left"]  = potentiometer::instance().get_position("height");
+	_command["angle_base_right"] = potentiometer::instance().get_position("height");
+	_command["angle_left"]  = _command["angle"];
+	_command["angle_right"] = _command["angle"];
 }
 
