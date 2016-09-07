@@ -9,6 +9,7 @@
 #define SINGLETON_HPP_
 
 #include <memory>
+#include <iostream>
 
 template <class T>
 class singleton {

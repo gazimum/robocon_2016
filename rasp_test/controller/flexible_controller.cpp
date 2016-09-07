@@ -16,9 +16,11 @@ std::string flexible_controller::_state_name = "very_low";
 
 flexible_controller::flexible_controller() {
 	init();
+	/*
 	controller::instance().add_reload_ini_file_value_function(
 			std::bind(&flexible_controller::init, this)
 	);
+	*/
 }
 
 flexible_controller::~flexible_controller() {}

@@ -1,5 +1,4 @@
 /*
- * todo:処理が正常に進まない問題．singleton	で死ぬのではなく．robot::instance()で死ぬ．
  * todo:angleに渡しているポテメのデータはLPFが効いているか？
  * todo:↑は効いていなかったため修正した．要テスト．
  * todo:コントローラ遷移時につかみ状態を維持するようにする．
@@ -16,15 +15,14 @@
 
 #include <iostream>
 
-void main_thread_func() {
-	using namespace serial_connected_mcu;
+int main() {
+	std::thread com_thread(std::ref(communication::instance()));
 
 	try {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		serial_connected_mcu_master::instance().init();
+		serial_connected_mcu::serial_connected_mcu_master::instance().init();
 
 		while (!robot::instance().is_end()) {
-			std::cout << "main loop" << std::endl;
 			robot::instance().update();
 			i2c::instance().write();
 
@@ -39,15 +37,7 @@ void main_thread_func() {
 		std::cout << s << std::endl;
 	}
 
-	std::cout << "main thread is end" << std::endl;
-}
-
-int main() {
-	std::thread com_thread(std::ref(communication::instance()));
-	std::thread main_thread(main_thread_func);
-
 	com_thread.join();
-	main_thread.join();
 
 	return 0;
 }
