@@ -8,10 +8,10 @@
 #ifndef CONTROLLER_FLEXIBLE_CONTROLLER_HPP_
 #define CONTROLLER_FLEXIBLE_CONTROLLER_HPP_
 
-#include <controller/controller_impl.hpp>
+#include <controller/moving_object_controller.hpp>
 #include <map>
 
-class flexible_controller : public controller_impl {
+class flexible_controller : public moving_object_controller {
 public:
 	flexible_controller();
 	virtual ~flexible_controller();
@@ -23,17 +23,15 @@ private:
 	void update_state_name();
 	void update_grab();
 	void update_lock();
-	void update_movement();
 	void update_angle_base();
 
 	int read_arm_abilities_position_index();
 
 	void update_state_by_state_name();
 
-	static std::string _state_name;
+	void init();
 
-	static bool _is_lock_enable;
-	static bool _is_grab_enable;
+	static std::string _state_name;
 
 	std::map<std::string, int> _state_index_dataset;
 };

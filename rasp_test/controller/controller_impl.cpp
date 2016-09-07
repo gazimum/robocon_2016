@@ -16,6 +16,8 @@ const std::vector<std::string> controller_impl::_arm_ability_name_dataset {
 	"height",
 	"angle"
 };
+bool controller_impl::_is_lock_enable = false;
+bool controller_impl::_is_grab_enable = false;
 
 controller_impl::controller_impl() {}
 
@@ -35,6 +37,8 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	controller_impl* state = update();
 	update_angle();
 	update_ini_parser();
+	apply_grab();
+	apply_lock();
 
 	// ロボットの操作値に係数をかける
 	for (auto&& i : _command) {
@@ -51,11 +55,17 @@ float controller_impl::get(std::string key) {
 	return _command[key];
 }
 
-bool controller_impl::is_key_pushed(std::string key) {
+bool controller_impl::is_key_pushed(std::string name) {
+	std::string key {
+		get_key_by_name(name)
+	};
 	return (_normalized_controller_state[key] > _command_threshold);
 }
 
-bool controller_impl::is_key_rise(std::string key) {
+bool controller_impl::is_key_rise(std::string name) {
+	std::string key {
+		get_key_by_name(name)
+	};
 	if (_normalized_controller_state[key] <= _command_threshold) {
 		return false;
 	}
@@ -65,14 +75,14 @@ bool controller_impl::is_key_rise(std::string key) {
 	return true;
 }
 
+std::string controller_impl::get_key_by_name(std::string name) {
+	return ini_parser::instance().get<std::string>("key_config", name);
+}
 
 int controller_impl::read_arm_ability_position_index() {
 	int n = ini_parser::instance().get<int>("key_config", "arm_index_num");
 	for (size_t i = 0; i < n; ++i) {
-		std::string key {
-			ini_parser::instance().get<std::string>("key_config", "arm_abilities_position_index_" + std::to_string(i))
-		};
-		if (is_key_pushed(key)) {
+		if (is_key_pushed("arm_abilities_position_index_" + std::to_string(i))) {
 			return i;
 		}
 	}
@@ -80,10 +90,7 @@ int controller_impl::read_arm_ability_position_index() {
 }
 
 void controller_impl::update_ini_parser() {
-	std::string key {
-		ini_parser::instance().get<std::string>("key_config", "reload_ini_file")
-	};
-	if (is_key_rise(key)) {
+	if (is_key_rise("reload_ini_file")) {
 		ini_parser::instance().read();
 		_command["reload_ini_file"] = 1.0f;
 	} else {
@@ -96,5 +103,21 @@ void controller_impl::update_angle() {
 	_command["angle_base_right"] = potentiometer::instance().get_position("height");
 	_command["angle_left"]  = _command["angle"];
 	_command["angle_right"] = _command["angle"];
+}
+
+void controller_impl::apply_grab() {
+	if (_is_grab_enable) {
+		_command["width"] = 1.0f;
+	} else {
+		_command["width"] = -1.0f;
+	}
+}
+
+void controller_impl::apply_lock() {
+	if (_is_lock_enable) {
+		_command["lock"] = 1.0f;
+	} else {
+		_command["lock"] = -1.0f;
+	}
 }
 

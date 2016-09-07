@@ -1,16 +1,10 @@
 /*
+ * todo:処理が正常に進まない問題．singleton	で死ぬのではなく．robot::instance()で死ぬ．
  * todo:angleに渡しているポテメのデータはLPFが効いているか？
- * todo:↑は聞いていなかったため修正した．要テスト．
+ * todo:↑は効いていなかったため修正した．要テスト．
  * todo:コントローラ遷移時につかみ状態を維持するようにする．
  * todo:起動時に設定ファイルのバックアップをとる機能を付ける．
- * todo:コントローラの微調整モードに入ったときにインデックスを知らなくても調整できたほうがいいため、
- * 		インデックスキーを押していなくてもIBが押されていれば微調整できるようにしたため実践してみる．
- * todo:移動の命令自体にLPFをかけることでタイヤが滑る問題に対策を立てたため実践してみる．
  * todo:flex_controllerの実装をしたため実際に操縦者に使ってもらってフィードバックを得る．
- * todo:微調整モードに範囲制限を追加：設定ファイルに制約式を追加する形が理想．
- * 		 ↑ではなく下限値と上限値を設定ファイルに書く形が妥当であると考えられる．
- * 		 ↑をもう少し実用的にするために条件を記述できるとよいと考えられる．
- * 		 ↑ティーチングが動作確認できたため、必要ないかもしれない．要検討．
  */
 
 #include <thread>
@@ -30,6 +24,7 @@ void main_thread_func() {
 		serial_connected_mcu_master::instance().init();
 
 		while (!robot::instance().is_end()) {
+			std::cout << "main loop" << std::endl;
 			robot::instance().update();
 			i2c::instance().write();
 
@@ -43,6 +38,8 @@ void main_thread_func() {
 	catch (std::string& s) {
 		std::cout << s << std::endl;
 	}
+
+	std::cout << "main thread is end" << std::endl;
 }
 
 int main() {

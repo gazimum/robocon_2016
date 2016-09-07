@@ -8,12 +8,12 @@
 #ifndef CONTROLLER_SIMPLE_CONTROLLER_HPP_
 #define CONTROLLER_SIMPLE_CONTROLLER_HPP_
 
-#include <controller/controller_impl.hpp>
+#include <controller/moving_object_controller.hpp>
 #include <state_machine/state_machine.hpp>
 #include <chrono>
 #include <map>
 
-class simple_controller : public controller_impl {
+class simple_controller : public moving_object_controller {
 public:
 	simple_controller();
 	virtual ~simple_controller();
@@ -23,7 +23,6 @@ private:
 
 	controller_impl* update_sequence();
 	void update_lock();
-	void update_movement();
 
 	int read_arm_abilities_position_index();
 
@@ -35,11 +34,12 @@ private:
 	void update_state_name();
 	void update_state_by_state_name();
 
+	void init();
+
 	static std::string _state_name;
 	static state_machine _state_machine;
 
 	std::chrono::system_clock::time_point _time;
-	bool _is_lock_enable;
 	std::map<std::string, int> _state_index_dataset;
 };
 

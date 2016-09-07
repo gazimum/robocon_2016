@@ -24,16 +24,21 @@ public:
 protected:
 	virtual controller_impl* update() = 0;
 
-	bool is_key_pushed(std::string key);
-	bool is_key_rise(std::string key);
+	bool is_key_pushed(std::string name);
+	bool is_key_rise(std::string name);
+	std::string get_key_by_name(std::string name);
 
 	int read_arm_ability_position_index();
 	void update_ini_parser();
 	void update_angle();
+	void apply_grab();
+	void apply_lock();
 
 	static const float _command_threshold;
 	static std::map<std::string, size_t> _arm_ability_position_index_dataset;
 	static const std::vector<std::string> _arm_ability_name_dataset;
+	static bool _is_lock_enable;
+	static bool _is_grab_enable;
 
 	std::map<std::string, float> _command;
 	std::map<std::string, float> _normalized_controller_state;

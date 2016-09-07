@@ -8,10 +8,9 @@
 #ifndef CONTROLLER_BASIC_CONTROLLER_HPP_
 #define CONTROLLER_BASIC_CONTROLLER_HPP_
 
-#include <controller/controller_impl.hpp>
-#include <state_machine/state_machine.hpp>
+#include <controller/moving_object_controller.hpp>
 
-class basic_controller : public controller_impl {
+class basic_controller : public moving_object_controller {
 public:
 	basic_controller();
 	virtual ~basic_controller();
@@ -20,7 +19,6 @@ private:
 	virtual controller_impl* update() override;
 
 	void update_arm();
-	void update_movement();
 	controller_impl* update_sequence();
 	bool update_arm_ability_position_index(std::string name);
 	void update_arm_ability_position();

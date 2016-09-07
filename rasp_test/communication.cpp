@@ -34,10 +34,12 @@ void communication::operator()() {
 
 		while (!client.is_end()) {
 			for (size_t i = 0; i < ini_parser::instance().get<int>("network_profile", "network_node_num"); ++i) {
-				std::string name{
+				std::string name {
 					ini_parser::instance().get<std::string>("network_profile", "network_device_name" + std::to_string(i))
 				};
-				std::string ip = ini_parser::instance().get<std::string>("network_profile", "ip_for_" + name);
+				std::string ip {
+					ini_parser::instance().get<std::string>("network_profile", "ip_for_" + name)
+				};
 
 				server_shared_data::_mutex.lock();
 				server_shared_data::_data[ip] = client.get(ip);

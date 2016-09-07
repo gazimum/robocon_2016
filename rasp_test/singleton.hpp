@@ -14,10 +14,10 @@ template <class T>
 class singleton {
 public:
 	static T& instance() {
-		static std::unique_ptr<T> instance {
-			create()
+		static std::unique_ptr<T> instance_ptr {
+			new T
 		};
-		return *instance;
+		return *instance_ptr;
 	}
 
 protected:
@@ -25,10 +25,6 @@ protected:
 	virtual ~singleton() {}
 
 private:
-	inline static T* create() {
-		return new T();
-	}
-
 	singleton(const singleton&) = delete;
 	singleton& operator=(const singleton&) = delete;
 	singleton(singleton&&) = delete;
