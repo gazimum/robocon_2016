@@ -51,7 +51,6 @@ void wheel_odometry::disable_lpf() {
 }
 
 float wheel_odometry::get_tire_frequency_kHz(int index) {
-	//float coeff = ini_parser::instance().get<float>("");
 	return get_raw(index) / ini_parser::instance().get<int>("encoder_profile", "encoder_resolution");
 }
 
@@ -69,9 +68,18 @@ float wheel_odometry::get_raw(int index) {
 	int id = serial_connected_mcu::ENCODER_SPEED1 + index;
 	float coeff = ini_parser::instance().get<float>("encoder_profile", "encoder_coeff" + std::to_string(index));
 	float raw = coeff * serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(id);
-	return _lpf_dataset.at(index).update(raw);
+	return raw;
+	//return _lpf_dataset.at(index).update(raw);
 }
 
 float wheel_odometry::get_heading_rad() {
-	return 0.0f;
+	float l = 0.0f;
+	for (size_t i = 0; i < ini_parser::instance().get<int>("encoder_profile", "encoder_num"); ++i) {
+		int id = serial_connected_mcu::ENCODER1 + i;
+		l += serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(id);
+	}
+	l /= ini_parser::instance().get<float>("encoder_profile", "encoder_resolution");
+	l *= 2.0f * M_PI * ini_parser::instance().get<float>("omni_wheel", "tire_radius_cm");
+	l /= ini_parser::instance().get<float>("encoder_profile", "encoder_num");
+	return l / ini_parser::instance().get<float>("omni_wheel", "body_radius_cm");
 }

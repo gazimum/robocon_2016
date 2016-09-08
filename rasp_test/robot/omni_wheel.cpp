@@ -19,7 +19,8 @@
 
 omni_wheel::omni_wheel() : _velocity_x(float()),
 							   _velocity_y(float()),
-							   _angular_velocity(float()) {
+							   _angular_velocity(float()),
+							   _target_heading_rad(float()) {
 	update_tire_frequency_pid_coeff();
 	controller::instance().add_reload_ini_file_value_function(
 			std::bind(&omni_wheel::update_tire_frequency_pid_coeff, this)
@@ -28,6 +29,15 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 
 omni_wheel::~omni_wheel() {}
 
+void normalize(float& theta) {
+	while (theta > M_PI) {
+		theta -= 2.0f * M_PI;
+	}
+	while (theta < -M_PI) {
+		theta += 2.0f * M_PI;
+	}
+}
+
 void omni_wheel::write() {
 	float p[_wheel_num];
 	for (size_t i = 0; i < _wheel_num; ++i) {
@@ -35,48 +45,28 @@ void omni_wheel::write() {
 		theta *= M_PI / 180.0f;
 		// タイヤの向きベクトルと速度ベクトルの内積
 		p[i] = _velocity_x * cos(theta) + _velocity_y * sin(theta);
-		p[i] += _angular_velocity;
 	}
-	// 回転数制御
-	for (size_t i = 0; i < _wheel_num; ++i) {
-		//float f = _wheel_odometry->get_raw(i) * 1000.0f / ini_parser::instance().get<int>("encoder_profile", "encoder_resolution");
-		float f = wheel_odometry::instance().get_tire_advanced_speed_cm_per_sec(i);
-		float target_f = p[i] * ini_parser::instance().get<float>("setting", "target_tire_frequency");
-
-		float threshold = 0.01f;
-		if (std::abs(target_f) > threshold) {
-			float e = target_f - f;
-			p[i] = _tire_frequency_pid[i](e);
-		} else {
-			_tire_frequency_pid[i].init();
-			p[i] = 0.0f;
-		}
-		p[i] = std::max(-1.0f, std::min(p[i], 1.0f));
-
-		if (i == 0) {
-			std::cout << target_f << " " << f << std::endl;
-		}
-		//std::cout << target_f << " " << f << ",";
+	// ロボットの角度制御
+	_target_heading_rad += _angular_velocity;
+	float e = _target_heading_rad - wheel_odometry::instance().get_heading_rad();
+	normalize(e);
+	std::cout << e << std::endl;
+	float mv = 0.0f;
+	float threshold = 0.01f;
+	if (std::abs(e) > threshold) {
+		mv = _heading_pid.update(e);
+	} else {
+		_heading_pid.init();
 	}
-	//std::cout << std::endl;
-	/*
-	// 速度制御
 	for (size_t i = 0; i < _wheel_num; ++i) {
-		float v = wheel_odometry::get_tire_advanced_speed_cm_per_sec(i);
-		float target_v = p[i] * ini_parser::instance().get<float>("setting", "target_tire_speed");
-
-		float threshold = 0.01f;
-		if (std::abs(target_v) > threshold) {
-			float e = target_v - v;
-			p[i] = _tire_frequency_pid[i](e);
-		} else {
-			_tire_frequency_pid[i].init();
+		if (p[i] + mv > 1.0f) {
+			mv = 1.0f - p[i];
+		} else if (p[i] + mv < -1.0f) {
+			mv = -1.0f - p[i];
 		}
-		p[i] = std::max(-1.0f, std::min(p[i], 1.0f));
 	}
-	*/
 	for (size_t i = 0; i < _wheel_num; ++i) {
-		dc_motor::instance().set("wheel" + std::to_string(i), p[i]);
+		dc_motor::instance().set("wheel" + std::to_string(i), p[i] + mv);
 	}
 }
 
@@ -94,6 +84,10 @@ void omni_wheel::set_angular_velocity(float v) {
 	_angular_velocity = std::max(-1.0f, std::min(1.0f, v));
 }
 
+void omni_wheel::set_target_heading_rad(float heading_rad) {
+	_target_heading_rad = heading_rad;
+}
+
 void omni_wheel::update_tire_frequency_pid_coeff() {
 	for (size_t i = 0; i < _wheel_num; ++i) {
 		_tire_frequency_pid[i].update_coeff(
@@ -102,4 +96,9 @@ void omni_wheel::update_tire_frequency_pid_coeff() {
 			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_tire_frequency_pid_kd")
 		);
 	}
+	_heading_pid.update_coeff(
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_heading_pid_kp"),
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_heading_pid_ki"),
+			ini_parser::instance().get<float>("pid_coeff", "omni_wheel_heading_pid_kd")
+	);
 }

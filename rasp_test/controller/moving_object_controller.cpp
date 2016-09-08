@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <controller/moving_object_controller.hpp>
+#include <ini_parser.hpp>
 
 moving_object_controller::moving_object_controller() {
 	// TODO 自動生成されたコンストラクター・スタブ
@@ -16,22 +17,41 @@ moving_object_controller::~moving_object_controller() {
 	// TODO Auto-generated destructor stub
 }
 
+void normalize(float& x, float& y) {
+	float l = x * x + y * y;
+	if (l > 1.0f) {
+		l = sqrt(l);
+		x /= l;
+		y /= l;
+	}
+}
+
 void moving_object_controller::update_movement() {
 	// 平行移動
 	float vx = _normalized_controller_state[get_key_by_name("velocity_x")];
 	float vy = _normalized_controller_state[get_key_by_name("velocity_y")];
+	float av = _normalized_controller_state[get_key_by_name("turn_+")];
+	av -= _normalized_controller_state[get_key_by_name("turn_-")];
 
-	float l = vx * vx + vy * vy;
-	if (l > 1.0f) {
-		l = sqrt(l);
-		vx /= l;
-		vy /= l;
+	float coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode1");
+	if (is_key_pushed("speed_mode2_switch_1") || is_key_pushed("speed_mode2_switch_2")) {
+		coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode2");
 	}
+	av *= coeff;
+
+	float l = sqrt(vx * vx + vy * vy);
+	float threshold = ini_parser::instance().get<float>("setting", "velocity_threshold");
+	if (l > threshold) {
+		vx *= coeff / l;
+		vy *= coeff / l;
+	} else {
+		vx = vy = 0.0f;
+	}
+	normalize(vx, vy);
 	_command["velocity_x"] = vx;
 	_command["velocity_y"] = vy;
 
 	// 旋回
-	_command["angular_velocity"]  = _normalized_controller_state[get_key_by_name("turn_+")];
-	_command["angular_velocity"] -= _normalized_controller_state[get_key_by_name("turn_-")];
+	_command["angular_velocity"]  = av;
 }
 
