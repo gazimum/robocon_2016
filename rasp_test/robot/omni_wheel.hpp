@@ -24,8 +24,6 @@ public:
 	void set_angular_velocity(float v);
 	void set_target_heading_rad(float heading_rad);
 
-	static constexpr size_t _wheel_num = 3;
-
 private:
 	void update_tire_frequency_pid_coeff();
 
@@ -34,7 +32,7 @@ private:
 	float _angular_velocity;
 	float _target_heading_rad;
 
-	speed_pid<float> _tire_frequency_pid[_wheel_num];
+	//speed_pid<float> _tire_frequency_pid[_wheel_num];
 	position_pid<float> _heading_pid;
 };
 

@@ -1,7 +1,7 @@
 /*
- * todo:タイヤの回転数制御でreload_iniが効かない．
- * todo:移動に低速モードと高速モードをつける．切り替えはL1R1
- * todo:回転角制御．実装はNucleo
+ * todo:PIDの係数をarm_stateごとに切り替える．
+ * todo:角度制御で操作中に急に動くことがある問題に対処する．
+ * 			↑は係数の調整で改善できたように見える．要実験．
  * todo:起動時に設定ファイルのバックアップをとる機能を付ける．
  */
 
@@ -24,7 +24,6 @@ int main() {
 		while (!robot::instance().is_end()) {
 			robot::instance().update();
 			i2c::instance().write();
-
 			controller::instance().update();
 			serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
 		}
