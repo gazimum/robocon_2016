@@ -20,9 +20,11 @@ public:
 	controller_impl* update(std::map<std::string, int>& controller_state);
 
 	float get(std::string key);
+	virtual void reload_ini_file_value() {};
 
 protected:
 	virtual controller_impl* update() = 0;
+	virtual void update_pid_index() {}
 
 	bool is_key_pushed(std::string name);
 	bool is_key_rise(std::string name);
@@ -31,6 +33,8 @@ protected:
 	int read_arm_ability_position_index();
 	void update_ini_parser();
 	void update_angle();
+
+
 	void apply_grab();
 	void apply_lock();
 

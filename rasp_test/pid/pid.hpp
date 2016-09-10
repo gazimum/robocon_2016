@@ -15,9 +15,7 @@ public:
 	virtual ~pid() {};
 
 	T operator()(const T& e);
-	T operator()(T&& e);
 	virtual T update(const T& e) = 0;
-	T update(T&& e);
 
 	virtual void init() = 0;
 	void update_coeff(float kp, float ki, float kd);

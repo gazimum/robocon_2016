@@ -1,37 +1,27 @@
-#include <functional>
 #include <robot/arm.hpp>
 #include <ini_parser.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <controller/controller.hpp>
 #include <dc_motor.hpp>
+#include <pid/pid_manager.hpp>
 #include <solenoid_valve.hpp>
 #include <potentiometer.hpp>
 
 const std::vector<std::string> arm::_dc_motor_name_dataset {
-	"length",
-	"height"
+	"arm_length",
+	"arm_height"
 };
 
 
 const std::vector<std::string> arm::_solenoid_valve_name_dataset {
-	"width",
+	"arm_width",
 	"lock"
 };
 
 arm::arm() {
 	for (const auto& i : _dc_motor_name_dataset) {
-		_pid.insert(
-			pid_container_type::value_type(i, {
-					ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kp"),
-					ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_ki"),
-					ini_parser::instance().get<float>("pid_coeff", "arm_" + i + "_pid_kd")
-				}
-			)
-		);
+		pid_manager::instance().add_pid<position_pid<float>>(i);
 	}
-	controller::instance().add_reload_ini_file_value_function(
-		std::bind(&arm::init, this)
-	);
 }
 
 void arm::update() {
@@ -40,7 +30,7 @@ void arm::update() {
 	for (const auto& name : _dc_motor_name_dataset) {
 		float position = potentiometer::instance().get_position(name);
 		float target = controller::instance().get(name);
-		float mv = _pid.at(name).update(target - position);
+		float mv = pid_manager::instance().get_pid(name)->update(target - position);
 		dc_motor::instance().set(name, mv);
 
 		std::cout << name << " " << target - position << ", ";
@@ -60,18 +50,4 @@ void arm::update_angle() {
 		serial_connected_mcu::ESC2,
 		controller::instance().get("angle_right") + controller::instance().get("angle_base_right")
 	);
-}
-
-void arm::init() {
-	for (auto&& i : _pid) {
-		i.second.update_coeff(
-			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kp"),
-			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_ki"),
-			ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kd")
-		);
-		std::cout << i.first << " " <<
-				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kp") << " " <<
-				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_ki") << " " <<
-				ini_parser::instance().get<float>("pid_coeff", "arm_" + i.first + "_pid_kd") << std::endl;
-	}
 }

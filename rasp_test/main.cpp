@@ -1,7 +1,5 @@
 /*
  * todo:PIDの係数をarm_stateごとに切り替える．
- * todo:角度制御で操作中に急に動くことがある問題に対処する．
- * 			↑は係数の調整で改善できたように見える．要実験．
  * todo:起動時に設定ファイルのバックアップをとる機能を付ける．
  */
 
@@ -11,6 +9,7 @@
 #include <i2c/i2c.hpp>
 #include <controller/controller.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
+#include <ini_parser.hpp>
 
 #include <iostream>
 
@@ -19,6 +18,16 @@ int main() {
 
 	try {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+		while (true) {	// 通信スレッドがini_parserの使用を終了したらメインスレッドの処理を開始する
+			ini_parser::_mutex.lock();
+			if (ini_parser::_is_usable_for_main_thread) {
+				ini_parser::_mutex.unlock();
+				break;
+			}
+			ini_parser::_mutex.unlock();
+		}
+
 		serial_connected_mcu::serial_connected_mcu_master::instance().init();
 
 		while (!robot::instance().is_end()) {
@@ -28,11 +37,11 @@ int main() {
 			serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
 		}
 	}
-	catch (const char* s) {
-		std::cout << s << std::endl;
+	catch (const std::exception& e) {
+		std::cout << e.what() << std::endl;
 	}
-	catch (std::string& s) {
-		std::cout << s << std::endl;
+	catch (...) {
+		throw;
 	}
 
 	com_thread.join();

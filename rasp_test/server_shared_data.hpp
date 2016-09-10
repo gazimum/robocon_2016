@@ -11,12 +11,10 @@ public:
 	typedef std::map<std::string, int> server_shared_data_type;
 	typedef std::map<std::string, server_shared_data_type> server_shared_data_container_type;
 
+	server_shared_data() = delete;
+
 	static std::mutex _mutex;
 	static server_shared_data_container_type _data;
-
-private:
-	server_shared_data() {}
-	~server_shared_data() {}
 };
 
 #endif /* SERVER_SHARED_DATA_HPP_ */

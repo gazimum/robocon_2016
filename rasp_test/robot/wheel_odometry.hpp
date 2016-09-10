@@ -9,6 +9,7 @@
 #define ROBOT_WHEEL_ODOMETRY_HPP_
 
 #include <map>
+#include <memory>
 #include <robot/omni_wheel.hpp>
 #include <lpf.hpp>
 #include <singleton.hpp>
@@ -31,6 +32,8 @@ private:
 
 	std::map<int, lpf<float>> _lpf_dataset;
 	bool _is_lpf_enable;
+	std::unique_ptr<float[]> _prev_raw;
+	std::unique_ptr<float[]> _raw_offset;
 };
 
 #endif /* ROBOT_WHEEL_ODOMETRY_HPP_ */

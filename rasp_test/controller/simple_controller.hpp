@@ -17,9 +17,11 @@ class simple_controller : public moving_object_controller {
 public:
 	simple_controller();
 	virtual ~simple_controller();
+	virtual void reload_ini_file_value() override;
 
 private:
 	virtual controller_impl* update() override;
+	virtual void update_pid_index() override;
 
 	controller_impl* update_sequence();
 	void update_lock();
@@ -33,8 +35,6 @@ private:
 
 	void update_state_name();
 	void update_state_by_state_name();
-
-	void init();
 
 	static std::string _state_name;
 	static state_machine _state_machine;

@@ -11,6 +11,9 @@
 #include <server_shared_data.hpp>
 #include <controller/controller_impl.hpp>
 #include <controller/flexible_controller.hpp>
+#include <pid/pid_manager.hpp>
+
+#include <iostream>
 
 controller::controller() : _controller_impl(nullptr) {
 	_controller_impl = new flexible_controller();
@@ -61,6 +64,8 @@ void controller::update() {
 		for (const auto& i : _reload_ini_file_value_function_dataset) {
 			i();
 		}
+		pid_manager::instance().config();
+		_controller_impl->reload_ini_file_value();
 	}
 }
 

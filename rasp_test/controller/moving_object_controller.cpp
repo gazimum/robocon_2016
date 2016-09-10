@@ -17,6 +17,8 @@ moving_object_controller::~moving_object_controller() {
 	// TODO Auto-generated destructor stub
 }
 
+namespace {
+
 void normalize(float& x, float& y) {
 	float l = x * x + y * y;
 	if (l > 1.0f) {
@@ -24,6 +26,8 @@ void normalize(float& x, float& y) {
 		x /= l;
 		y /= l;
 	}
+}
+
 }
 
 void moving_object_controller::update_movement() {

@@ -19,13 +19,13 @@
 
 moving_object::moving_object() {
 	_command_lpf.insert(
-			std::pair<std::string, lpf<float>>("velocity_x", {})
+			std::make_pair("velocity_x", lpf<float>())
 	);
 	_command_lpf.insert(
-			std::pair<std::string, lpf<float>>("velocity_y", {})
+			std::make_pair("velocity_y", lpf<float>())
 	);
 	_command_lpf.insert(
-			std::pair<std::string, lpf<float>>("angular_velocity", {})
+			std::make_pair("angular_velocity", lpf<float>())
 	);
 	init_lpf();
 	controller::instance().add_reload_ini_file_value_function(
@@ -40,18 +40,16 @@ void moving_object::update() {
 	float vy = controller::instance().get("velocity_y");
 	float av = controller::instance().get("angular_velocity");
 
-	// 移動する状態だったらエンコーダのLPFは有効化
+	// 移動する状態だったらLPFを有効化
 	float l = sqrt(vx * vx + vy * vy);
 	float threshold = ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_velocity");
 	bool is_enable_lpf = (l > threshold);
 	threshold = ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_angular_velocity");
 	is_enable_lpf = is_enable_lpf || (std::fabs(av) > threshold);
 	if (is_enable_lpf) {
-		wheel_odometry::instance().enable_lpf();
 		enable_lpf();
 	} else {
-		// 移動する状態でないならエンコーダLPFは無効化
-		wheel_odometry::instance().disable_lpf();
+		// 移動する状態でないならLPFを無効化
 		disable_lpf();
 	}
 

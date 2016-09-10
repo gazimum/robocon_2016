@@ -5,22 +5,19 @@
  *      Author: u
  */
 
+#include <string>
 #include <controller/controller.hpp>
 #include <controller/simple_controller.hpp>
 #include <controller/basic_controller.hpp>
 #include <controller/flexible_controller.hpp>
 #include <ini_parser.hpp>
-#include <string>
+#include <pid/pid_manager.hpp>
+#include <iostream>
 
 std::string flexible_controller::_state_name = "very_low";
 
 flexible_controller::flexible_controller() {
-	init();
-	/*
-	controller::instance().add_reload_ini_file_value_function(
-			std::bind(&flexible_controller::init, this)
-	);
-	*/
+	reload_ini_file_value();
 }
 
 flexible_controller::~flexible_controller() {}
@@ -32,8 +29,12 @@ controller_impl* flexible_controller::update() {
 
 	update_state_name();
 	update_state_by_state_name();
-
 	return update_sequence();
+}
+
+void flexible_controller::update_pid_index() {
+	pid_manager::instance().set_index(_state_index_dataset.at(_state_name));
+	pid_manager::instance().config();
 }
 
 void flexible_controller::update_state_name() {
@@ -83,11 +84,11 @@ void flexible_controller::update_state_by_state_name() {
 		};
 		int index = ini_parser::instance().get<int>("arm_state", value_key);
 		_arm_ability_position_index_dataset[i] = index;
-		_command[i] = ini_parser::instance().get<float>("arm_" + i, "position" + std::to_string(index));
+		_command[i] = ini_parser::instance().get<float>(i, "position" + std::to_string(index));
 	}
 }
 
-void flexible_controller::init() {
+void flexible_controller::reload_ini_file_value() {
 	for (size_t i = 0; i < ini_parser::instance().get<int>("arm_state", "arm_state_num"); ++i) {
 		std::string name = ini_parser::instance().get<std::string>("arm_state", "state" + std::to_string(i) + "_name");
 		_state_index_dataset[name] = i;

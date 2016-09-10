@@ -8,8 +8,6 @@
 #ifndef OMNI_WHEEL_HPP_
 #define OMNI_WHEEL_HPP_
 
-#include <boost/numeric/ublas/vector.hpp>
-#include <pid/speed_pid.hpp>
 #include <pid/position_pid.hpp>
 
 class wheel_odometry;
@@ -25,15 +23,10 @@ public:
 	void set_target_heading_rad(float heading_rad);
 
 private:
-	void update_tire_frequency_pid_coeff();
-
 	float _velocity_x;
 	float _velocity_y;
 	float _angular_velocity;
 	float _target_heading_rad;
-
-	//speed_pid<float> _tire_frequency_pid[_wheel_num];
-	position_pid<float> _heading_pid;
 };
 
 #endif /* OMNI_WHEEL_HPP_ */

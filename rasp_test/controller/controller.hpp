@@ -31,6 +31,8 @@ private:
 	friend class singleton<controller>;
 	controller();
 
+	void update_pid_index();
+
 	controller_impl* _controller_impl;
 	std::chrono::system_clock::time_point _time;
 

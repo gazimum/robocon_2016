@@ -14,7 +14,9 @@
 #include <controller/controller.hpp>
 #include <iostream>
 
-wheel_odometry::wheel_odometry() : _is_lpf_enable(true) {
+wheel_odometry::wheel_odometry() : _is_lpf_enable(true),
+										_prev_raw(new float[ini_parser::instance().get<int>("encoder_profile", "encoder_num")]),
+										_raw_offset(new float[ini_parser::instance().get<int>("encoder_profile", "encoder_num")]) {
 	for (size_t i = 0; i < ini_parser::instance().get<int>("encoder_profile", "encoder_num"); ++i) {
 		_lpf_dataset.insert(
 				std::pair<int, lpf<float>>(i, {})
@@ -67,22 +69,16 @@ float wheel_odometry::get_tire_advanced_speed_cm_per_sec(int index) {
 }
 
 float wheel_odometry::get_raw(int index) {
-	static float prev_raw[3] = {};
-	static float offset[3] = {};
-
 	float coeff = ini_parser::instance().get<float>("encoder_profile", "encoder_coeff" + std::to_string(index));
 	int id = serial_connected_mcu::ENCODER1 + index;
 	float raw = coeff * serial_connected_mcu::serial_connected_mcu_master::instance().get_raw(id);
-	std::cout << raw << std::endl;
-	if (raw - prev_raw[index] >= INT16_MAX) { 			// マイナスにオーバーフロー
-		offset[index] += INT16_MIN - INT16_MAX;
-	} else if (raw - prev_raw[index] <= INT16_MIN) {	// プラスにオーバーフロ \u\jjー
-		offset[index] += INT16_MAX - INT16_MIN;
+	if (raw - _prev_raw[index] >= INT16_MAX) { 			// マイナスにオーバーフロー
+		_raw_offset[index] += INT16_MIN - INT16_MAX;
+	} else if (raw - _prev_raw[index] <= INT16_MIN) {	// プラスにオーバーフロー
+		_raw_offset[index] += INT16_MAX - INT16_MIN;
 	}
-	prev_raw[index] = raw;
-	std::cout << raw + offset[index] << " " << offset[index] << std::endl;
-	return raw + offset[index];
-	//return _lpf_dataset.at(index).update(raw);
+	_prev_raw[index] = raw;
+	return raw + _raw_offset[index];
 }
 
 static void normalize(float& theta) {

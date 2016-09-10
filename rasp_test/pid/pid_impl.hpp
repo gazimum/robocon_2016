@@ -10,6 +10,8 @@
 
 #include "pid.hpp"
 
+#include <iostream>
+
 template <class T>
 pid<T>::pid(const T& kp, const T& ki, const T& kd) : _mv(T()) {
 	update_coeff(kp, ki, kd);
@@ -18,16 +20,6 @@ pid<T>::pid(const T& kp, const T& ki, const T& kd) : _mv(T()) {
 template <class T>
 T pid<T>::operator()(const T& e) {
 	return update(e);
-}
-
-template <class T>
-T pid<T>::operator()(T&& e) {
-	return update(e);
-}
-
-template <class T>
-T pid<T>::update(T&& e) {
-	return operator()(e);
 }
 
 template <class T>

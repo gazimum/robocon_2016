@@ -107,7 +107,7 @@ void basic_controller::update_arm_ability_position() {
 		std::string value_key {
 			"position" + std::to_string(_arm_ability_position_index_dataset[i])
 		};
-		_command[i] = ini_parser::instance().get<float>("arm_" + i, value_key);
+		_command[i] = ini_parser::instance().get<float>(i, value_key);
 		_command[i] += _arm_adjustment[i];
 	}
 }

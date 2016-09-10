@@ -5,11 +5,12 @@
  *      Author: u
  */
 
+#include <string>
 #include <controller/simple_controller.hpp>
 #include <controller/basic_controller.hpp>
 #include <controller/flexible_controller.hpp>
 #include <ini_parser.hpp>
-#include <string>
+#include <pid/pid_manager.hpp>
 
 std::string simple_controller::_state_name = "very_low";
 state_machine simple_controller::_state_machine("height_low");
@@ -20,6 +21,7 @@ simple_controller::simple_controller() {
 	_state_machine.add_state("grab", 			std::bind(&simple_controller::grab, 		 this));
 	_state_machine.add_state("height_adjust", 	std::bind(&simple_controller::height_adjust, this));
 
+	reload_ini_file_value();
 	_time = std::chrono::system_clock::now();
 }
 
@@ -31,6 +33,11 @@ controller_impl* simple_controller::update() {
 	update_lock();
 	update_movement();
 	return update_sequence();
+}
+
+void simple_controller::update_pid_index() {
+	pid_manager::instance().set_index(_state_index_dataset.at(_state_name));
+	pid_manager::instance().config();
 }
 
 controller_impl* simple_controller::update_sequence() {
@@ -123,11 +130,11 @@ void simple_controller::update_state_by_state_name() {
 		};
 		int index = ini_parser::instance().get<int>("arm_state", value_key);
 		_arm_ability_position_index_dataset[i] = index;
-		_command[i] = ini_parser::instance().get<float>("arm_" + i, "position" + std::to_string(index));
+		_command[i] = ini_parser::instance().get<float>(i, "position" + std::to_string(index));
 	}
 }
 
-void simple_controller::init() {
+void simple_controller::reload_ini_file_value() {
 	for (size_t i = 0; i < ini_parser::instance().get<int>("arm_state", "arm_state_num"); ++i) {
 		std::string name = ini_parser::instance().get<std::string>("arm_state", "state" + std::to_string(i) + "_name");
 		_state_index_dataset[name] = i;

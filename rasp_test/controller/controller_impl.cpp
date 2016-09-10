@@ -8,13 +8,14 @@
 #include <controller/controller_impl.hpp>
 #include <ini_parser.hpp>
 #include <potentiometer.hpp>
+#include <pid/pid_manager.hpp>
 
 const float controller_impl::_command_threshold = 0.5f;
 std::map<std::string, size_t> controller_impl::_arm_ability_position_index_dataset = {};
 const std::vector<std::string> controller_impl::_arm_ability_name_dataset {
-	"length",
-	"height",
-	"angle"
+	"arm_length",
+	"arm_height",
+	"arm_angle"
 };
 bool controller_impl::_is_lock_enable = false;
 bool controller_impl::_is_grab_enable = false;
@@ -37,6 +38,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	controller_impl* state = update();
 	update_angle();
 	update_ini_parser();
+	update_pid_index();
 	apply_grab();
 	apply_lock();
 
@@ -80,7 +82,7 @@ std::string controller_impl::get_key_by_name(std::string name) {
 }
 
 int controller_impl::read_arm_ability_position_index() {
-	int n = ini_parser::instance().get<int>("key_config", "arm_index_num");
+	size_t n = ini_parser::instance().get<int>("key_config", "arm_index_num");
 	for (size_t i = 0; i < n; ++i) {
 		if (is_key_pushed("arm_abilities_position_index_" + std::to_string(i))) {
 			return i;
@@ -99,17 +101,17 @@ void controller_impl::update_ini_parser() {
 }
 
 void controller_impl::update_angle() {
-	_command["angle_base_left"]  = potentiometer::instance().get_position("height");
-	_command["angle_base_right"] = potentiometer::instance().get_position("height");
-	_command["angle_left"]  = _command["angle"];
-	_command["angle_right"] = _command["angle"];
+	_command["angle_base_left"]  = potentiometer::instance().get_position("arm_height");
+	_command["angle_base_right"] = potentiometer::instance().get_position("arm_height");
+	_command["angle_left"]  = _command["arm_angle"];
+	_command["angle_right"] = _command["arm_angle"];
 }
 
 void controller_impl::apply_grab() {
 	if (_is_grab_enable) {
-		_command["width"] = 1.0f;
+		_command["arm_width"] = 1.0f;
 	} else {
-		_command["width"] = -1.0f;
+		_command["arm_width"] = -1.0f;
 	}
 }
 
