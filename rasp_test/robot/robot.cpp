@@ -6,10 +6,12 @@
  */
 
 #include "robot.hpp"
+#include <potentiometer.hpp>
 
 robot::robot() {}
 
 void robot::update() {
+	potentiometer::instance().update();
 	_arm.update();
 	_moving_object.update();
 }

@@ -9,6 +9,7 @@
 #define MOVING_OBJECT_HPP_
 
 #include <map>
+#include <vector>
 #include <pid/position_pid.hpp>
 #include <robot/omni_wheel.hpp>
 #include <lpf.hpp>
@@ -21,12 +22,8 @@ public:
 	void update();
 
 private:
-	void enable_lpf();
-	void disable_lpf();
-	void init_lpf();
-
+	static const std::vector<std::string> _lpf_name_dataset;
 	omni_wheel _omni_wheel;
-	std::map<std::string, lpf<float>> _command_lpf;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */

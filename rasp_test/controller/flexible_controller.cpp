@@ -12,6 +12,7 @@
 #include <controller/flexible_controller.hpp>
 #include <ini_parser.hpp>
 #include <pid/pid_manager.hpp>
+#include <lpf/lpf_manager.hpp>
 #include <iostream>
 
 std::string flexible_controller::_state_name = "very_low";
@@ -35,6 +36,11 @@ controller_impl* flexible_controller::update() {
 void flexible_controller::update_pid_index() {
 	pid_manager<float>::instance().set_index(_state_index_dataset.at(_state_name));
 	pid_manager<float>::instance().config();
+}
+
+void flexible_controller::update_lpf_index() {
+	lpf_manager<float>::instance().set_index(_state_index_dataset.at(_state_name));
+	lpf_manager<float>::instance().config();
 }
 
 void flexible_controller::update_state_name() {

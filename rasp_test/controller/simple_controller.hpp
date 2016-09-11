@@ -22,6 +22,7 @@ public:
 private:
 	virtual controller_impl* update() override;
 	virtual void update_pid_index() override;
+	virtual void update_lpf_index() override;
 
 	controller_impl* update_sequence();
 	void update_lock();

@@ -39,6 +39,7 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	update_angle();
 	update_ini_parser();
 	update_pid_index();
+	update_lpf_index();
 	apply_grab();
 	apply_lock();
 

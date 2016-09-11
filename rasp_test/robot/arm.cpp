@@ -19,7 +19,7 @@ const std::vector<std::string> arm::_solenoid_valve_name_dataset {
 
 arm::arm() {
 	for (const auto& i : _dc_motor_name_dataset) {
-		pid_manager<float>::instance().add_pid<position_pid>(i);
+		pid_manager<float>::instance().add<position_pid<float>>(i);
 	}
 }
 
@@ -29,7 +29,7 @@ void arm::update() const {
 	for (const auto& name : _dc_motor_name_dataset) {
 		float position = potentiometer::instance().get_position(name);
 		float target = controller::instance().get(name);
-		float mv = pid_manager<float>::instance().get_pid(name).update(target - position);
+		float mv = pid_manager<float>::instance().get(name).update(target - position);
 		dc_motor::instance().set(name, mv);
 
 		std::cout << name << " " << target - position << ", ";

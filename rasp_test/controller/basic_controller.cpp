@@ -13,8 +13,7 @@
 #include <ini_parser.hpp>
 #include <potentiometer.hpp>
 
-basic_controller::basic_controller()  {
-}
+basic_controller::basic_controller()  {}
 
 basic_controller::~basic_controller() {}
 
