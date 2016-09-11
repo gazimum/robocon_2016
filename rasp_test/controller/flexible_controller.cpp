@@ -33,8 +33,8 @@ controller_impl* flexible_controller::update() {
 }
 
 void flexible_controller::update_pid_index() {
-	pid_manager::instance().set_index(_state_index_dataset.at(_state_name));
-	pid_manager::instance().config();
+	pid_manager<float>::instance().set_index(_state_index_dataset.at(_state_name));
+	pid_manager<float>::instance().config();
 }
 
 void flexible_controller::update_state_name() {

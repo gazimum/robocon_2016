@@ -21,7 +21,7 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 							   _velocity_y(float()),
 							   _angular_velocity(float()),
 							   _target_heading_rad(float()) {
-	pid_manager::instance().add_pid<position_pid<float>>("omni_wheel_heading");
+	pid_manager<float>::instance().add_pid<position_pid>("omni_wheel_heading");
 }
 
 omni_wheel::~omni_wheel() {}
@@ -52,7 +52,7 @@ void omni_wheel::write() {
 	_target_heading_rad += _angular_velocity;
 	float e = _target_heading_rad - wheel_odometry::instance().get_heading_rad();
 	normalize(e);
-	float mv = pid_manager::instance().get_pid("omni_wheel_heading")->update(e);
+	float mv = pid_manager<float>::instance().get_pid("omni_wheel_heading")->update(e);
 
 	for (size_t i = 0; i < tire_num; ++i) {
 		dc_motor::instance().set("wheel" + std::to_string(i), p[i] + mv);

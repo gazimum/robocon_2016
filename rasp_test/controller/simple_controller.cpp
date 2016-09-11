@@ -36,8 +36,8 @@ controller_impl* simple_controller::update() {
 }
 
 void simple_controller::update_pid_index() {
-	pid_manager::instance().set_index(_state_index_dataset.at(_state_name));
-	pid_manager::instance().config();
+	pid_manager<float>::instance().set_index(_state_index_dataset.at(_state_name));
+	pid_manager<float>::instance().config();
 }
 
 controller_impl* simple_controller::update_sequence() {

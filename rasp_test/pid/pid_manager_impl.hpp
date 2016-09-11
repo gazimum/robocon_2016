@@ -9,13 +9,16 @@
 #include <pid/pid_manager.hpp>
 #include <memory>
 
-pid_manager::pid_manager() : _pid_index(int()) {}
+template <class T>
+pid_manager<T>::pid_manager() : _pid_index(int()) {}
 
-void pid_manager::set_index(int index) {
+template <class T>
+void pid_manager<T>::set_index(int index) {
 	_pid_index = index;
 }
 
-void pid_manager::config() {
+template <class T>
+void pid_manager<T>::config() {
 	for (auto&& i : _pid_dataset) {
 		std::string index_key {
 			"pid_state_" + std::to_string(_pid_index) + "_" + i.first + "_index"
@@ -32,7 +35,8 @@ void pid_manager::config() {
 	}
 }
 
-pid<float>* pid_manager::get_pid(std::string name) {
+template <class T>
+pid<T>* pid_manager<T>::get_pid(std::string name) {
 	if (_pid_dataset.find(name) == _pid_dataset.end()) {
 		throw std::out_of_range(
 			"in pid_manager::get_pid(std::string name) : \"" + name + "\" is not found in \"_pid_dataset\""

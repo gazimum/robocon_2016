@@ -64,7 +64,7 @@ void controller::update() {
 		for (const auto& i : _reload_ini_file_value_function_dataset) {
 			i();
 		}
-		pid_manager::instance().config();
+		pid_manager<float>::instance().config();
 		_controller_impl->reload_ini_file_value();
 	}
 }
