@@ -14,6 +14,7 @@
 #include <dc_motor.hpp>
 #include <controller/controller.hpp>
 #include <pid/pid_manager.hpp>
+#include <utils.hpp>
 
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 
@@ -25,19 +26,6 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 }
 
 omni_wheel::~omni_wheel() {}
-
-namespace {
-
-static void normalize(float& theta) {
-	while (theta > M_PI) {
-		theta -= 2.0f * M_PI;
-	}
-	while (theta < -M_PI) {
-		theta += 2.0f * M_PI;
-	}
-}
-
-}
 
 void omni_wheel::write() {
 	size_t tire_num = ini_parser::instance().get<int>("omni_wheel", "tire_num");
@@ -51,26 +39,22 @@ void omni_wheel::write() {
 	// ロボットの角度制御
 	_target_heading_rad += _angular_velocity;
 	float e = _target_heading_rad - wheel_odometry::instance().get_heading_rad();
-	normalize(e);
-	float mv = pid_manager<float>::instance().get_pid("omni_wheel_heading")->update(e);
+	utils::normalize_angle_rad(e);
+	float mv = pid_manager<float>::instance().get_pid("omni_wheel_heading").update(e);
 
 	for (size_t i = 0; i < tire_num; ++i) {
 		dc_motor::instance().set("wheel" + std::to_string(i), p[i] + mv);
 	}
 }
 
-void omni_wheel::set_velocity(float x, float y) {
-	float l = sqrt(x * x + y * y);
-	if (l > 1.0f) { // ベクトルの大きさが1より大きいなら1に調整する
-		x /= l;
-		y /= l;
-	}
-	_velocity_x = x;
-	_velocity_y = y;
+void omni_wheel::set_velocity(float vx, float vy) {
+	utils::restrict_vector_to_unit_vector(vx, vy);
+	_velocity_x = vx;
+	_velocity_y = vy;
 }
 
-void omni_wheel::set_angular_velocity(float v) {
-	_angular_velocity = std::max(-1.0f, std::min(v, 1.0f));
+void omni_wheel::set_angular_velocity(float av) {
+	_angular_velocity = std::max(-1.0f, std::min(av, 1.0f));
 }
 
 void omni_wheel::set_target_heading_rad(float heading_rad) {

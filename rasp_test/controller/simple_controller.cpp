@@ -135,7 +135,8 @@ void simple_controller::update_state_by_state_name() {
 }
 
 void simple_controller::reload_ini_file_value() {
-	for (size_t i = 0; i < ini_parser::instance().get<int>("arm_state", "arm_state_num"); ++i) {
+	size_t arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
+	for (size_t i = 0; i < arm_state_num; ++i) {
 		std::string name = ini_parser::instance().get<std::string>("arm_state", "state" + std::to_string(i) + "_name");
 		_state_index_dataset[name] = i;
 	}

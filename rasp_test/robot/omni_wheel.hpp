@@ -18,8 +18,8 @@ public:
 	~omni_wheel();
 
 	void write();
-	void set_velocity(float x, float y);
-	void set_angular_velocity(float v);
+	void set_velocity(float vx, float vy);
+	void set_angular_velocity(float av);
 	void set_target_heading_rad(float heading_rad);
 
 private:

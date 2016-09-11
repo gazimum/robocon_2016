@@ -36,11 +36,11 @@ void pid_manager<T>::config() {
 }
 
 template <class T>
-pid<T>* pid_manager<T>::get_pid(std::string name) {
+pid<T>& pid_manager<T>::get_pid(std::string name) {
 	if (_pid_dataset.find(name) == _pid_dataset.end()) {
 		throw std::out_of_range(
 			"in pid_manager::get_pid(std::string name) : \"" + name + "\" is not found in \"_pid_dataset\""
 		);
 	}
-	return _pid_dataset.at(name).get();
+	return *_pid_dataset.at(name);
 }

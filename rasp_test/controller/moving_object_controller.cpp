@@ -8,6 +8,7 @@
 #include <cmath>
 #include <controller/moving_object_controller.hpp>
 #include <ini_parser.hpp>
+#include <utils.hpp>
 
 moving_object_controller::moving_object_controller() {
 	// TODO 自動生成されたコンストラクター・スタブ
@@ -15,19 +16,6 @@ moving_object_controller::moving_object_controller() {
 
 moving_object_controller::~moving_object_controller() {
 	// TODO Auto-generated destructor stub
-}
-
-namespace {
-
-void normalize(float& x, float& y) {
-	float l = x * x + y * y;
-	if (l > 1.0f) {
-		l = sqrt(l);
-		x /= l;
-		y /= l;
-	}
-}
-
 }
 
 void moving_object_controller::update_movement() {
@@ -51,7 +39,7 @@ void moving_object_controller::update_movement() {
 	} else {
 		vx = vy = 0.0f;
 	}
-	normalize(vx, vy);
+	utils::restrict_vector_to_unit_vector(vx, vy);
 	_command["velocity_x"] = vx;
 	_command["velocity_y"] = vy;
 

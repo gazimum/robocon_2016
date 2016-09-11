@@ -30,7 +30,7 @@ public:
 
 	void set_index(int index);
 	void config();
-	pid<T>* get_pid(std::string name);
+	pid<T>& get_pid(std::string name);
 
 private:
 	friend class singleton<pid_manager<T>>;

@@ -13,6 +13,7 @@
 #include <ini_parser.hpp>
 #include <controller/controller.hpp>
 #include <iostream>
+#include <utils.hpp>
 
 wheel_odometry::wheel_odometry() : _is_lpf_enable(true),
 										_prev_raw(new float[ini_parser::instance().get<int>("encoder_profile", "encoder_num")]),
@@ -81,15 +82,6 @@ float wheel_odometry::get_raw(int index) {
 	return raw + _raw_offset[index];
 }
 
-static void normalize(float& theta) {
-	while (theta > M_PI) {
-		theta -= 2.0f * M_PI;
-	}
-	while (theta < -M_PI) {
-		theta += 2.0f * M_PI;
-	}
-}
-
 float wheel_odometry::get_heading_rad() {
 	float l = 0.0f;
 	for (size_t i = 0; i < ini_parser::instance().get<int>("encoder_profile", "encoder_num"); ++i) {
@@ -99,6 +91,6 @@ float wheel_odometry::get_heading_rad() {
 	l *= 2.0f * M_PI * ini_parser::instance().get<float>("omni_wheel", "tire_radius_cm");
 	l /= ini_parser::instance().get<float>("encoder_profile", "encoder_num");
 	float theta = l / ini_parser::instance().get<float>("omni_wheel", "body_radius_cm");
-	normalize(theta);
+	utils::normalize_angle_rad(theta);
 	return theta;
 }

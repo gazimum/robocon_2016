@@ -29,7 +29,7 @@ void arm::update() {
 	for (const auto& name : _dc_motor_name_dataset) {
 		float position = potentiometer::instance().get_position(name);
 		float target = controller::instance().get(name);
-		float mv = pid_manager<float>::instance().get_pid(name)->update(target - position);
+		float mv = pid_manager<float>::instance().get_pid(name).update(target - position);
 		dc_motor::instance().set(name, mv);
 
 		std::cout << name << " " << target - position << ", ";
