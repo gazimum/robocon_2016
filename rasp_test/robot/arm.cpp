@@ -12,7 +12,6 @@ const std::vector<std::string> arm::_dc_motor_name_dataset {
 	"arm_height"
 };
 
-
 const std::vector<std::string> arm::_solenoid_valve_name_dataset {
 	"arm_width",
 	"lock"
