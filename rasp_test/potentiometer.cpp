@@ -19,8 +19,8 @@ potentiometer::potentiometer() {
 	for (auto&& i : _read_id_dataset) {
 		_lpf.insert(
 			std::make_pair(
-					i.first,
-					lpf<float>()
+				i.first,
+				lpf<float>()
 			)
 		);
 	}
@@ -31,7 +31,7 @@ potentiometer::potentiometer() {
 	);
 }
 
-float potentiometer::get_position(std::string name) {
+float potentiometer::get_position(std::string name) const {
 	auto&& i = serial_connected_mcu::serial_connected_mcu_master::instance();
 
 	if (_read_id_dataset.find(name) == _read_id_dataset.end()) {

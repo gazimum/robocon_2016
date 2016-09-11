@@ -20,14 +20,14 @@ private:
 
 	void update_arm();
 	controller_impl* update_sequence();
-	bool update_arm_ability_position_index(std::string name);
-	void update_arm_ability_position();
 
 	bool udpate_arm_index_and_adjustment();
+	void update_arm_ability_position();
+
+	bool update_arm_ability_position_index(std::string name);
 	void update_arm_adjustment(std::string name);
 
 	void teaching(std::string name);
-
 	void write_ini_file();
 
 	std::map<std::string, float> _arm_adjustment;

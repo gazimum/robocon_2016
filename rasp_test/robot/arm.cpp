@@ -23,7 +23,7 @@ arm::arm() {
 	}
 }
 
-void arm::update() {
+void arm::update() const {
 	update_angle();
 
 	for (const auto& name : _dc_motor_name_dataset) {
@@ -40,7 +40,7 @@ void arm::update() {
 	}
 }
 
-void arm::update_angle() {
+void arm::update_angle() const {
 	serial_connected_mcu::serial_connected_mcu_master::instance().set(
 		serial_connected_mcu::ESC1,
 		controller::instance().get("angle_left") + controller::instance().get("angle_base_left")

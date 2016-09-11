@@ -35,9 +35,9 @@ controller_impl* basic_controller::update_sequence() {
 }
 
 void basic_controller::update_arm() {
+	// IB:Identifier Button 識別ボタン
 	static bool is_ib_pushed_prev = false;
 	bool is_ib_pushed = udpate_arm_index_and_adjustment();
-	// IB:Identifier Button 識別ボタン
 
 	if (!is_ib_pushed && is_ib_pushed_prev) {
 		// 操作が終わったら微調整分を適用してファイルに書き込む
@@ -65,23 +65,6 @@ bool basic_controller::udpate_arm_index_and_adjustment() {
 	return false;
 }
 
-void basic_controller::update_arm_adjustment(std::string name) {
-	float adj = _normalized_controller_state[get_key_by_name("arm_adjusting_+")];
-	adj -= _normalized_controller_state[get_key_by_name("arm_adjusting_-")];
-	adj *= ini_parser::instance().get<float>("command_coeff", "command_coeff_arm_adjustment");
-	_arm_adjustment[name] += adj;
-
-	std::string value_key {
-		"position" + std::to_string(_arm_ability_position_index_dataset[name])
-	};
-	float pos = ini_parser::instance().get<float>("arm_" + name, value_key);
-	if (pos + _arm_adjustment[name] > 1.0f) {
-		_arm_adjustment[name] = 1.0f - pos;
-	} else if (pos + _arm_adjustment[name] < -1.0f) {
-		_arm_adjustment[name] = -1.0f - pos;
-	}
-}
-
 bool basic_controller::update_arm_ability_position_index(std::string name) {
 	int index = read_arm_ability_position_index();
 	if (index < 0) {
@@ -94,12 +77,29 @@ bool basic_controller::update_arm_ability_position_index(std::string name) {
 		index += ini_parser::instance().get<int>("key_config", "height_low_key_num");
 	}
 
-	int position_num = ini_parser::instance().get<int>("arm_" + name, "position_num");
+	int position_num = ini_parser::instance().get<int>(name, "position_num");
 	if (index >= position_num) {
 		index = position_num - 1;
 	}
 	_arm_ability_position_index_dataset[name] = index;
 	return true;
+}
+
+void basic_controller::update_arm_adjustment(std::string name) {
+	float adj = _normalized_controller_state[get_key_by_name("arm_adjusting_+")];
+	adj -= _normalized_controller_state[get_key_by_name("arm_adjusting_-")];
+	adj *= ini_parser::instance().get<float>("command_coeff", "command_coeff_arm_adjustment");
+	_arm_adjustment[name] += adj;
+
+	std::string value_key {
+		"position" + std::to_string(_arm_ability_position_index_dataset[name])
+	};
+	float pos = ini_parser::instance().get<float>(name, value_key);
+	if (pos + _arm_adjustment[name] > 1.0f) {
+		_arm_adjustment[name] = 1.0f - pos;
+	} else if (pos + _arm_adjustment[name] < -1.0f) {
+		_arm_adjustment[name] = -1.0f - pos;
+	}
 }
 
 void basic_controller::update_arm_ability_position() {
@@ -113,12 +113,16 @@ void basic_controller::update_arm_ability_position() {
 }
 
 void basic_controller::teaching(std::string name) {
+	if (name == "arm_angle") {
+		return;
+	}
+
 	if (is_key_rise("teaching")) {
 		std::string value_key {
 			"position" + std::to_string(_arm_ability_position_index_dataset[name])
 		};
 		float pos = potentiometer::instance().get_position(name);
-		ini_parser::instance().set("arm_" + name, value_key, pos);
+		ini_parser::instance().set(name, value_key, pos);
 		_arm_adjustment[name] = 0.0f;
 		write_ini_file();
 	}
@@ -130,8 +134,8 @@ void basic_controller::write_ini_file() {
 			std::string value_key {
 				"position" + std::to_string(_arm_ability_position_index_dataset[i])
 			};
-			float pos = ini_parser::instance().get<float>("arm_" + i, value_key);
-			ini_parser::instance().set("arm_" + i, value_key, pos + _arm_adjustment[i]);
+			float pos = ini_parser::instance().get<float>(i, value_key);
+			ini_parser::instance().set(i, value_key, pos + _arm_adjustment[i]);
 		}
 		_arm_adjustment[i] = 0.0f;
 	}

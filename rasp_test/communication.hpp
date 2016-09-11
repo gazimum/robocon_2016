@@ -12,7 +12,7 @@
 
 class communication : public singleton<communication> {
 public:
-	void operator()();
+	void operator()() const;
 
 private:
 	friend class singleton<communication>;

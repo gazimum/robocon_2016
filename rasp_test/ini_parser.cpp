@@ -40,12 +40,12 @@ void ini_parser::read(std::string name) {
 	_ptrees[name] = p;
 }
 
-void ini_parser::write() {
+void ini_parser::write() const {
 	for (const auto& i : _ptrees) {
 		write_ini(_directory_name + i.first, i.second);
 	}
 }
 
-void ini_parser::write(std::string name) {
+void ini_parser::write(std::string name) const {
 	write_ini(_directory_name + name, _ptrees.at(name));
 }

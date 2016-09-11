@@ -16,7 +16,7 @@
 
 class potentiometer : public singleton<potentiometer> {
 public:
-	float get_position(std::string name);
+	float get_position(std::string name) const;
 
 private:
 	friend class singleton<potentiometer>;

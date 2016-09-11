@@ -29,7 +29,6 @@ void moving_object_controller::update_movement() {
 	if (is_key_pushed("speed_mode2_switch_1") || is_key_pushed("speed_mode2_switch_2")) {
 		coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode2");
 	}
-	av *= coeff;
 
 	float l = sqrt(vx * vx + vy * vy);
 	float threshold = ini_parser::instance().get<float>("setting", "velocity_threshold");
@@ -43,7 +42,12 @@ void moving_object_controller::update_movement() {
 	_command["velocity_x"] = vx;
 	_command["velocity_y"] = vy;
 
-	// 旋回
+	threshold = ini_parser::instance().get<float>("setting", "angular_velocity_threshold");
+	if (std::fabs(av) > threshold) {
+		av *= coeff;
+	} else {
+		av = 0.0f;
+	}
 	_command["angular_velocity"]  = av;
 }
 

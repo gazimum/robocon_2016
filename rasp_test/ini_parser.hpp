@@ -28,11 +28,11 @@ public:
 	void read();
 	void read(std::string name);
 
-	void write();
-	void write(std::string name);
+	void write() const;
+	void write(std::string name) const;
 
 	template <class T>
-	T get(std::string ptree_name, std::string key) {
+	T get(std::string ptree_name, std::string key) const {
 		try {
 			if (_ptrees.find(ptree_name + ".ini") == _ptrees.end()) {
 				throw std::out_of_range(

@@ -29,10 +29,14 @@ void solenoid_valve::set(std::string name, float p) {
 }
 
 void solenoid_valve::init() {
-	for (size_t i = 0; i < ini_parser::instance().get<int>("solenoid_valve", "solenoid_valve_num"); ++i) {
+	size_t solenoid_valve_num = ini_parser::instance().get<int>("solenoid_valve", "solenoid_valve_num");
+	for (size_t i = 0; i < solenoid_valve_num; ++i) {
 		std::string name {
 			ini_parser::instance().get<std::string>("solenoid_valve", "solenoid_valve_" + std::to_string(i) + "_name")
 		};
-		_name_and_index_dataset[name] = ini_parser::instance().get<int>("solenoid_valve", "solenoid_valve_" + std::to_string(i) + "_index");
+		std::string value_key {
+			"solenoid_valve_" + std::to_string(i) + "_index"
+		};
+		_name_and_index_dataset[name] = ini_parser::instance().get<int>("solenoid_valve", value_key);
 	}
 }

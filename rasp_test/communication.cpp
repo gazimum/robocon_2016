@@ -23,7 +23,7 @@
 
 communication::communication() {}
 
-void communication::operator()() {
+void communication::operator()() const {
 	try {
 		int port = ini_parser::instance().get<int>("network_profile", "server_port");
 		std::string server_ip = ini_parser::instance().get<std::string>("network_profile", "server_ip");

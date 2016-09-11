@@ -18,14 +18,13 @@ template <class T>
 class pid_manager : public singleton<pid_manager<T>> {
 public:
 	template <template<class> class PIDType>
-	void add_pid(std::string name, int init_index = 0) {
+	void add_pid(std::string name) {
 		_pid_dataset.insert(
 			std::make_pair (
 				name,
 				std::move(std::unique_ptr<pid<T>>(new PIDType<T>))
 			)
 		);
-		_pid_index = init_index;
 	}
 
 	void set_index(int index);

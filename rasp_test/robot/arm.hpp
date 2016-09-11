@@ -18,10 +18,10 @@
 class arm {
 public:
 	arm();
-	void update();
+	void update() const;
 
 private:
-	void update_angle();
+	void update_angle() const;
 
 	static const std::vector<std::string> _dc_motor_name_dataset;
 	static const std::map<std::string, serial_connected_mcu::read_id> _read_id_dataset;
