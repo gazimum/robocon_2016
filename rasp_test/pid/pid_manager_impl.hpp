@@ -1,18 +1,20 @@
 /*
- * config_pid.cpp
+ * pid_manager_impl.hpp
  *
  *  Created on: 2016/09/10
  *      Author: u
  */
 
+#ifndef INCLUDED_PID_MANAGER_IMPL_HPP
+#define INCLUDED_PID_MANAGER_IMPL_HPP
+
 #include <ini_parser.hpp>
-#include <pid/pid_manager.hpp>
 
 template <class T>
 void pid_manager<T>::config() {
-	for (auto&& i : _dataset) {
+	for (auto&& i : manager<pid<T>>::_dataset) {
 		std::string index_key {
-			"pid_state_" + std::to_string(_index) + "_" + i.first + "_index"
+			"pid_state_" + std::to_string(manager<pid<T>>::_index) + "_" + i.first + "_index"
 		};
 		int index = ini_parser::instance().get<int>("pid_state", index_key);
 		std::string prefix {
@@ -25,3 +27,5 @@ void pid_manager<T>::config() {
 		);
 	}
 }
+
+#endif

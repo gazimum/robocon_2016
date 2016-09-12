@@ -11,6 +11,9 @@
 template <class BaseType>
 manager<BaseType>::manager() : _index(int()) {}
 
+template <class BaseType>
+manager<BaseType>::~manager() {}
+
 template <class T>
 void manager<T>::set_index(int index) {
 	_index = index;

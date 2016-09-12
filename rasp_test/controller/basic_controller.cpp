@@ -69,11 +69,11 @@ bool basic_controller::update_arm_ability_position_index(std::string name) {
 	if (index < 0) {
 		return false;
 	}
-	float x = _normalized_controller_state[get_key_by_name("height_high_x")];
+	float x = _normalized_controller_state[get_key_by_name("arm__x")];
 	float y = _normalized_controller_state[get_key_by_name("height_high_y")];
 	float l = sqrt(x * x + y * y);
 	if (l > _command_threshold) {
-		index += ini_parser::instance().get<int>("key_config", "height_low_key_num");
+		index += ini_parser::instance().get<int>("key_config", "arm_index_mode_1_key_num");
 	}
 
 	int position_num = ini_parser::instance().get<int>(name, "position_num");
@@ -91,7 +91,7 @@ void basic_controller::update_arm_adjustment(std::string name) {
 	_arm_adjustment[name] += adj;
 
 	std::string value_key {
-		"position" + std::to_string(_arm_ability_position_index_dataset[name])
+		"position_" + std::to_string(_arm_ability_position_index_dataset[name])
 	};
 	float pos = ini_parser::instance().get<float>(name, value_key);
 	if (pos + _arm_adjustment[name] > 1.0f) {
@@ -104,7 +104,7 @@ void basic_controller::update_arm_adjustment(std::string name) {
 void basic_controller::update_arm_ability_position() {
 	for (const auto& i : _arm_ability_name_dataset) {
 		std::string value_key {
-			"position" + std::to_string(_arm_ability_position_index_dataset[i])
+			"position_" + std::to_string(_arm_ability_position_index_dataset[i])
 		};
 		_command[i] = ini_parser::instance().get<float>(i, value_key);
 		_command[i] += _arm_adjustment[i];
@@ -118,7 +118,7 @@ void basic_controller::teaching(std::string name) {
 
 	if (is_key_rise("teaching")) {
 		std::string value_key {
-			"position" + std::to_string(_arm_ability_position_index_dataset[name])
+			"position_" + std::to_string(_arm_ability_position_index_dataset[name])
 		};
 		float pos = potentiometer::instance().get_position(name);
 		ini_parser::instance().set(name, value_key, pos);
@@ -131,7 +131,7 @@ void basic_controller::write_ini_file() {
 	for (const auto& i : _arm_ability_name_dataset) {
 		if (_arm_adjustment[i] != 0.0f) {
 			std::string value_key {
-				"position" + std::to_string(_arm_ability_position_index_dataset[i])
+				"position_" + std::to_string(_arm_ability_position_index_dataset[i])
 			};
 			float pos = ini_parser::instance().get<float>(i, value_key);
 			ini_parser::instance().set(i, value_key, pos + _arm_adjustment[i]);

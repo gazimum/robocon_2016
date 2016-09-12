@@ -36,7 +36,7 @@ void communication::operator()() const {
 		std::string ip_dataset[network_node_num];
 		for (size_t i = 0; i < network_node_num; ++i) {
 			std::string name {
-				ini_parser::instance().get<std::string>("network_profile", "network_device_name" + std::to_string(i))
+				ini_parser::instance().get<std::string>("network_profile", "network_device_name_" + std::to_string(i))
 			};
 			ip_dataset[i] = ini_parser::instance().get<std::string>("network_profile", "ip_for_" + name);
 		}

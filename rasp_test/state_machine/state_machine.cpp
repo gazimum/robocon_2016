@@ -9,9 +9,7 @@
 
 state_machine::state_machine(std::string initial_state) : _current_state_name(initial_state) {}
 
-state_machine::~state_machine() {
-	// TODO Auto-generated destructor stub
-}
+state_machine::~state_machine() {}
 
 void state_machine::add_state(std::string name, std::function<std::string()> action) {
 	_state_map[name] = action;

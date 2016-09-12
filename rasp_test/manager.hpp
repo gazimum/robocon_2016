@@ -9,10 +9,15 @@
 #define PID_MANAGER_HPP_
 
 #include <map>
+#include <string>
+#include <memory>
 
 template <class BaseType>
 class manager {
 public:
+	manager();
+	virtual ~manager();
+
 	virtual void config() = 0;
 
 	template <class T>
@@ -28,10 +33,7 @@ public:
 	void set_index(int index);
 	BaseType& get(std::string name);
 
-private:
-	manager();
-	virtual ~manager();
-
+protected:
 	std::map<std::string, std::unique_ptr<BaseType>> _dataset;
 	int _index;
 };

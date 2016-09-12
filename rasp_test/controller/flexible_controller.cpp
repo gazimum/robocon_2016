@@ -48,15 +48,15 @@ void flexible_controller::update_state_name() {
 	if (index < 0) {
 		return;
 	}
-	if (is_key_pushed("height_high")){
-		index += ini_parser::instance().get<int>("key_config", "height_low_key_num");
+	if (is_key_pushed("arm_index_mode_2_switch")){
+		index += ini_parser::instance().get<int>("key_config", "arm_index_mode_1_key_num");
 	}
 	int arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
 	if (index >= arm_state_num) {
 		index = arm_state_num - 1;
 	}
 	std::string value_key {
-		"state" + std::to_string(index) + "_name"
+		"state_" + std::to_string(index) + "_name"
 	};
 	_state_name = ini_parser::instance().get<std::string>("arm_state", value_key);
 }
@@ -86,17 +86,18 @@ void flexible_controller::update_lock() {
 void flexible_controller::update_state_by_state_name() {
 	for (const auto& i : _arm_ability_name_dataset) {
 		std::string value_key {
-			"state" + std::to_string(_state_index_dataset[_state_name]) + "_" + i + "_index"
+			"state_" + std::to_string(_state_index_dataset[_state_name]) + "_" + i + "_index"
 		};
 		int index = ini_parser::instance().get<int>("arm_state", value_key);
 		_arm_ability_position_index_dataset[i] = index;
-		_command[i] = ini_parser::instance().get<float>(i, "position" + std::to_string(index));
+		_command[i] = ini_parser::instance().get<float>(i, "position_" + std::to_string(index));
 	}
 }
 
 void flexible_controller::reload_ini_file_value() {
-	for (size_t i = 0; i < ini_parser::instance().get<int>("arm_state", "arm_state_num"); ++i) {
-		std::string name = ini_parser::instance().get<std::string>("arm_state", "state" + std::to_string(i) + "_name");
+	size_t arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
+	for (size_t i = 0; i < arm_state_num; ++i) {
+		std::string name = ini_parser::instance().get<std::string>("arm_state", "state_" + std::to_string(i) + "_name");
 		_state_index_dataset[name] = i;
 	}
 }

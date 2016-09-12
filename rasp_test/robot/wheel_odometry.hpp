@@ -11,7 +11,6 @@
 #include <map>
 #include <memory>
 #include <robot/omni_wheel.hpp>
-#include <lpf.hpp>
 #include <singleton.hpp>
 
 class wheel_odometry : public singleton<wheel_odometry> {
@@ -22,16 +21,10 @@ public:
 	float get_raw(int index);
 	float get_heading_rad();
 
-	void enable_lpf();
-	void disable_lpf();
-
 private:
 	friend class singleton<wheel_odometry>;
 	wheel_odometry();
-	void init();
 
-	std::map<int, lpf<float>> _lpf_dataset;
-	bool _is_lpf_enable;
 	std::unique_ptr<float[]> _prev_raw;
 	std::unique_ptr<float[]> _raw_offset;
 };

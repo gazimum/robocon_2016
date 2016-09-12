@@ -26,7 +26,7 @@ void moving_object_controller::update_movement() {
 	av -= _normalized_controller_state[get_key_by_name("turn_-")];
 
 	float coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode1");
-	if (is_key_pushed("speed_mode2_switch_1") || is_key_pushed("speed_mode2_switch_2")) {
+	if (is_key_pushed("speed_mode_2_switch_1") || is_key_pushed("speed_mode_2_switch_2")) {
 		coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode2");
 	}
 

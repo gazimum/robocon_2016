@@ -5,7 +5,7 @@
  *      Author: tomoya
  */
 
-#include <lpf.hpp>
+#include <lpf/lpf.hpp>
 
 template <class T>
 lpf<T>::lpf(T p, T new_value) : _p(p),

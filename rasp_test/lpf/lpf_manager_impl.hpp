@@ -12,9 +12,9 @@
 
 template <class T>
 void lpf_manager<T>::config() {
-	for (auto&& i : _dataset) {
+	for (auto&& i : manager<lpf<T>>::_dataset) {
 		std::string index_key {
-			"lpf_state_" + std::to_string(_index) + "_" + i.first + "_index"
+			"lpf_state_" + std::to_string(manager<lpf<T>>::_index) + "_" + i.first + "_index"
 		};
 		int index = ini_parser::instance().get<int>("lpf_state", index_key);
 		std::string value_key {
@@ -25,6 +25,5 @@ void lpf_manager<T>::config() {
 		);
 	}
 }
-
 
 #endif

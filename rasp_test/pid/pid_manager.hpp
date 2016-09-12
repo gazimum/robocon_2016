@@ -16,11 +16,11 @@ class pid_manager :	 public manager<pid<T>>,
 					 public singleton<pid_manager<T>> {
 public:
 	virtual void config() override;
+	virtual ~pid_manager() {}
 
 private:
 	friend class singleton<pid_manager<T>>;
 	pid_manager() {}
-	virtual ~pid_manager() {}
 };
 
 #include <pid/pid_manager_impl.hpp>

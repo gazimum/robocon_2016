@@ -18,7 +18,7 @@
 #include <lpf/lpf_manager.hpp>
 #include <lpf/lpf.hpp>
 
-const std::string moving_object::_lpf_name_dataset {
+const std::vector<std::string> moving_object::_lpf_name_dataset {
 	"velocity_x",
 	"velocity_y",
 	"angular_velocity"
@@ -51,7 +51,6 @@ void moving_object::update() {
 			lpf_manager<float>::instance().get(i).init();
 		}
 	}
-
 
 	_omni_wheel.set_velocity(vx, vy);
 	_omni_wheel.set_angular_velocity(av);

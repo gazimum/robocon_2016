@@ -22,7 +22,7 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 							   _velocity_y(float()),
 							   _angular_velocity(float()),
 							   _target_heading_rad(float()) {
-	pid_manager<float>::instance().add_pid<position_pid>("omni_wheel_heading");
+	pid_manager<float>::instance().add<position_pid<float>>("omni_wheel_heading");
 }
 
 omni_wheel::~omni_wheel() {}
@@ -39,8 +39,8 @@ void omni_wheel::write() {
 	// ロボットの角度制御
 	_target_heading_rad += _angular_velocity;
 	float e = _target_heading_rad - wheel_odometry::instance().get_heading_rad();
-	utils::normalize_angle_rad(e);
-	float mv = pid_manager<float>::instance().get_pid("omni_wheel_heading").update(e);
+	utils::normalize_angle_rad(e); // [?, ?] -> [-pi, pi]]
+	float mv = pid_manager<float>::instance().get("omni_wheel_heading").update(e);
 
 	for (size_t i = 0; i < tire_num; ++i) {
 		dc_motor::instance().set("wheel" + std::to_string(i), p[i] + mv);
@@ -54,7 +54,7 @@ void omni_wheel::set_velocity(float vx, float vy) {
 }
 
 void omni_wheel::set_angular_velocity(float av) {
-	_angular_velocity = std::max(-1.0f, std::min(av, 1.0f));
+	_angular_velocity = av;
 }
 
 void omni_wheel::set_target_heading_rad(float heading_rad) {

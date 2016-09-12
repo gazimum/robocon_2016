@@ -10,6 +10,7 @@
 #include <controller/controller.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <ini_parser.hpp>
+#include <potentiometer.hpp>
 
 #include <iostream>
 
@@ -31,6 +32,7 @@ int main() {
 		serial_connected_mcu::serial_connected_mcu_master::instance().init();
 
 		while (!robot::instance().is_end()) {
+			potentiometer::instance().update();
 			robot::instance().update();
 			i2c::instance().write();
 			controller::instance().update();

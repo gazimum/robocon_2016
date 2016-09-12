@@ -18,7 +18,7 @@ const std::map<std::string, serial_connected_mcu::read_id> potentiometer::_read_
 potentiometer::potentiometer() {
 	for (auto&& i : _read_id_dataset) {
 		lpf_manager<float>::instance().add<lpf<float>>(i.first);
-		_filtered_value_dataset[i] = 0.0f;
+		_filtered_value_dataset[i.first] = 0.0f;
 	}
 }
 

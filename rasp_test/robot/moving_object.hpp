@@ -12,7 +12,6 @@
 #include <vector>
 #include <pid/position_pid.hpp>
 #include <robot/omni_wheel.hpp>
-#include <lpf.hpp>
 
 class moving_object {
 public:
