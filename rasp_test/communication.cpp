@@ -13,37 +13,37 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <communication.hpp>
-#include <ini_parser.hpp>
+#include <config.hpp>
+#include <config.hpp>
 #include <network/RobotClient.hpp>
 #include <server_shared_data.hpp>
 #include <iostream>
 #include <map>
 #include <string>
-#include <ini_parser.hpp>
 
 communication::communication() {}
 
 void communication::operator()() const {
 	try {
-		int port = ini_parser::instance().get<int>("network_profile", "server_port");
-		std::string server_ip = ini_parser::instance().get<std::string>("network_profile", "server_ip");
+		int port = config::instance().get<int>("network_profile", "server_port");
+		std::string server_ip = config::instance().get<std::string>("network_profile", "server_ip");
 
 		boost::asio::io_service io;
 		network::RobotClient client(server_ip, port, 5, "\n", io);
 		client.connect();
 
-		size_t network_node_num = ini_parser::instance().get<int>("network_profile", "network_node_num");
+		size_t network_node_num = config::instance().get<int>("network_profile", "network_node_num");
 		std::string ip_dataset[network_node_num];
 		for (size_t i = 0; i < network_node_num; ++i) {
 			std::string name {
-				ini_parser::instance().get<std::string>("network_profile", "network_device_name_" + std::to_string(i))
+				config::instance().get<std::string>("network_profile", "network_device_name_" + std::to_string(i))
 			};
-			ip_dataset[i] = ini_parser::instance().get<std::string>("network_profile", "ip_for_" + name);
+			ip_dataset[i] = config::instance().get<std::string>("network_profile", "ip_for_" + name);
 		}
 
-		ini_parser::_mutex.lock();
-		ini_parser::_is_usable_for_main_thread = true;
-		ini_parser::_mutex.unlock();
+		config::_mutex.lock();
+		config::_is_usable_for_main_thread = true;
+		config::_mutex.unlock();
 
 		while (!client.is_end()) {
 			for (size_t i = 0; i < network_node_num; ++i) {

@@ -5,8 +5,8 @@
  *      Author: u
  */
 
+#include <config.hpp>
 #include <controller/controller_impl.hpp>
-#include <ini_parser.hpp>
 #include <potentiometer.hpp>
 #include <pid/pid_manager.hpp>
 
@@ -31,13 +31,13 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 			std::string key {
 				"normalization_coeff_" + i.first
 			};
-			_normalized_controller_state[i.first] = i.second * ini_parser::instance().get<float>("normalization_coeff", key);
+			_normalized_controller_state[i.first] = i.second * config::instance().get<float>("normalization_coeff", key);
 		}
 	}
 
 	controller_impl* state = update();
 	update_angle();
-	update_ini_parser();
+	update_config();
 	update_pid_index();
 	update_lpf_index();
 	apply_grab();
@@ -45,8 +45,8 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 
 	// ロボットの操作値に係数をかける
 	for (auto&& i : _command) {
-		i.second *= ini_parser::instance().get<float>("command_coeff", "command_coeff_" + i.first);
-		i.second += ini_parser::instance().get<float>("command_offset", "command_offset_" + i.first);
+		i.second *= config::instance().get<float>("command_coeff", "command_coeff_" + i.first);
+		i.second += config::instance().get<float>("command_offset", "command_offset_" + i.first);
 	}
 
 	_prev_normalized_controller_state = _normalized_controller_state;
@@ -79,11 +79,11 @@ bool controller_impl::is_key_rise(std::string name) {
 }
 
 std::string controller_impl::get_key_by_name(std::string name) {
-	return ini_parser::instance().get<std::string>("key_config", name);
+	return config::instance().get<std::string>("key_config", name);
 }
 
 int controller_impl::read_arm_ability_position_index() {
-	size_t n = ini_parser::instance().get<int>("key_config", "arm_index_num");
+	size_t n = config::instance().get<int>("key_config", "arm_index_num");
 	for (size_t i = 0; i < n; ++i) {
 		if (is_key_pushed("arm_abilities_position_index_" + std::to_string(i))) {
 			return i;
@@ -92,9 +92,9 @@ int controller_impl::read_arm_ability_position_index() {
 	return -1;
 }
 
-void controller_impl::update_ini_parser() {
+void controller_impl::update_config() {
 	if (is_key_rise("reload_ini_file")) {
-		ini_parser::instance().read();
+		config::instance().read();
 		_command["reload_ini_file"] = 1.0f;
 	} else {
 		_command["reload_ini_file"] = -1.0f;

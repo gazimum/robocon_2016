@@ -8,7 +8,7 @@
 #ifndef INCLUDED_PID_MANAGER_IMPL_HPP
 #define INCLUDED_PID_MANAGER_IMPL_HPP
 
-#include <ini_parser.hpp>
+#include <config.hpp>
 
 template <class T>
 void pid_manager<T>::config() {
@@ -16,14 +16,14 @@ void pid_manager<T>::config() {
 		std::string index_key {
 			"pid_state_" + std::to_string(manager<pid<T>>::_index) + "_" + i.first + "_index"
 		};
-		int index = ini_parser::instance().get<int>("pid_state", index_key);
+		int index = config::instance().get<int>("pid_state", index_key);
 		std::string prefix {
 			i.first + "_pid_" + std::to_string(index)
 		};
 		i.second->update_coeff(
-			ini_parser::instance().get<float>("pid_coeff", prefix + "_kp"),
-			ini_parser::instance().get<float>("pid_coeff", prefix + "_ki"),
-			ini_parser::instance().get<float>("pid_coeff", prefix + "_kd")
+			config::instance().get<float>("pid_coeff", prefix + "_kp"),
+			config::instance().get<float>("pid_coeff", prefix + "_ki"),
+			config::instance().get<float>("pid_coeff", prefix + "_kd")
 		);
 	}
 }

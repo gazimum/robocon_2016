@@ -5,9 +5,9 @@
  *      Author: u
  */
 
+#include <config.hpp>
 #include <cmath>
 #include <controller/moving_object_controller.hpp>
-#include <ini_parser.hpp>
 #include <utils.hpp>
 
 moving_object_controller::moving_object_controller() {
@@ -25,13 +25,13 @@ void moving_object_controller::update_movement() {
 	float av = _normalized_controller_state[get_key_by_name("turn_+")];
 	av -= _normalized_controller_state[get_key_by_name("turn_-")];
 
-	float coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode1");
+	float coeff = config::instance().get<float>("command_coeff", "command_coeff_speed_mode1");
 	if (is_key_pushed("speed_mode_2_switch_1") || is_key_pushed("speed_mode_2_switch_2")) {
-		coeff = ini_parser::instance().get<float>("command_coeff", "command_coeff_speed_mode2");
+		coeff = config::instance().get<float>("command_coeff", "command_coeff_speed_mode2");
 	}
 
 	float l = sqrt(vx * vx + vy * vy);
-	float threshold = ini_parser::instance().get<float>("setting", "velocity_threshold");
+	float threshold = config::instance().get<float>("setting", "velocity_threshold");
 	if (l > threshold) {
 		vx *= coeff / l;
 		vy *= coeff / l;
@@ -42,7 +42,7 @@ void moving_object_controller::update_movement() {
 	_command["velocity_x"] = vx;
 	_command["velocity_y"] = vy;
 
-	threshold = ini_parser::instance().get<float>("setting", "angular_velocity_threshold");
+	threshold = config::instance().get<float>("setting", "angular_velocity_threshold");
 	if (std::fabs(av) > threshold) {
 		av *= coeff;
 	} else {

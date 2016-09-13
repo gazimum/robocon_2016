@@ -5,12 +5,12 @@
  *      Author: u
  */
 
+#include <config.hpp>
 #include <iostream>
 #include <functional>
 #include <controller/basic_controller.hpp>
 #include <controller/simple_controller.hpp>
 #include <controller/flexible_controller.hpp>
-#include <ini_parser.hpp>
 #include <potentiometer.hpp>
 
 basic_controller::basic_controller()  {}
@@ -69,14 +69,14 @@ bool basic_controller::update_arm_ability_position_index(std::string name) {
 	if (index < 0) {
 		return false;
 	}
-	float x = _normalized_controller_state[get_key_by_name("arm__x")];
-	float y = _normalized_controller_state[get_key_by_name("height_high_y")];
+	float x = _normalized_controller_state[get_key_by_name("arm_index_mode_2_switch_2")];
+	float y = _normalized_controller_state[get_key_by_name("arm_index_mode_2_switch_2")];
 	float l = sqrt(x * x + y * y);
 	if (l > _command_threshold) {
-		index += ini_parser::instance().get<int>("key_config", "arm_index_mode_1_key_num");
+		index += config::instance().get<int>("key_config", "arm_index_mode_1_key_num");
 	}
 
-	int position_num = ini_parser::instance().get<int>(name, "position_num");
+	int position_num = config::instance().get<int>(name, "position_num");
 	if (index >= position_num) {
 		index = position_num - 1;
 	}
@@ -87,13 +87,13 @@ bool basic_controller::update_arm_ability_position_index(std::string name) {
 void basic_controller::update_arm_adjustment(std::string name) {
 	float adj = _normalized_controller_state[get_key_by_name("arm_adjusting_+")];
 	adj -= _normalized_controller_state[get_key_by_name("arm_adjusting_-")];
-	adj *= ini_parser::instance().get<float>("command_coeff", "command_coeff_arm_adjustment");
+	adj *= config::instance().get<float>("command_coeff", "command_coeff_arm_adjustment");
 	_arm_adjustment[name] += adj;
 
 	std::string value_key {
 		"position_" + std::to_string(_arm_ability_position_index_dataset[name])
 	};
-	float pos = ini_parser::instance().get<float>(name, value_key);
+	float pos = config::instance().get<float>(name, value_key);
 	if (pos + _arm_adjustment[name] > 1.0f) {
 		_arm_adjustment[name] = 1.0f - pos;
 	} else if (pos + _arm_adjustment[name] < -1.0f) {
@@ -106,7 +106,7 @@ void basic_controller::update_arm_ability_position() {
 		std::string value_key {
 			"position_" + std::to_string(_arm_ability_position_index_dataset[i])
 		};
-		_command[i] = ini_parser::instance().get<float>(i, value_key);
+		_command[i] = config::instance().get<float>(i, value_key);
 		_command[i] += _arm_adjustment[i];
 	}
 }
@@ -121,7 +121,7 @@ void basic_controller::teaching(std::string name) {
 			"position_" + std::to_string(_arm_ability_position_index_dataset[name])
 		};
 		float pos = potentiometer::instance().get_position(name);
-		ini_parser::instance().set(name, value_key, pos);
+		config::instance().set(name, value_key, pos);
 		_arm_adjustment[name] = 0.0f;
 		write_ini_file();
 	}
@@ -133,11 +133,11 @@ void basic_controller::write_ini_file() {
 			std::string value_key {
 				"position_" + std::to_string(_arm_ability_position_index_dataset[i])
 			};
-			float pos = ini_parser::instance().get<float>(i, value_key);
-			ini_parser::instance().set(i, value_key, pos + _arm_adjustment[i]);
+			float pos = config::instance().get<float>(i, value_key);
+			config::instance().set(i, value_key, pos + _arm_adjustment[i]);
 		}
 		_arm_adjustment[i] = 0.0f;
 	}
-	ini_parser::instance().write();
+	config::instance().write();
 }
 

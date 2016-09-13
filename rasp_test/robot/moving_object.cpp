@@ -12,9 +12,9 @@
 #include <robot/omni_wheel.hpp>
 #include <server_shared_data.hpp>
 #include <communication.hpp>
+#include <config.hpp>
 #include <controller/controller.hpp>
 #include <robot/wheel_odometry.hpp>
-#include <ini_parser.hpp>
 #include <lpf/lpf_manager.hpp>
 #include <lpf/lpf.hpp>
 
@@ -38,9 +38,9 @@ void moving_object::update() {
 	float av = controller::instance().get("angular_velocity");
 
 	float l = sqrt(vx * vx + vy * vy);
-	float threshold = ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_velocity");
+	float threshold = config::instance().get<float>("lpf", "lpf_enable_threshold_velocity");
 	bool is_enable_lpf = (l > threshold);
-	threshold = ini_parser::instance().get<float>("lpf", "lpf_enable_threshold_angular_velocity");
+	threshold = config::instance().get<float>("lpf", "lpf_enable_threshold_angular_velocity");
 	is_enable_lpf = is_enable_lpf || (std::fabs(av) > threshold);
 	if (is_enable_lpf) {
 		vx = lpf_manager<float>::instance().get("velocity_x").update(vx);

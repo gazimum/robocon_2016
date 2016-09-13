@@ -5,9 +5,9 @@
  *      Author: u
  */
 
+#include <config.hpp>
 #include <potentiometer.hpp>
 #include <controller/controller.hpp>
-#include <ini_parser.hpp>
 #include <lpf/lpf_manager.hpp>
 
 const std::map<std::string, serial_connected_mcu::read_id> potentiometer::_read_id_dataset {

@@ -5,7 +5,7 @@
  *      Author: tomoya
  */
 
-#include <ini_parser.hpp>
+#include <config.hpp>
 #include <map>
 #include <controller/controller.hpp>
 #include <server_shared_data.hpp>
@@ -33,8 +33,8 @@ float controller::get(std::string key) {
 }
 
 void controller::update() {
-	std::string key = "ip_for_" + ini_parser::instance().get<std::string>("network_profile", "my_controller_name");
-	std::string ip = ini_parser::instance().get<std::string>("network_profile", key);
+	std::string key = "ip_for_" + config::instance().get<std::string>("network_profile", "my_controller_name");
+	std::string ip = config::instance().get<std::string>("network_profile", key);
 
 	server_shared_data::_mutex.lock();
 	std::map<std::string, int> command {
@@ -46,7 +46,7 @@ void controller::update() {
 	// 状態遷移の処理
 	auto now = std::chrono::system_clock::now();
 	float t_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
-	if (t_ms < ini_parser::instance().get<float>("setting", "controller_sequence_wait_time_ms")) {
+	if (t_ms < config::instance().get<float>("setting", "controller_sequence_wait_time_ms")) {
 		if (state != _controller_impl) {
 			delete state;
 		}
@@ -65,7 +65,7 @@ void controller::update() {
 			i();
 		}
 		pid_manager<float>::instance().config();
-		_controller_impl->reload_ini_file_value();
+		_controller_impl->reload_config_value();
 	}
 }
 

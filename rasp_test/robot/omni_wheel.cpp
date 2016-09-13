@@ -5,12 +5,12 @@
  *      Author: tomoya
  */
 
+#include <config.hpp>
 #include <cmath>
 #include <algorithm>
 #include "omni_wheel.hpp"
 #include <i2c/i2c.hpp>
 #include <robot/wheel_odometry.hpp>
-#include <ini_parser.hpp>
 #include <dc_motor.hpp>
 #include <controller/controller.hpp>
 #include <pid/pid_manager.hpp>
@@ -28,10 +28,10 @@ omni_wheel::omni_wheel() : _velocity_x(float()),
 omni_wheel::~omni_wheel() {}
 
 void omni_wheel::write() {
-	size_t tire_num = ini_parser::instance().get<int>("omni_wheel", "tire_num");
+	size_t tire_num = config::instance().get<int>("omni_wheel", "tire_num");
 	float p[tire_num];
 	for (size_t i = 0; i < tire_num; ++i) {
-		float theta = ini_parser::instance().get<float>("omni_wheel", "tire_" + std::to_string(i) + "_heading_deg");
+		float theta = config::instance().get<float>("omni_wheel", "tire_" + std::to_string(i) + "_heading_deg");
 		theta *= M_PI / 180.0f;
 		// タイヤの向きベクトルと速度ベクトルの内積
 		p[i] = _velocity_x * cos(theta) + _velocity_y * sin(theta);

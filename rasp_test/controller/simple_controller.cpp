@@ -5,11 +5,11 @@
  *      Author: u
  */
 
+#include <config.hpp>
 #include <string>
 #include <controller/simple_controller.hpp>
 #include <controller/basic_controller.hpp>
 #include <controller/flexible_controller.hpp>
-#include <ini_parser.hpp>
 #include <pid/pid_manager.hpp>
 #include <lpf/lpf_manager.hpp>
 
@@ -22,11 +22,12 @@ simple_controller::simple_controller() {
 	_state_machine.add_state("grab", 			std::bind(&simple_controller::grab, 		 this));
 	_state_machine.add_state("height_adjust", 	std::bind(&simple_controller::height_adjust, this));
 
-	reload_ini_file_value();
 	_time = std::chrono::system_clock::now();
 }
 
-simple_controller::~simple_controller() {}
+simple_controller::~simple_controller() {
+	reload_config_value();
+}
 
 controller_impl* simple_controller::update() {
 	_state_machine.update();
@@ -67,7 +68,7 @@ std::string simple_controller::release() {
 
 	auto elapsed = std::chrono::system_clock::now() - _time;
 	float elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
-	float wait_time_ms = ini_parser::instance().get<float>("setting", "release_wait_time_ms");
+	float wait_time_ms = config::instance().get<float>("setting", "release_wait_time_ms");
 	bool is_transition = (elapsed_ms > wait_time_ms);
 	is_transition = is_transition && is_key_rise("grab");
 	if (is_transition) {
@@ -93,7 +94,7 @@ std::string simple_controller::grab() {
 
 	auto elapsed = std::chrono::system_clock::now() - _time;
 	float elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
-	float wait_time_ms = ini_parser::instance().get<float>("setting", "release_wait_time_ms");
+	float wait_time_ms = config::instance().get<float>("setting", "release_wait_time_ms");
 	if (elapsed_ms > wait_time_ms) {
 		return "height_adjust";
 	}
@@ -116,17 +117,17 @@ void simple_controller::update_state_name() {
 	if (index < 0) {
 		return;
 	}
-	if (is_key_pushed("arm_index_mode_2_switch")){
-		index += ini_parser::instance().get<int>("key_config", "arm_index_mode_1_key_num");
+	if (is_key_pushed("arm_index_mode_2_switch_1")){
+		index += config::instance().get<int>("key_config", "arm_index_mode_1_key_num");
 	}
-	int arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
+	int arm_state_num = config::instance().get<int>("arm_state", "arm_state_num");
 	if (index >= arm_state_num) {
 		index = arm_state_num - 1;
 	}
 	std::string value_key {
 		"state_" + std::to_string(index) + "_name"
 	};
-	_state_name = ini_parser::instance().get<std::string>("arm_state", value_key);
+	_state_name = config::instance().get<std::string>("arm_state", value_key);
 }
 
 void simple_controller::update_state_by_state_name() {
@@ -134,16 +135,16 @@ void simple_controller::update_state_by_state_name() {
 		std::string value_key {
 			"state_" + std::to_string(_state_index_dataset[_state_name]) + "_" + i + "_index"
 		};
-		int index = ini_parser::instance().get<int>("arm_state", value_key);
+		int index = config::instance().get<int>("arm_state", value_key);
 		_arm_ability_position_index_dataset[i] = index;
-		_command[i] = ini_parser::instance().get<float>(i, "position_" + std::to_string(index));
+		_command[i] = config::instance().get<float>(i, "position_" + std::to_string(index));
 	}
 }
 
-void simple_controller::reload_ini_file_value() {
-	size_t arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
+void simple_controller::reload_config_value() {
+	size_t arm_state_num = config::instance().get<int>("arm_state", "arm_state_num");
 	for (size_t i = 0; i < arm_state_num; ++i) {
-		std::string name = ini_parser::instance().get<std::string>("arm_state", "state_" + std::to_string(i) + "_name");
+		std::string name = config::instance().get<std::string>("arm_state", "state_" + std::to_string(i) + "_name");
 		_state_index_dataset[name] = i;
 	}
 }

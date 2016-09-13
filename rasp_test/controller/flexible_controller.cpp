@@ -5,12 +5,12 @@
  *      Author: u
  */
 
+#include <config.hpp>
 #include <string>
 #include <controller/controller.hpp>
 #include <controller/simple_controller.hpp>
 #include <controller/basic_controller.hpp>
 #include <controller/flexible_controller.hpp>
-#include <ini_parser.hpp>
 #include <pid/pid_manager.hpp>
 #include <lpf/lpf_manager.hpp>
 #include <iostream>
@@ -18,7 +18,7 @@
 std::string flexible_controller::_state_name = "very_low";
 
 flexible_controller::flexible_controller() {
-	reload_ini_file_value();
+	reload_config_value();
 }
 
 flexible_controller::~flexible_controller() {}
@@ -45,20 +45,22 @@ void flexible_controller::update_lpf_index() {
 
 void flexible_controller::update_state_name() {
 	int index = controller_impl::read_arm_ability_position_index();
+	//std::cout << index << " ";
 	if (index < 0) {
 		return;
 	}
-	if (is_key_pushed("arm_index_mode_2_switch")){
-		index += ini_parser::instance().get<int>("key_config", "arm_index_mode_1_key_num");
+	if (is_key_pushed("arm_index_mode_2_switch_1")){
+		index += config::instance().get<int>("key_config", "arm_index_mode_1_key_num");
 	}
-	int arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
+	int arm_state_num = config::instance().get<int>("arm_state", "arm_state_num");
 	if (index >= arm_state_num) {
 		index = arm_state_num - 1;
 	}
 	std::string value_key {
 		"state_" + std::to_string(index) + "_name"
 	};
-	_state_name = ini_parser::instance().get<std::string>("arm_state", value_key);
+	_state_name = config::instance().get<std::string>("arm_state", value_key);
+	//std::cout << _state_name << std::endl;
 }
 
 void flexible_controller::update_grab() {
@@ -88,16 +90,17 @@ void flexible_controller::update_state_by_state_name() {
 		std::string value_key {
 			"state_" + std::to_string(_state_index_dataset[_state_name]) + "_" + i + "_index"
 		};
-		int index = ini_parser::instance().get<int>("arm_state", value_key);
+		int index = config::instance().get<int>("arm_state", value_key);
 		_arm_ability_position_index_dataset[i] = index;
-		_command[i] = ini_parser::instance().get<float>(i, "position_" + std::to_string(index));
+		_command[i] = config::instance().get<float>(i, "position_" + std::to_string(index));
 	}
+	std::cout << std::endl;
 }
 
-void flexible_controller::reload_ini_file_value() {
-	size_t arm_state_num = ini_parser::instance().get<int>("arm_state", "arm_state_num");
+void flexible_controller::reload_config_value() {
+	size_t arm_state_num = config::instance().get<int>("arm_state", "arm_state_num");
 	for (size_t i = 0; i < arm_state_num; ++i) {
-		std::string name = ini_parser::instance().get<std::string>("arm_state", "state_" + std::to_string(i) + "_name");
+		std::string name = config::instance().get<std::string>("arm_state", "state_" + std::to_string(i) + "_name");
 		_state_index_dataset[name] = i;
 	}
 }

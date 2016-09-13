@@ -1,5 +1,6 @@
+#include <cstdlib>
+#include <config.hpp>
 #include <robot/arm.hpp>
-#include <ini_parser.hpp>
 #include <serial_connected_mcu/serial_connected_mcu_master.hpp>
 #include <controller/controller.hpp>
 #include <dc_motor.hpp>
@@ -33,6 +34,7 @@ void arm::update() const {
 		dc_motor::instance().set(name, mv);
 
 		std::cout << name << " " << target - position << ", ";
+
 	}
 	std::cout << std::endl;
 	for (const auto& i : _solenoid_valve_name_dataset) {

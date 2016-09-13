@@ -17,7 +17,7 @@ class simple_controller : public moving_object_controller {
 public:
 	simple_controller();
 	virtual ~simple_controller();
-	virtual void reload_ini_file_value() override;
+	virtual void reload_config_value() override;
 
 private:
 	virtual controller_impl* update() override;
