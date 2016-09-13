@@ -10,10 +10,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
-//#include <filesystem>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
-//#include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <boost/range/algorithm/for_each.hpp>
 #include <config.hpp>
@@ -80,6 +78,15 @@ std::vector<std::string> read_dir(std::string dir) {
 	return obj_name_dataset;
 }
 
+std::string split_file_name(std::string path) {
+	int file_name_index = path.find_last_of("/");
+	if (file_name_index == std::string::npos) {
+		return path;
+	}
+	++file_name_index;
+	return path.substr(file_name_index, path.size() - file_name_index);
+}
+
 }
 
 void config::read() {
@@ -102,30 +109,6 @@ void config::read() {
 			read(i);
 		}
 	}
-
-	/*
-	boost::filesystem::path dir {
-		_current_directory_path + "setting"
-	};
-	auto first = boost::filesystem::recursive_directory_iterator(dir);
-	auto last = boost::filesystem::recursive_directory_iterator();
-	boost::for_each(std::make_pair(first, last), [this](boost::filesystem::path const& file_path) {
-		if (file_path.extension().generic_string() == ".ini") {
-			read(file_path.generic_string());
-		}
-	});
-	*/
-	/*
-	std::ifstream list;
-	list.open(_current_directory_path + _ini_file_list_file_name, std::ios::in);
-
-	std::string name;
-	while (std::getline(list, name)) {
-		if (name.size() > 0) {
-			read(name);
-		}
-	}
-	*/
 }
 
 void config::read(std::string path) {
@@ -134,16 +117,7 @@ void config::read(std::string path) {
 	ptree p;
 	boost::property_tree::read_ini(path, p);
 	_ptree_dataset[path] = p;
-
-	int file_name_index = path.find_last_of("/");
-	std::string file_name;
-	if (file_name_index == std::string::npos) {
-		file_name = path;
-	} else {
-		++file_name_index;
-		file_name = path.substr(file_name_index, path.size() - file_name_index);
-	}
-	_config_file_path_dataset[file_name] = path;
+	_config_file_path_dataset[split_file_name(path)] = path;
 }
 
 void config::write() const {
@@ -159,12 +133,51 @@ void config::write(std::string name) const {
 	write_ini(path, _ptree_dataset.at(path));
 }
 
+namespace {
+
+bool copy(const std::string& src, const std::string& dst) {
+    // コピー元をオープンする
+    std::ifstream ifs(src);
+    if (!ifs) {
+        std::cerr << "file open error: " << src << '\n';
+        return false;
+    }
+    // コピー先をオープンする
+    std::ofstream ofs(dst, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
+    if (!ofs) {
+        std::cerr << "file open error: " << dst << '\n';
+        return false;
+    }
+    // コピー
+    ofs << ifs.rdbuf() << std::flush;
+
+    // エラーチェック
+    if (!ifs) {
+        std::cerr << "I/O error: " << src << '\n';
+        return false;
+    }
+    if (!ofs) {
+        std::cerr << "I/O error: " << dst << '\n';
+        return false;
+    }
+
+    return true;
+}
+
+}
+
 void config::backup_config_file() const {
+	std::string bak_dir {
+		_current_directory_path + "backup/"
+	};
+	std::string command {
+		"cp -a " + _current_directory_path + "config/" + " " + bak_dir
+	};
+
+	system(command.c_str());
+
+	/*
 	for (const auto& i : _ptree_dataset) {
-		/*
-		boost::filesystem::path backup_directory_path {
-			_current_directory_path + "backup"
-		};
-		*/
-	}
+		copy(i.first.c_str(), bak_dir + split_file_name(i.first));
+	}*/
 }

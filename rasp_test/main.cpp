@@ -1,7 +1,3 @@
-/*
- * todo:プログラムが起動するごとに設定ファイルのバックアップを./backupに生成する．
- */
-
 #include <thread>
 #include <communication.hpp>
 #include <config.hpp>
