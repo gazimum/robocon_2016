@@ -65,6 +65,7 @@ void controller::update() {
 			i();
 		}
 		pid_manager<float>::instance().config();
+		lpf_manager<float>::instance().config();
 		_controller_impl->reload_config_value();
 	}
 }
