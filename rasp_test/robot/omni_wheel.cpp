@@ -47,6 +47,7 @@ void omni_wheel::write() {
 		float tire_heading_deg = config::instance().get<float>("omni_wheel", "tire_" + std::to_string(i) + "_heading_deg");
 		float between_deg = tire_position_deg + 90.0f - tire_heading_deg;
 		float turn = mv * cos(between_deg * M_PI / 180.0f);
+		std::cout << mv << " " << cos(between_deg * M_PI / 180.0f) << std::endl;
 		dc_motor::instance().set("wheel" + std::to_string(i), parallel[i] + turn);
 	}
 }

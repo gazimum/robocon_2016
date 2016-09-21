@@ -1,3 +1,7 @@
+/*
+ * todo:コントローラ遷移の時におそらくarm_length, arm_width, arm_height, arm_angleに0が命令される問題を解決する
+*/
+
 #include <thread>
 #include <communication.hpp>
 #include <config.hpp>

@@ -12,6 +12,7 @@
 #include <controller/controller_impl.hpp>
 #include <controller/flexible_controller.hpp>
 #include <pid/pid_manager.hpp>
+#include <lpf/lpf_manager.hpp>
 
 #include <iostream>
 
