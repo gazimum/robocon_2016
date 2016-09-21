@@ -1,7 +1,8 @@
 /*
  * todo:コントローラ遷移の時におそらくarm_length, arm_width, arm_height, arm_angleに0が命令される問題を解決する
  * 		↑を対策した．要実験．
- * todo:network_node_num -> network_divice_num 設定ファイルをこのように変更する必要がある．
+ * todo:network_node_num -> network_device_num 設定ファイルをこのように変更する必要がある．
+ * todo:wheel_0 -> wheel_1 設定ファイルをこのように変更する必要がある．
 */
 
 #include <thread>

@@ -8,20 +8,22 @@
 #ifndef ROBOT_HPP_
 #define ROBOT_HPP_
 
-#include "moving_object.hpp"
-#include "arm.hpp"
-#include "singleton.hpp"
+#include <memory>
+#include <robot/arm.hpp>
+#include <singleton.hpp>
+#include <robot/moving_object.hpp>
 
 class robot : public singleton<robot> {
 public:
 	void update();
+	void update_moving_object();
 	bool is_end();
 
 private:
 	friend class singleton<robot>;
 	robot();
 
-	moving_object _moving_object;
+	std::unique_ptr<moving_object> _moving_object;
 	arm _arm;
 };
 

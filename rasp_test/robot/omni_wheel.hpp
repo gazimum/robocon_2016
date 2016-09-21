@@ -8,25 +8,15 @@
 #ifndef OMNI_WHEEL_HPP_
 #define OMNI_WHEEL_HPP_
 
-#include <pid/position_pid.hpp>
+#include <robot/moving_object.hpp>
 
-class wheel_odometry;
-
-class omni_wheel {
+class omni_wheel : public moving_object {
 public:
 	omni_wheel();
-	~omni_wheel();
+	virtual ~omni_wheel();
 
-	void write();
-	void set_velocity(float vx, float vy);
-	void set_angular_velocity(float av);
-	void set_target_heading_rad(float heading_rad);
-
-private:
-	float _velocity_x;
-	float _velocity_y;
-	float _angular_velocity;
-	float _target_heading_rad;
+protected:
+	virtual void write() override;
 };
 
 #endif /* OMNI_WHEEL_HPP_ */

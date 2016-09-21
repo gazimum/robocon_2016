@@ -54,7 +54,7 @@ float wheel_odometry::get_heading_rad() {
 	l /= config::instance().get<float>("encoder_profile", "encoder_resolution");
 	l *= 2.0f * M_PI * config::instance().get<float>("omni_wheel", "tire_radius_cm");
 	l /= config::instance().get<float>("encoder_profile", "encoder_num");
-	float theta = l / config::instance().get<float>("omni_wheel", "body_radius_cm");
-	utils::normalize_angle_rad(theta);
-	return theta;
+	float heading_rad = l / config::instance().get<float>("omni_wheel", "body_radius_cm");
+	utils::normalize_angle_rad(heading_rad);
+	return heading_rad;
 }

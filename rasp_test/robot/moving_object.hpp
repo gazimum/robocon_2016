@@ -8,21 +8,28 @@
 #ifndef MOVING_OBJECT_HPP_
 #define MOVING_OBJECT_HPP_
 
-#include <map>
 #include <vector>
-#include <pid/position_pid.hpp>
-#include <robot/omni_wheel.hpp>
 
 class moving_object {
 public:
 	moving_object();
-	~moving_object();
+	virtual ~moving_object();
 
 	void update();
+	void set_velocity(float vx, float vy);
+	void set_angular_velocity(float av);
+	void set_target_heading_rad(float heading_rad);
+
+protected:
+	virtual void write() = 0;
+
+	float _velocity_x;
+	float _velocity_y;
+	float _angular_velocity;
+	float _target_heading_rad;
 
 private:
 	static const std::vector<std::string> _lpf_name_dataset;
-	omni_wheel _omni_wheel;
 };
 
 #endif /* MOVING_OBJECT_HPP_ */
