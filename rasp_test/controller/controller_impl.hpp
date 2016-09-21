@@ -19,7 +19,7 @@ public:
 
 	controller_impl* update(std::map<std::string, int>& controller_state);
 
-	float get(std::string key);
+	std::map<std::string, float> get_command();
 	virtual void reload_config_value() {};
 
 protected:

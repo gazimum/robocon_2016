@@ -54,8 +54,8 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	return state;
 }
 
-float controller_impl::get(std::string key) {
-	return _command[key];
+std::map<std::string, float> controller_impl::get_command() {
+	return _command;
 }
 
 bool controller_impl::is_key_pushed(std::string name) {

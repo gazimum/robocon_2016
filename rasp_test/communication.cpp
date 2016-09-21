@@ -30,11 +30,11 @@ void communication::operator()() const {
 
 		boost::asio::io_service io;
 		network::RobotClient client(server_ip, port, 5, "\n", io);
-		client.connect();
 
-		size_t network_node_num = config::instance().get<int>("network_profile", "network_node_num");
-		std::string ip_dataset[network_node_num];
-		for (size_t i = 0; i < network_node_num; ++i) {
+		// 定数を設定ファイルから読みだしておく
+		size_t network_device_num = config::instance().get<int>("network_profile", "network_device_num");
+		std::string ip_dataset[network_device_num];
+		for (size_t i = 0; i < network_device_num; ++i) {
 			std::string name {
 				config::instance().get<std::string>("network_profile", "network_device_name_" + std::to_string(i))
 			};
@@ -45,8 +45,10 @@ void communication::operator()() const {
 		config::_is_usable_for_main_thread = true;
 		config::_mutex.unlock();
 
+		client.connect();
+
 		while (!client.is_end()) {
-			for (size_t i = 0; i < network_node_num; ++i) {
+			for (size_t i = 0; i < network_device_num; ++i) {
 				server_shared_data::_mutex.lock();
 				server_shared_data::_data[ip_dataset[i]] = client.get(ip_dataset[i]);
 				server_shared_data::_mutex.unlock();

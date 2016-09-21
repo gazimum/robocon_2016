@@ -17,6 +17,10 @@
 #include <boost/property_tree/ini_parser.hpp>
 #include <boost/optional.hpp>
 
+/*
+ * 仕様：たとえディレクトリが違ったとしても同名設定ファイルは禁止されている．
+ */
+
 class config : public singleton<config> {
 public:
 	typedef boost::property_tree::ptree ptree;

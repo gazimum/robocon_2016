@@ -1,5 +1,7 @@
 /*
  * todo:コントローラ遷移の時におそらくarm_length, arm_width, arm_height, arm_angleに0が命令される問題を解決する
+ * 		↑を対策した．要実験．
+ * todo:network_node_num -> network_divice_num 設定ファイルをこのように変更する必要がある．
 */
 
 #include <thread>
@@ -30,9 +32,9 @@ int main() {
 
 		while (!robot::instance().is_end()) {
 			potentiometer::instance().update();
+			controller::instance().update();
 			robot::instance().update();
 			i2c::instance().write();
-			controller::instance().update();
 			serial_connected_mcu::serial_connected_mcu_master::instance().communicate();
 		}
 	}

@@ -30,20 +30,21 @@ float controller::operator()(std::string key) {
 }
 
 float controller::get(std::string key) {
-	return _controller_impl->get(key);
+	return _command[key];
 }
 
 void controller::update() {
-	std::string key = "ip_for_" + config::instance().get<std::string>("network_profile", "my_controller_name");
-	std::string ip = config::instance().get<std::string>("network_profile", key);
+	std::string value_key = "ip_for_" + config::instance().get<std::string>("network_profile", "my_controller_name");
+	std::string ip = config::instance().get<std::string>("network_profile", value_key);
 
 	server_shared_data::_mutex.lock();
-	std::map<std::string, int> command {
+	std::map<std::string, int> controller_state {
 		server_shared_data::_data[ip]
 	};
 	server_shared_data::_mutex.unlock();
 
-	controller_impl* state = _controller_impl->update(command);
+	controller_impl* state = _controller_impl->update(controller_state);
+	_command = _controller_impl->get_command();
 	// 状態遷移の処理
 	auto now = std::chrono::system_clock::now();
 	float t_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - _time).count();
@@ -61,7 +62,7 @@ void controller::update() {
 	}
 
 	// 設定ファイルをリロードしたときに設定ファイルから値を設定しなおす
-	if (_controller_impl->get("reload_ini_file") > 0.0f) {
+	if (_command["reload_ini_file"] > 0.0f) {
 		for (const auto& i : _reload_ini_file_value_function_dataset) {
 			i();
 		}

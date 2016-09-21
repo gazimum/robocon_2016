@@ -36,6 +36,8 @@ private:
 	controller_impl* _controller_impl;
 	std::chrono::system_clock::time_point _time;
 
+	std::map<std::string, float> _command;
+
 	std::vector<std::function<void()>> _reload_ini_file_value_function_dataset;
 };
 

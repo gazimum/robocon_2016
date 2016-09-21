@@ -133,39 +133,6 @@ void config::write(std::string name) const {
 	write_ini(path, _ptree_dataset.at(path));
 }
 
-namespace {
-
-bool copy(const std::string& src, const std::string& dst) {
-    // コピー元をオープンする
-    std::ifstream ifs(src);
-    if (!ifs) {
-        std::cerr << "file open error: " << src << '\n';
-        return false;
-    }
-    // コピー先をオープンする
-    std::ofstream ofs(dst, std::ios_base::binary | std::ios_base::out | std::ios_base::trunc);
-    if (!ofs) {
-        std::cerr << "file open error: " << dst << '\n';
-        return false;
-    }
-    // コピー
-    ofs << ifs.rdbuf() << std::flush;
-
-    // エラーチェック
-    if (!ifs) {
-        std::cerr << "I/O error: " << src << '\n';
-        return false;
-    }
-    if (!ofs) {
-        std::cerr << "I/O error: " << dst << '\n';
-        return false;
-    }
-
-    return true;
-}
-
-}
-
 void config::backup_config_file() const {
 	std::string bak_dir {
 		_current_directory_path + "backup/"
@@ -175,9 +142,4 @@ void config::backup_config_file() const {
 	};
 
 	system(command.c_str());
-
-	/*
-	for (const auto& i : _ptree_dataset) {
-		copy(i.first.c_str(), bak_dir + split_file_name(i.first));
-	}*/
 }
