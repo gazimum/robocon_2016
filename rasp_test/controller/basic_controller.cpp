@@ -45,6 +45,7 @@ void basic_controller::update_arm() {
 	is_ib_pushed_prev = is_ib_pushed;
 
 	// 各機能の値はインデックスと微調整に応じて設定される
+	// B1257
 	update_arm_ability_position();
 }
 
@@ -70,7 +71,7 @@ bool basic_controller::update_arm_ability_position_index(std::string name) {
 		return false;
 	}
 	float x = _normalized_controller_state[get_key_by_name("arm_index_mode_2_switch_2")];
-	float y = _normalized_controller_state[get_key_by_name("arm_index_mode_2_switch_2")];
+	float y = _normalized_controller_state[get_key_by_name("arm_index_mode_2_switch_3")];
 	float l = sqrt(x * x + y * y);
 	if (l > _command_threshold) {
 		index += config::instance().get<int>("key_config", "arm_index_mode_1_key_num");

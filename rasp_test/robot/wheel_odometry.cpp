@@ -17,7 +17,12 @@
 #include <lpf/lpf_manager.hpp>
 
 wheel_odometry::wheel_odometry() : _prev_raw(new float[config::instance().get<int>("encoder_profile", "encoder_num")]),
-										_raw_offset(new float[config::instance().get<int>("encoder_profile", "encoder_num")]) {}
+										_raw_offset(new float[config::instance().get<int>("encoder_profile", "encoder_num")]) {
+	for (int i = 0; i < config::instance().get<int>("encoder_profile", "encoder_num"); ++i) {
+		_prev_raw[i] = float();
+		_raw_offset[i] = float();
+	}
+}
 
 float wheel_odometry::get_tire_frequency_kHz(int index) {
 	return get_raw(index) / config::instance().get<int>("encoder_profile", "encoder_resolution");
@@ -51,6 +56,8 @@ float wheel_odometry::get_heading_rad() {
 	for (size_t i = 0; i < config::instance().get<int>("encoder_profile", "encoder_num"); ++i) {
 		l += get_raw(i);
 	}
+	std::cout << std::endl;
+
 	l /= config::instance().get<float>("encoder_profile", "encoder_resolution");
 	l *= 2.0f * M_PI * config::instance().get<float>("omni_wheel", "tire_radius_cm");
 	l /= config::instance().get<float>("encoder_profile", "encoder_num");
