@@ -33,11 +33,13 @@ void communication::operator()() const {
 
 		// 定数を設定ファイルから読みだしておく
 		size_t network_device_num = config::instance().get<int>("network_profile", "network_device_num");
+		std::string name_dataset[network_device_num];
 		std::string ip_dataset[network_device_num];
 		for (size_t i = 0; i < network_device_num; ++i) {
 			std::string name {
 				config::instance().get<std::string>("network_profile", "network_device_name_" + std::to_string(i))
 			};
+			name_dataset[i] = name;
 			ip_dataset[i] = config::instance().get<std::string>("network_profile", "ip_for_" + name);
 		}
 
@@ -50,7 +52,7 @@ void communication::operator()() const {
 		while (!client.is_end()) {
 			for (size_t i = 0; i < network_device_num; ++i) {
 				server_shared_data::_mutex.lock();
-				server_shared_data::_data[ip_dataset[i]] = client.get(ip_dataset[i]);
+				server_shared_data::_dataset[name_dataset[i]] = client.get(ip_dataset[i]);
 				server_shared_data::_mutex.unlock();
 
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));

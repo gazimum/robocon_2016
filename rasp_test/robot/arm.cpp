@@ -7,6 +7,7 @@
 #include <pid/pid_manager.hpp>
 #include <solenoid_valve.hpp>
 #include <potentiometer.hpp>
+#include <controller/controller_impl.hpp>
 
 const std::vector<std::string> arm::_dc_motor_name_dataset {
 	"arm_length",
@@ -25,6 +26,11 @@ arm::arm() {
 }
 
 void arm::update() const {
+	float threshold = config::instance().get<float>("setting", "ability_enable_threshold");
+	if (controller::instance().get("is_enable_arm") < threshold) {
+		return;
+	};
+
 	update_angle();
 
 	for (const auto& name : _dc_motor_name_dataset) {

@@ -15,6 +15,6 @@
 #include <server_shared_data.hpp>
 
 std::mutex server_shared_data::_mutex;
-typename server_shared_data::server_shared_data_container_type server_shared_data::_data;
+typename server_shared_data::container_type server_shared_data::_dataset;
 
 #endif /* SERVER_SHARED_DATA_CPP_ */

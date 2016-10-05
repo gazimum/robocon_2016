@@ -13,6 +13,7 @@
 #include <controller/flexible_controller.hpp>
 #include <pid/pid_manager.hpp>
 #include <lpf/lpf_manager.hpp>
+#include <i2c/i2c.hpp>
 #include <iostream>
 
 std::string flexible_controller::_state_name = "very_low";
@@ -24,6 +25,8 @@ flexible_controller::flexible_controller() {
 flexible_controller::~flexible_controller() {}
 
 controller_impl* flexible_controller::update() {
+	i2c::instance().set("debug_0", 0x05);
+
 	update_movement();
 	update_grab();
 	update_lock();

@@ -10,7 +10,7 @@
 
 #include <controller/controller_impl.hpp>
 
-class moving_object_controller : public controller_impl {
+class moving_object_controller : public virtual controller_impl {
 public:
 	moving_object_controller();
 	virtual ~moving_object_controller();

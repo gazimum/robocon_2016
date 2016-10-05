@@ -20,13 +20,18 @@ const std::vector<std::string> controller_impl::_arm_ability_name_dataset {
 bool controller_impl::_is_lock_enable = false;
 bool controller_impl::_is_grab_enable = false;
 
-controller_impl::controller_impl() {}
+controller_impl::controller_impl() : 	_mode_name("normal"),
+											_my_controller_name(
+												config::instance().get<std::string>("network_profile", "my_controller_name")
+											) {}
 
 controller_impl::~controller_impl() {}
 
-controller_impl* controller_impl::update(std::map<std::string, int>& controller_state) {
+controller_impl* controller_impl::update(const server_shared_data::container_type& controller_state) {
+	_server_shared_data = controller_state;
+
 	// 正規化 : コントローラの操作値の範囲を [-1.0f, 1.0f] にする
-	for (const auto& i : controller_state) {
+	for (const auto& i : controller_state.at(_my_controller_name)) {
 		if (i.first.size() != 0) {
 			std::string key {
 				"normalization_coeff_" + i.first
@@ -35,9 +40,12 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 		}
 	}
 
+	_command["is_enable_arm"] = 1.0f;
+	_command["is_enable_moving_object"] = 1.0f;
+
 	controller_impl* state = update();
 	update_angle();
-	update_config();
+	//update_config();
 	update_pid_index();
 	update_lpf_index();
 	apply_grab();
@@ -54,25 +62,37 @@ controller_impl* controller_impl::update(std::map<std::string, int>& controller_
 	return state;
 }
 
-std::map<std::string, float> controller_impl::get_command() {
+controller_impl::container_type controller_impl::get_command() {
 	return _command;
 }
 
-bool controller_impl::is_key_pushed(std::string name) {
+bool controller_impl::is_key_pushed(std::string name, float threshold) {
 	std::string key {
 		get_key_by_name(name)
 	};
-	return (_normalized_controller_state[key] > _command_threshold);
+	if (threshold < 0.0f) {
+		return (_normalized_controller_state[key] < threshold);
+	}
+	return (_normalized_controller_state[key] > threshold);
 }
 
-bool controller_impl::is_key_rise(std::string name) {
+bool controller_impl::is_key_rise(std::string name, float threshold) {
 	std::string key {
 		get_key_by_name(name)
 	};
-	if (_normalized_controller_state[key] <= _command_threshold) {
+	if (threshold < 0.0f) {
+		if (_normalized_controller_state[key] >= threshold) {
+			return false;
+		}
+		if (_prev_normalized_controller_state[key] < threshold) {
+			return false;
+		}
+	}
+
+	if (_normalized_controller_state[key] <= threshold) {
 		return false;
 	}
-	if (_prev_normalized_controller_state[key] > _command_threshold) {
+	if (_prev_normalized_controller_state[key] > threshold) {
 		return false;
 	}
 	return true;

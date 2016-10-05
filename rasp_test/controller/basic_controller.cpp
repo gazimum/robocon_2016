@@ -12,22 +12,22 @@
 #include <controller/simple_controller.hpp>
 #include <controller/flexible_controller.hpp>
 #include <potentiometer.hpp>
+#include <i2c/i2c.hpp>
 
 basic_controller::basic_controller()  {}
 
 basic_controller::~basic_controller() {}
 
 controller_impl* basic_controller::update() {
+	i2c::instance().set("debug_0", 0x02);
+
 	update_movement();
 	update_arm();
 	return update_sequence();
 }
 
 controller_impl* basic_controller::update_sequence() {
-	if (is_key_pushed("controller_switch_1") && is_key_rise("controller_switch_2")) {
-		if (is_key_pushed("controller_switch_3")) {
-			return new simple_controller;
-		}
+	if (is_key_pushed("controller_switch_3") && is_key_rise("controller_switch_1")) {
 		return new flexible_controller;
 	}
 	return this;

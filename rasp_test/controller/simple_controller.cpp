@@ -1,39 +1,34 @@
 /*
- * simplecontroller.cpp
+ * flexiblecontroller.cpp
  *
- *  Created on: 2016/08/17
+ *  Created on: 2016/09/06
  *      Author: u
  */
 
-#include <config.hpp>
+#include <iostream>
 #include <string>
+#include <controller/controller.hpp>
 #include <controller/simple_controller.hpp>
 #include <controller/basic_controller.hpp>
 #include <controller/flexible_controller.hpp>
+#include <controller/fusion_fan_controller.hpp>
+#include <controller/fusion_controller.hpp>
 #include <pid/pid_manager.hpp>
+#include <config.hpp>
 #include <lpf/lpf_manager.hpp>
-
-std::string simple_controller::_state_name = "very_low";
-state_machine simple_controller::_state_machine("height_low");
+#include <i2c/i2c.hpp>
 
 simple_controller::simple_controller() {
-	_state_machine.add_state("release", 		std::bind(&simple_controller::release, 		 this));
-	_state_machine.add_state("height_low",		std::bind(&simple_controller::height_low, 	 this));
-	_state_machine.add_state("grab", 			std::bind(&simple_controller::grab, 		 this));
-	_state_machine.add_state("height_adjust", 	std::bind(&simple_controller::height_adjust, this));
-
-	_time = std::chrono::system_clock::now();
-}
-
-simple_controller::~simple_controller() {
 	reload_config_value();
 }
 
+simple_controller::~simple_controller() {}
+
 controller_impl* simple_controller::update() {
-	_state_machine.update();
-	update_state_by_state_name();
-	update_lock();
+	i2c::instance().set("debug_0", 0x01);
+
 	update_movement();
+	update_arm();
 	return update_sequence();
 }
 
@@ -48,97 +43,13 @@ void simple_controller::update_lpf_index() {
 }
 
 controller_impl* simple_controller::update_sequence() {
-	if (is_key_pushed("controller_switch_1") && is_key_rise("controller_switch_2")) {
-		if (is_key_pushed("controller_switch_3")) {
-			return new flexible_controller;
-		}
-		return new basic_controller;
+	if (controller_impl::is_key_rise("controller_switch_1")) {
+		return new fusion_controller;
+	}
+	if (controller_impl::is_key_rise("controller_switch_2")) {
+		return new fusion_fan_controller;
 	}
 	return this;
-}
-
-void simple_controller::update_lock() {
-	if (is_key_rise("lock")) {
-		_is_lock_enable = !_is_lock_enable;
-	}
-}
-
-std::string simple_controller::release() {
-	_is_grab_enable = false;
-
-	auto elapsed = std::chrono::system_clock::now() - _time;
-	float elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
-	float wait_time_ms = config::instance().get<float>("setting", "release_wait_time_ms");
-	bool is_transition = (elapsed_ms > wait_time_ms);
-	is_transition = is_transition && is_key_rise("grab");
-	if (is_transition) {
-		return "height_low";
-	}
-
-	return "release";
-}
-
-std::string simple_controller::height_low() {
-	_state_name = "very_low";
-
-	if (is_key_rise("grab")){
-		_time = std::chrono::system_clock::now();
-		return "grab";
-	}
-
-	return "height_low";
-}
-
-std::string simple_controller::grab() {
-	_is_grab_enable = true;
-
-	auto elapsed = std::chrono::system_clock::now() - _time;
-	float elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
-	float wait_time_ms = config::instance().get<float>("setting", "release_wait_time_ms");
-	if (elapsed_ms > wait_time_ms) {
-		return "height_adjust";
-	}
-	return "grab";
-}
-
-std::string simple_controller::height_adjust() {
-	update_state_name();
-
-	if (is_key_rise("grab")){
-		_time = std::chrono::system_clock::now();
-		return "release";
-	}
-
-	return "height_adjust";
-}
-
-void simple_controller::update_state_name() {
-	int index = controller_impl::read_arm_ability_position_index();
-	if (index < 0) {
-		return;
-	}
-	if (is_key_pushed("arm_index_mode_2_switch_1")){
-		index += config::instance().get<int>("key_config", "arm_index_mode_1_key_num");
-	}
-	int arm_state_num = config::instance().get<int>("arm_state", "arm_state_num");
-	if (index >= arm_state_num) {
-		index = arm_state_num - 1;
-	}
-	std::string value_key {
-		"state_" + std::to_string(index) + "_name"
-	};
-	_state_name = config::instance().get<std::string>("arm_state", value_key);
-}
-
-void simple_controller::update_state_by_state_name() {
-	for (const auto& i : _arm_ability_name_dataset) {
-		std::string value_key {
-			"state_" + std::to_string(_state_index_dataset[_state_name]) + "_" + i + "_index"
-		};
-		int index = config::instance().get<int>("arm_state", value_key);
-		_arm_ability_position_index_dataset[i] = index;
-		_command[i] = config::instance().get<float>(i, "position_" + std::to_string(index));
-	}
 }
 
 void simple_controller::reload_config_value() {
@@ -148,3 +59,4 @@ void simple_controller::reload_config_value() {
 		_state_index_dataset[name] = i;
 	}
 }
+

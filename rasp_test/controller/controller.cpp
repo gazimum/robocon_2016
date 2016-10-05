@@ -11,13 +11,14 @@
 #include <server_shared_data.hpp>
 #include <controller/controller_impl.hpp>
 #include <controller/flexible_controller.hpp>
+#include <controller/simple_controller.hpp>
 #include <pid/pid_manager.hpp>
 #include <lpf/lpf_manager.hpp>
 
 #include <iostream>
 
 controller::controller() : _controller_impl(nullptr) {
-	_controller_impl = new flexible_controller();
+	_controller_impl = new simple_controller();
 	_time = std::chrono::system_clock::now();
 }
 
@@ -38,8 +39,8 @@ void controller::update() {
 	std::string ip = config::instance().get<std::string>("network_profile", value_key);
 
 	server_shared_data::_mutex.lock();
-	std::map<std::string, int> controller_state {
-		server_shared_data::_data[ip]
+	server_shared_data::container_type controller_state {
+		server_shared_data::_dataset
 	};
 	server_shared_data::_mutex.unlock();
 

@@ -8,13 +8,13 @@
 
 class server_shared_data {
 public:
-	typedef std::map<std::string, int> server_shared_data_type;
-	typedef std::map<std::string, server_shared_data_type> server_shared_data_container_type;
+	using value_type = std::map<std::string, int>;
+	using container_type = std::map<std::string, value_type>;
 
 	server_shared_data() = delete;
 
 	static std::mutex _mutex;
-	static server_shared_data_container_type _data;
+	static container_type _dataset;
 };
 
 #endif /* SERVER_SHARED_DATA_HPP_ */

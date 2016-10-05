@@ -36,6 +36,11 @@ moving_object::moving_object() : _velocity_x(float()),
 moving_object::~moving_object() {}
 
 void moving_object::update() {
+	float ability_threshold = config::instance().get<float>("setting", "ability_enable_threshold");
+	if (controller::instance().get("is_enable_moving_object") < ability_threshold) {
+		return;
+	}
+
 	float l = sqrt(_velocity_x * _velocity_x + _velocity_y * _velocity_y);
 	float threshold = config::instance().get<float>("lpf", "lpf_enable_threshold_velocity");
 	if (l > threshold) {

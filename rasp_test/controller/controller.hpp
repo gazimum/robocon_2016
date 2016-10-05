@@ -19,11 +19,13 @@ class controller_impl;
 
 class controller : public singleton<controller> {
 public:
+	using container_type = std::map<std::string, float>;
+
 	void update();
 	float operator()(std::string key);
 	float get(std::string key);
 
-	void add_reload_ini_file_value_function(std::function<void(void)> f);
+	void add_reload_ini_file_value_function(std::function<void()> f);
 
 	virtual ~controller();
 
@@ -33,10 +35,12 @@ private:
 
 	void update_pid_index();
 
+	std::string _my_controller_name;
+
 	controller_impl* _controller_impl;
 	std::chrono::system_clock::time_point _time;
 
-	std::map<std::string, float> _command;
+	container_type _command;
 
 	std::vector<std::function<void()>> _reload_ini_file_value_function_dataset;
 };
